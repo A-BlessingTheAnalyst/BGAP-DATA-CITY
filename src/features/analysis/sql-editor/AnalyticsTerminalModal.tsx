@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MonacoSqlEditor } from './MonacoSqlEditor';
 import { SchemaViewer } from './SchemaViewer';
 import { ResultTable } from '../results/ResultTable';
@@ -10,47 +10,106 @@ import { HintSystem } from '../results/HintSystem';
 import { useDuckDb } from '../sql-worker/useDuckDb';
 import { useGameState } from '../../game/engine/GameState';
 import { MissionEvaluationResult } from '@/shared/types/mission';
-import { Play, Send, X, Database, HelpCircle, Code } from 'lucide-react';
+import { Play, Send, X, Database, HelpCircle, Code, Lightbulb } from 'lucide-react';
+
+const STARTER_QUERY_TEMPLATE = `-- BGAP Analytics Workstation — Chapter 01: The Café Revenue Mystery
+-- Objective: Calculate daily recognized revenue from completed sales.
+-- Hint: Exclude 'refunded' and 'voided' transactions.
+
+SELECT 
+    CAST(sale_at AS DATE) AS sale_date,
+    SUM(quantity * unit_price) AS revenue
+FROM sales
+WHERE payment_status = 'completed'
+GROUP BY 1
+ORDER BY 1;`;
 
 export const AnalyticsTerminalModal: React.FC = () => {
   const closeWorkstation = useGameState((s) => s.closeWorkstation);
   const setMissionState = useGameState((s) => s.setMissionState);
+  const missionState = useGameState((s) => s.missionState);
 
-  const [query, setQuery] = useState(
-    "SELECT CAST(sale_at AS DATE) AS sale_date,\n       SUM(quantity * unit_price) AS revenue\nFROM sales\nWHERE payment_status = 'completed'\nGROUP BY 1\nORDER BY 1;"
-  );
+  const [query, setQuery] = useState(STARTER_QUERY_TEMPLATE);
   const [activeTab, setActiveTab] = useState<'editor' | 'schema' | 'hints'>('editor');
-  const [explanationId, setExplanationId] = useState('expl_refunds_and_voids');
+  const [explanationId, setExplanationId] = useState<string>(''); // Unselected by default
+  const [attemptId, setAttemptId] = useState<string>('attempt-ch1-active');
+  const [hintsUsed, setHintsUsed] = useState<number>(0);
   const [evaluationResult, setEvaluationResult] = useState<MissionEvaluationResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { runQuery, queryResult, isRunning, error } = useDuckDb();
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Initialize or resume attempt session from authoritative server endpoint
+  useEffect(() => {
+    async function initAttempt() {
+      try {
+        const res = await fetch('/api/game/missions/ch1_cafe_revenue_mystery/start', {
+          method: 'POST',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.attemptId) setAttemptId(data.attemptId);
+        }
+      } catch (e) {
+        console.warn('[Terminal] Failed to start server attempt, using local fallback:', e);
+      }
+    }
+    initAttempt();
+  }, []);
+
+  // Debounced auto-save draft query to server
+  useEffect(() => {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(async () => {
+      try {
+        await fetch(`/api/game/attempts/${attemptId}/save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query }),
+        });
+      } catch (e) {}
+    }, 1500);
+
+    return () => {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    };
+  }, [query, attemptId]);
 
   const handleExecute = async () => {
     await runQuery(query);
   };
 
   const handleSubmit = async () => {
+    if (!explanationId) {
+      setSubmitError('Please select your business finding/explanation before submitting for official grading.');
+      return;
+    }
+    setSubmitError(null);
     setIsSubmitting(true);
+
     try {
-      const res = await fetch('/api/game/attempts/ch1-attempt/submit', {
+      const res = await fetch(`/api/game/attempts/${attemptId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          attemptId: 'ch1-attempt',
+          attemptId,
           missionId: 'ch1_cafe_revenue_mystery',
           query,
           explanationId,
-          clientTimeMs: 1200,
+          hintsUsed,
+          clientTimeMs: 1400,
         }),
       });
+
       const data: MissionEvaluationResult = await res.json();
       setEvaluationResult(data);
       if (data.isPassed) {
         setMissionState('completed');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Failed to submit official solution.');
     } finally {
       setIsSubmitting(false);
     }
@@ -67,11 +126,11 @@ export const AnalyticsTerminalModal: React.FC = () => {
           <div>
             <h1 className="text-sm font-bold text-bgap-text flex items-center gap-2">
               <span>BGAP ANALYTICS WORKSTATION</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-bgap-card text-bgap-cyan font-mono">
-                Mission 01
+              <span className="text-xs px-2 py-0.5 rounded bg-bgap-card text-bgap-cyan font-mono font-bold">
+                Chapter 01
               </span>
             </h1>
-            <p className="text-xs text-bgap-muted">The Café Revenue Mystery — SQL Practice Engine</p>
+            <p className="text-xs text-bgap-muted">The Café Revenue Mystery — Live SQL Practice</p>
           </div>
         </div>
 
@@ -100,7 +159,10 @@ export const AnalyticsTerminalModal: React.FC = () => {
             Data Schema
           </button>
           <button
-            onClick={() => setActiveTab('hints')}
+            onClick={() => {
+              setActiveTab('hints');
+              setHintsUsed((h) => h + 1);
+            }}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
               activeTab === 'hints'
                 ? 'bg-bgap-cyan/20 text-bgap-cyan border border-bgap-cyan/40'
@@ -108,7 +170,7 @@ export const AnalyticsTerminalModal: React.FC = () => {
             }`}
           >
             <HelpCircle className="w-3.5 h-3.5" />
-            Hints & Help
+            Hints & Guidance
           </button>
 
           <button
@@ -122,7 +184,7 @@ export const AnalyticsTerminalModal: React.FC = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Column: Editor or Schema */}
+        {/* Left Column: Monaco Editor or Schema */}
         <div className="flex-1 flex flex-col border-r border-bgap-border">
           {activeTab === 'editor' && (
             <>
@@ -133,16 +195,14 @@ export const AnalyticsTerminalModal: React.FC = () => {
 
               {/* Action Toolbar */}
               <div className="h-14 border-t border-bgap-border bg-bgap-surface px-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleExecute}
-                    disabled={isRunning}
-                    className="px-4 py-2 rounded-xl bg-bgap-cyan hover:bg-bgap-neon text-bgap-dark font-bold text-xs flex items-center gap-1.5 transition disabled:opacity-50"
-                  >
-                    <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>{isRunning ? 'Executing...' : 'Run Query [Ctrl+Enter]'}</span>
-                  </button>
-                </div>
+                <button
+                  onClick={handleExecute}
+                  disabled={isRunning}
+                  className="px-4 py-2 rounded-xl bg-bgap-cyan hover:bg-bgap-neon text-bgap-dark font-bold text-xs flex items-center gap-1.5 transition disabled:opacity-50"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>{isRunning ? 'Executing...' : 'Run Query [Ctrl+Enter]'}</span>
+                </button>
 
                 <button
                   onClick={handleSubmit}
@@ -157,20 +217,80 @@ export const AnalyticsTerminalModal: React.FC = () => {
           )}
 
           {activeTab === 'schema' && <SchemaViewer />}
-          {activeTab === 'hints' && <HintSystem onInsertSnippet={(snip) => setQuery(snip)} />}
+          {activeTab === 'hints' && (
+            <HintSystem onInsertSnippet={(snip) => {
+              setQuery(snip);
+              setActiveTab('editor');
+            }} />
+          )}
         </div>
 
-        {/* Right Column: Execution Output & Feedback */}
-        <div className="w-[480px] flex flex-col bg-bgap-dark/50 overflow-y-auto">
+        {/* Right Column: Execution Output, Explanation & Rubric Feedback */}
+        <div className="w-[500px] flex flex-col bg-bgap-dark/50 overflow-y-auto">
           {/* Query Metrics Bar */}
           <QueryMetrics result={queryResult} error={error} isRunning={isRunning} />
 
           {/* Results Table */}
-          <div className="flex-1 p-4 overflow-auto">
+          <div className="flex-1 p-4 overflow-auto min-h-[220px]">
             <ResultTable result={queryResult} />
           </div>
 
-          {/* Rubric Evaluation Results Modal Overlay */}
+          {/* Interactive Business Explanation Form */}
+          <div className="p-4 border-t border-bgap-border bg-bgap-surface/90">
+            <div className="flex items-center gap-2 mb-2">
+              <Lightbulb className="w-4 h-4 text-bgap-gold" />
+              <h3 className="text-xs font-bold text-bgap-text uppercase font-mono tracking-wider">
+                Step 2: Analytical Conclusion (Required)
+              </h3>
+            </div>
+            <p className="text-[11px] text-bgap-muted mb-3">
+              What does your analysis explain about the café's reported revenue decline?
+            </p>
+
+            <div className="space-y-2 mb-3">
+              {[
+                {
+                  id: 'expl_footfall_drop',
+                  label: 'Customer volume decreased sharply during afternoon hours.',
+                },
+                {
+                  id: 'expl_refunds_and_voids',
+                  label: 'Actual customer traffic is steady; accidental voided tickets and pending refund liabilities distorted the gross reporting balance.',
+                },
+                {
+                  id: 'expl_catering_discount',
+                  label: 'Heavy discounts on catering packages eroded all operating margins.',
+                },
+              ].map((opt) => (
+                <label
+                  key={opt.id}
+                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                    explanationId === opt.id
+                      ? 'bg-bgap-cyan/10 border-bgap-cyan text-bgap-text font-medium'
+                      : 'bg-bgap-card border-bgap-border text-bgap-muted hover:border-bgap-border/80'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="explanation"
+                    value={opt.id}
+                    checked={explanationId === opt.id}
+                    onChange={() => setExplanationId(opt.id)}
+                    className="mt-0.5 accent-cyan-400"
+                  />
+                  <span>{opt.label}</span>
+                </label>
+              ))}
+            </div>
+
+            {submitError && (
+              <p className="text-xs text-red-400 bg-red-500/10 p-2.5 rounded-lg border border-red-500/30">
+                {submitError}
+              </p>
+            )}
+          </div>
+
+          {/* Rubric Evaluation Results */}
           {evaluationResult && (
             <div className="p-4 border-t border-bgap-border bg-bgap-surface">
               <RubricFeedback

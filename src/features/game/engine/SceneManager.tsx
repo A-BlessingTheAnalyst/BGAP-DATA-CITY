@@ -28,11 +28,11 @@ export const SceneManager: React.FC = () => {
         <PlayerCharacter />
         <NPCManager />
 
-        {/* Mission Objectives Waypoint */}
-        <WaypointMarker position={[25, 3.5, 15]} label="Mama Bisi's Café" />
+        {/* Mission Objectives Waypoint right over the Café patio laptop workstation */}
+        <WaypointMarker position={[28, 2.5, 23.5]} label="Mama Bisi's Café Workstation" />
       </PhysicsWorld>
 
-      {/* Cinematic Camera */}
+      {/* Cinematic Camera with occlusion raycasting */}
       <ThirdPersonCamera />
     </>
   );

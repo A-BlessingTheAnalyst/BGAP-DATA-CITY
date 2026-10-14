@@ -11,8 +11,8 @@ export const AcademyBuilding: React.FC<Props> = ({ position }) => {
   return (
     <group position={position}>
       <RigidBody type="fixed">
-        {/* Main Headquarters Tower */}
-        <mesh position={[0, 12, 0]} castShadow receiveShadow>
+        {/* Main Headquarters Tower with cameraBlocker */}
+        <mesh position={[0, 12, 0]} castShadow receiveShadow userData={{ cameraBlocker: true }}>
           <boxGeometry args={[30, 24, 20]} />
           <meshStandardMaterial color="#111827" metalness={0.7} roughness={0.2} />
         </mesh>

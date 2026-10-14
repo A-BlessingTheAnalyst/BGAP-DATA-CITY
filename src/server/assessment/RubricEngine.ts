@@ -7,21 +7,32 @@ export class RubricEngine {
     explanationId?: string;
     hintsUsed: number;
   }): MissionEvaluationResult {
-    const { calculationPassed, filterPassed } = SqlEvaluator.evaluateQuery(params.query);
+    const { calculationPassed, filterPassed, hiddenFixturePassed } = SqlEvaluator.evaluateQuery(params.query);
 
+    // 1. Numerical Aggregation & Grouping (50%)
     let calcScore = calculationPassed ? 50 : 0;
-    let filterScore = filterPassed ? 20 : 0;
-    let explScore = params.explanationId === 'expl_refunds_and_voids' ? 20 : 5;
-    let indepScore = Math.max(0, 10 - params.hintsUsed * 3);
+
+    // 2. Filter logic: Exclude voided & refunded orders (20%)
+    let filterScore = filterPassed && hiddenFixturePassed ? 20 : 0;
+
+    // 3. Business Findings Explanation (20%)
+    let explScore = params.explanationId === 'expl_refunds_and_voids' ? 20 : 0;
+
+    // 4. Independence: Deduct 3 points per hint consulted, minimum 0 (10%)
+    let indepScore = Math.max(0, 10 - (params.hintsUsed || 0) * 3);
 
     const totalScore = calcScore + filterScore + explScore + indepScore;
     const isPassed = totalScore >= 75;
 
     let feedback = '';
     if (isPassed) {
-      feedback = 'Outstanding work, Detective! By isolating completed transactions from voided and refunded items, you revealed that daily customer traffic remains healthy, but uncollected refunds skewed the aggregate ledger.';
+      feedback = 'Outstanding work! By excluding voided duplicate orders and customer refund liabilities, your query accurately isolated recognized revenue (₦115,500 on Oct 1, ₦126,000 on Oct 2, and ₦91,350 on Oct 3). Customer footfall remains robust!';
     } else {
-      feedback = 'Your daily totals include cancelled and refunded tickets, causing the ledger to diverge from verified bank income. Re-examine the payment_status filter!';
+      const issues: string[] = [];
+      if (!calcScore) issues.push('Ensure you SUM(quantity * unit_price) and GROUP BY the calendar date.');
+      if (!filterScore) issues.push('Ensure you filter specifically for payment_status = \'completed\'.');
+      if (!explScore) issues.push('Select the business hypothesis supported by your data findings.');
+      feedback = issues.join(' ') || 'The calculation did not match the expected financial ledger.';
     }
 
     return {

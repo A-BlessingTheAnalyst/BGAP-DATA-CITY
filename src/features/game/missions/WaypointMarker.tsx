@@ -33,13 +33,13 @@ export const WaypointMarker: React.FC<Props> = ({ position, label }) => {
       </mesh>
 
       {/* Vertical Light Pillar */}
-      <mesh position={[0, -2, 0]}>
-        <cylinderGeometry args={[0.04, 0.04, 4, 8]} />
+      <mesh position={[0, -1.8, 0]}>
+        <cylinderGeometry args={[0.04, 0.04, 3.6, 8]} />
         <meshBasicMaterial color="#00F2FE" transparent opacity={0.4} />
       </mesh>
 
       {/* HTML Floating Beacon Label */}
-      <Html position={[0, 1.2, 0]} center distanceFactor={15}>
+      <Html position={[0, 1.2, 0]} center distanceFactor={18}>
         <div className="bg-bgap-surface/90 border border-bgap-cyan text-bgap-cyan px-2.5 py-1 rounded-full text-xs font-mono whitespace-nowrap shadow-neon-cyan flex items-center gap-1.5 pointer-events-none">
           <span className="w-2 h-2 rounded-full bg-bgap-cyan animate-ping" />
           <span>{label}</span>

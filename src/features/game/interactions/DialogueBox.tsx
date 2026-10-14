@@ -2,24 +2,39 @@
 
 import React, { useState } from 'react';
 import { useGameState } from '../engine/GameState';
-import { CAFE_DIALOGUE_TREE } from '../missions/chapter1-cafe/CafeDialogueTree';
+import { CAFE_DIALOGUE_TREE, GUARD_DIALOGUE_TREE, DialogueNode } from './DialogueTrees';
 import { MessageSquare, ArrowRight, X } from 'lucide-react';
 
 export const DialogueBox: React.FC = () => {
-  const [currentNodeId, setCurrentNodeId] = useState('root');
+  const activeNpcId = useGameState((s) => s.activeNpcId);
+  const missionState = useGameState((s) => s.missionState);
   const closeDialogue = useGameState((s) => s.closeDialogue);
   const openWorkstation = useGameState((s) => s.openWorkstation);
   const setMissionState = useGameState((s) => s.setMissionState);
 
-  const node = CAFE_DIALOGUE_TREE[currentNodeId] || CAFE_DIALOGUE_TREE.root;
+  // Select appropriate dialogue tree based on interacting NPC
+  const isGuard = activeNpcId === 'npc_guard_academy';
+  const tree = isGuard ? GUARD_DIALOGUE_TREE : CAFE_DIALOGUE_TREE;
+
+  // Determine starting node
+  const initialNodeId = (() => {
+    if (isGuard) return 'root';
+    if (missionState === 'completed') return 'debrief_success';
+    if (missionState === 'analysis') return 'waiting_analysis';
+    return 'root';
+  })();
+
+  const [currentNodeId, setCurrentNodeId] = useState(initialNodeId);
+  const node: DialogueNode = tree[currentNodeId] || tree.root;
 
   const handleOptionClick = (option: (typeof node.options)[0]) => {
     if (option.action === 'open_terminal') {
       closeDialogue();
       openWorkstation('ws_cafe_laptop');
-      setMissionState('analysis');
-    } else if (option.action === 'complete_mission') {
-      setMissionState('completed');
+      if (missionState === 'available') {
+        setMissionState('active');
+      }
+    } else if (option.action === 'close') {
       closeDialogue();
     } else if (option.nextNodeId) {
       setCurrentNodeId(option.nextNodeId);

@@ -9,19 +9,34 @@ export interface CafeSaleRecord {
   payment_method: string;
 }
 
+// Exact daily recognized revenue for completed sales:
+// 2026-10-01: 2*2500 + 3*4500 + 4*3000 + 1*85000 = 5,000 + 13,500 + 12,000 + 85,000 = 115,500 NGN
+// 2026-10-02: 4*3000 + 6*4000 + 2*45000 = 12,000 + 24,000 + 90,000 = 126,000 NGN
+// 2026-10-03: 3*2250 + 1*75000 + 3*3200 = 6,750 + 75,000 + 9,600 = 91,350 NGN
 export const CAFE_SAMPLE_SALES: CafeSaleRecord[] = [
+  // 2026-10-01
   { id: 1, transaction_code: 'TX-1001', sale_at: '2026-10-01 08:15:00', item_name: 'Espresso Doppio', quantity: 2, unit_price: 2500, payment_status: 'completed', payment_method: 'pos_card' },
   { id: 2, transaction_code: 'TX-1002', sale_at: '2026-10-01 09:30:00', item_name: 'Club Sandwich Combo', quantity: 3, unit_price: 4500, payment_status: 'completed', payment_method: 'cash' },
   { id: 3, transaction_code: 'TX-1003', sale_at: '2026-10-01 10:45:00', item_name: 'Caramel Macchiato', quantity: 4, unit_price: 3000, payment_status: 'completed', payment_method: 'transfer' },
   { id: 4, transaction_code: 'TX-1004', sale_at: '2026-10-01 13:00:00', item_name: 'Catering Platter Special', quantity: 1, unit_price: 85000, payment_status: 'completed', payment_method: 'transfer' },
   { id: 5, transaction_code: 'TX-1005', sale_at: '2026-10-01 15:20:00', item_name: 'Avocado Toast & Tea', quantity: 2, unit_price: 5000, payment_status: 'refunded', payment_method: 'pos_card' },
   { id: 6, transaction_code: 'TX-1006', sale_at: '2026-10-01 16:40:00', item_name: 'Accidental Duplicate Order', quantity: 5, unit_price: 6000, payment_status: 'voided', payment_method: 'pos_card' },
+  
+  // 2026-10-02
   { id: 7, transaction_code: 'TX-1007', sale_at: '2026-10-02 08:30:00', item_name: 'Vanilla Latte', quantity: 4, unit_price: 3000, payment_status: 'completed', payment_method: 'pos_card' },
   { id: 8, transaction_code: 'TX-1008', sale_at: '2026-10-02 11:15:00', item_name: 'Suya Beef Wrap', quantity: 6, unit_price: 4000, payment_status: 'completed', payment_method: 'transfer' },
   { id: 9, transaction_code: 'TX-1009', sale_at: '2026-10-02 14:00:00', item_name: 'Meeting Room Coffee Box', quantity: 2, unit_price: 45000, payment_status: 'completed', payment_method: 'transfer' },
   { id: 10, transaction_code: 'TX-1010', sale_at: '2026-10-02 16:30:00', item_name: 'Gluten Free Pastry Pack', quantity: 2, unit_price: 8000, payment_status: 'voided', payment_method: 'pos_card' },
+  
+  // 2026-10-03
   { id: 11, transaction_code: 'TX-1011', sale_at: '2026-10-03 09:00:00', item_name: 'Iced Americano', quantity: 3, unit_price: 2250, payment_status: 'completed', payment_method: 'cash' },
   { id: 12, transaction_code: 'TX-1012', sale_at: '2026-10-03 12:10:00', item_name: 'Executive Lunch Basket', quantity: 1, unit_price: 75000, payment_status: 'completed', payment_method: 'transfer' },
-  { id: 13, transaction_code: 'TX-1013', sale_at: '2026-10-03 14:45:00', item_name: 'Sparkling Berry Brew', quantity: 3, unit_price: 3166.67, payment_status: 'completed', payment_method: 'pos_card' },
+  { id: 13, transaction_code: 'TX-1013', sale_at: '2026-10-03 14:45:00', item_name: 'Sparkling Berry Brew', quantity: 3, unit_price: 3200, payment_status: 'completed', payment_method: 'pos_card' },
   { id: 14, transaction_code: 'TX-1014', sale_at: '2026-10-03 17:00:00', item_name: 'Catering Test Order', quantity: 2, unit_price: 25000, payment_status: 'refunded', payment_method: 'transfer' },
+];
+
+export const CAFE_EXPECTED_DAILY_REVENUE = [
+  { sale_date: '2026-10-01', revenue: 115500 },
+  { sale_date: '2026-10-02', revenue: 126000 },
+  { sale_date: '2026-10-03', revenue: 91350 },
 ];

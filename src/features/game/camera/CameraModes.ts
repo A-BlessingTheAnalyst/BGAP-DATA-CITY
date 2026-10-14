@@ -1,1 +1,1 @@
-export { CameraMode } from '@/shared/types/game';
+export type { CameraMode } from '@/shared/types/game';

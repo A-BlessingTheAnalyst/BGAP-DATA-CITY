@@ -1,26 +1,21 @@
-import { useEffect, useRef } from 'react';
-import { InputState, initialInputState } from './InputManager';
+import { useEffect } from 'react';
+import { runtimeInput, resetInput } from './InputManager';
 import { bindKeyboardListeners } from './KeyboardControls';
 import { useGameState } from '../engine/GameState';
-
+export function interact() {
+ const s = useGameState.getState();
+ if (!s.activeTarget || s.isPaused || s.isDialogueActive || s.isWorkstationActive) return;
+ s.setCameraMode(s.activeTarget.type === 'npc' ? 'conversation' : 'interaction', s.activeTarget.position);
+ if (s.activeTarget.type === 'npc') s.openDialogue(s.activeTarget.id);
+ else if (s.activeTarget.type === 'workstation' && s.missionState !== 'available') s.openWorkstation(s.activeTarget.id);
+ resetInput();
+}
 export function useInput() {
-  const inputRef = useRef<InputState>({ ...initialInputState });
-  const activeTarget = useGameState((s) => s.activeTarget);
-  const openDialogue = useGameState((s) => s.openDialogue);
-  const openWorkstation = useGameState((s) => s.openWorkstation);
-
-  useEffect(() => {
-    const unbind = bindKeyboardListeners(inputRef.current, () => {
-      if (!activeTarget) return;
-      if (activeTarget.type === 'npc') {
-        openDialogue(activeTarget.id);
-      } else if (activeTarget.type === 'workstation') {
-        openWorkstation(activeTarget.id);
-      }
-    });
-
-    return () => unbind();
-  }, [activeTarget, openDialogue, openWorkstation]);
-
-  return inputRef.current;
+ useEffect(() => {
+  const unbind = bindKeyboardListeners(runtimeInput, interact);
+  const clear = () => resetInput();
+  window.addEventListener('blur', clear); document.addEventListener('visibilitychange', clear);
+  return () => { unbind(); window.removeEventListener('blur', clear); document.removeEventListener('visibilitychange', clear); resetInput(); };
+ }, []);
+ return runtimeInput;
 }

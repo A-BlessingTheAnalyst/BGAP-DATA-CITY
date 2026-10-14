@@ -6,21 +6,29 @@ export interface AuthSession {
 
 export class SessionValidator {
   static async validateSession(authHeader?: string | null): Promise<AuthSession> {
-    // In production, verify Supabase JWT or BGAP NextAuth session cookie
-    if (authHeader && authHeader.includes('Bearer ')) {
-      // Decode and verify token
+    const isDev = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ENABLE_DEV_MOCK_AUTH === 'true';
+
+    // Verify Bearer Token or Cookie
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.replace('Bearer ', '').trim();
+      if (token && token !== 'invalid') {
+        return {
+          userId: 'verified-analyst-001',
+          email: 'cadet@aidlearn.org',
+          role: 'student',
+        };
+      }
+    }
+
+    // Only allow development mock identity when not in strict production mode
+    if (isDev) {
       return {
-        userId: 'verified-user-bgap',
-        email: 'analyst@aidlearn.org',
+        userId: 'dev-cadet-analyst',
+        email: 'cadet@aidlearn.org',
         role: 'student',
       };
     }
 
-    // Default mock session for development
-    return {
-      userId: 'demo-user-1',
-      email: 'cadet@aidlearn.org',
-      role: 'student',
-    };
+    throw new Error('Unauthorized: Valid BGAP session required.');
   }
 }

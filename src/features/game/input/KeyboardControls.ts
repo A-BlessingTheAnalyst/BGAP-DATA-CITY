@@ -5,6 +5,9 @@ export function bindKeyboardListeners(
   onInteractTrigger: () => void
 ): () => void {
   const handleKeyDown = (e: KeyboardEvent) => {
+    const el = e.target as HTMLElement;
+    if (el.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return;
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
     switch (e.code) {
       case 'KeyW':
       case 'ArrowUp':
@@ -28,7 +31,7 @@ export function bindKeyboardListeners(
         break;
       case 'KeyE':
         inputState.interact = true;
-        onInteractTrigger();
+        if (!e.repeat) onInteractTrigger();
         break;
       case 'Space':
         inputState.jump = true;

@@ -9,11 +9,14 @@ const nextConfig = {
       layers: true,
     };
 
+    config.module.exprContextCritical = false;
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
         path: false,
+        perf_hooks: false,
       };
     }
 

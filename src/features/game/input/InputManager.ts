@@ -17,3 +17,6 @@ export const initialInputState: InputState = {
   interact: false,
   jump: false,
 };
+
+export const runtimeInput = { ...initialInputState, axisX: 0, axisZ: 0, yaw: 0, pitch: 0.35 };
+export function resetInput() { Object.assign(runtimeInput, initialInputState, { axisX: 0, axisZ: 0 }); }

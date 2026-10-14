@@ -1,71 +1,48 @@
-"use client";
-
-import React, { useRef } from 'react';
+'use client';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { RigidBody, RapierRigidBody } from '@react-three/rapier';
-import * as THREE from 'three';
+import { RigidBody, CapsuleCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
+import { Group, Vector3, MathUtils } from 'three';
 import { useGameState } from '../engine/GameState';
 import { useInput } from '../input/useInput';
-import { GAME_CONFIG } from '@/shared/constants/gameConfig';
-
-export const PlayerCharacter: React.FC = () => {
-  const rigidBodyRef = useRef<RapierRigidBody>(null);
-  const meshRef = useRef<THREE.Group>(null);
-  const setPlayerTransform = useGameState((s) => s.setPlayerTransform);
-  const isDialogueActive = useGameState((s) => s.isDialogueActive);
-  const isWorkstationActive = useGameState((s) => s.isWorkstationActive);
-  const input = useInput();
-
-  useFrame((_, delta) => {
-    if (!rigidBodyRef.current || isDialogueActive || isWorkstationActive) return;
-
-    const { forward, backward, left, right, sprint } = input;
-    const moveX = (right ? 1 : 0) - (left ? 1 : 0);
-    const moveZ = (backward ? 1 : 0) - (forward ? 1 : 0);
-
-    const speed = sprint ? GAME_CONFIG.player.runSpeed : GAME_CONFIG.player.walkSpeed;
-    const linvel = rigidBodyRef.current.linvel();
-
-    if (moveX !== 0 || moveZ !== 0) {
-      const angle = Math.atan2(moveX, moveZ);
-      if (meshRef.current) {
-        meshRef.current.rotation.y = THREE.MathUtils.lerp(
-          meshRef.current.rotation.y,
-          angle,
-          GAME_CONFIG.player.turnSpeed * delta
-        );
-      }
-      rigidBodyRef.current.setLinvel({ x: moveX * speed, y: linvel.y, z: moveZ * speed }, true);
-    } else {
-      rigidBodyRef.current.setLinvel({ x: 0, y: linvel.y, z: 0 }, true);
-    }
-
-    const pos = rigidBodyRef.current.translation();
-    const rot = meshRef.current ? meshRef.current.rotation.y : 0;
-    setPlayerTransform([pos.x, pos.y, pos.z], rot);
-  });
-
-  return (
-    <RigidBody
-      ref={rigidBodyRef}
-      colliders="hull"
-      position={[0, 1.2, 0]}
-      enabledRotations={[false, false, false]}
-      friction={0.5}
-      mass={75}
-    >
-      <group ref={meshRef}>
-        {/* Character Stylized Mesh Placeholder */}
-        <mesh position={[0, 0.45, 0]} castShadow>
-          <capsuleGeometry args={[GAME_CONFIG.player.capsuleRadius, GAME_CONFIG.player.capsuleHeight * 0.5, 8, 16]} />
-          <meshStandardMaterial color="#10B981" roughness={0.3} metalness={0.2} />
-        </mesh>
-        {/* Analyst Visor Indicator */}
-        <mesh position={[0, 0.75, 0.35]}>
-          <boxGeometry args={[0.35, 0.1, 0.15]} />
-          <meshBasicMaterial color="#00F2FE" />
-        </mesh>
-      </group>
-    </RigidBody>
-  );
-};
+import { Humanoid } from './Humanoid';
+export const playerRuntime = { position: new Vector3(0, 0.95, 0), rotation: 0, speed: 0 };
+export function PlayerCharacter() {
+ const body = useRef<RapierRigidBody>(null), visual = useRef<Group>(null);
+ const { world } = useRapier();
+ const controller = useRef<ReturnType<typeof world.createCharacterController>>();
+ const input = useInput(), velocity = useRef(new Vector3()), elapsed = useRef(0);
+ useEffect(() => {
+  const c = world.createCharacterController(0.02);
+  c.enableAutostep(0.3, 0.2, true); c.enableSnapToGround(0.3); c.setMaxSlopeClimbAngle(Math.PI / 4);
+  controller.current = c;
+  return () => { world.removeCharacterController(c); controller.current = undefined; };
+ }, [world]);
+ useFrame((_, dt) => {
+  if (!body.current || !controller.current) return;
+  const delta = Math.min(dt, 0.04), s = useGameState.getState();
+  const blocked = s.isPaused || s.isDialogueActive || s.isWorkstationActive;
+  let x = blocked ? 0 : Number(input.right) - Number(input.left) + input.axisX;
+  let z = blocked ? 0 : Number(input.backward) - Number(input.forward) + input.axisZ;
+  const length = Math.max(1, Math.hypot(x, z)); x /= length; z /= length;
+  const speed = input.sprint ? 7 : 4, sin = Math.sin(input.yaw), cos = Math.cos(input.yaw);
+  velocity.current.x = blocked ? 0 : MathUtils.damp(velocity.current.x, (x * cos + z * sin) * speed, 12, delta);
+  velocity.current.z = blocked ? 0 : MathUtils.damp(velocity.current.z, (z * cos - x * sin) * speed, 12, delta);
+  velocity.current.y = controller.current.computedGrounded() ? -0.5 : Math.max(-20, velocity.current.y - 9.81 * delta);
+  controller.current.computeColliderMovement(body.current.collider(0), { x: velocity.current.x * delta, y: velocity.current.y * delta, z: velocity.current.z * delta });
+  const movement = controller.current.computedMovement(), p = body.current.translation();
+  const out = p.y < -10 || Math.abs(p.x) > 55 || Math.abs(p.z) > 55;
+  body.current.setNextKinematicTranslation(out ? { x: 0, y: 0.95, z: 0 } : { x: p.x + movement.x, y: p.y + movement.y, z: p.z + movement.z });
+  playerRuntime.position.set(p.x, p.y, p.z); playerRuntime.speed = Math.hypot(movement.x, movement.z) / delta;
+  if (playerRuntime.speed > 0.1 && visual.current) {
+   const target = Math.atan2(velocity.current.x, velocity.current.z);
+   const diff = Math.atan2(Math.sin(target - visual.current.rotation.y), Math.cos(target - visual.current.rotation.y));
+   visual.current.rotation.y += diff * (1 - Math.exp(-12 * delta)); playerRuntime.rotation = visual.current.rotation.y;
+  }
+  elapsed.current += delta;
+  if (elapsed.current > 0.1) { s.setPlayerTransform([p.x, p.y, p.z], playerRuntime.rotation); elapsed.current = 0; }
+ });
+ return <RigidBody ref={body} type="kinematicPosition" colliders={false} position={[0, 0.95, 0]} enabledRotations={[false, false, false]}>
+  <CapsuleCollider args={[0.55, 0.32]} /><group ref={visual} position={[0, -0.87, 0]}><Humanoid speed={() => playerRuntime.speed} /></group>
+ </RigidBody>;
+}

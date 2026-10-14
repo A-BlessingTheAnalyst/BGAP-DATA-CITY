@@ -1,16 +1,14 @@
 -- =============================================================================
--- BGAP 3D GAME: DATA CITY — DATABASE SCHEMA MIGRATION
--- Compatible with PostgreSQL 14+ / Supabase
--- Integrates with existing BGAP user authentication
+-- BGAP 3D GAME: DATA CITY — AUTHORITATIVE DATABASE SCHEMA & RLS
+-- Integrates with BGAP's canonical auth.users table in PostgreSQL / Supabase
 -- =============================================================================
 
--- Enable UUID extension if not already present
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 1. Player Game Profiles (1-to-1 with existing auth.users)
+-- 1. Player Game Profiles (Shared 1-to-1 identity with BGAP auth.users)
 CREATE TABLE IF NOT EXISTS game_profiles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL UNIQUE, -- Foreign key referencing existing auth.users(id)
+    user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
     avatar_id VARCHAR(50) DEFAULT 'default_analyst_m',
     avatar_config JSONB DEFAULT '{"outfit": "casual_business", "color_scheme": "emerald", "accessories": []}'::jsonb,
     level INTEGER DEFAULT 1,
@@ -23,32 +21,42 @@ CREATE TABLE IF NOT EXISTS game_profiles (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. Game Missions Catalog
+-- 2. Published Missions (Public learner metadata — NO answers or gold queries)
 CREATE TABLE IF NOT EXISTS game_missions (
-    id VARCHAR(50) PRIMARY KEY, -- e.g. 'ch1_cafe_revenue_mystery'
+    id VARCHAR(50) PRIMARY KEY,
     chapter INTEGER NOT NULL DEFAULT 1,
     title VARCHAR(150) NOT NULL,
     slug VARCHAR(100) NOT NULL UNIQUE,
     briefing TEXT NOT NULL,
-    primary_skill VARCHAR(50) NOT NULL, -- 'SQL', 'Excel', 'Python', 'PowerBI'
-    difficulty_level VARCHAR(20) DEFAULT 'Beginner', -- 'Beginner', 'Intermediate', 'Advanced'
+    primary_skill VARCHAR(50) NOT NULL,
+    difficulty_level VARCHAR(20) DEFAULT 'Beginner',
     estimated_minutes INTEGER DEFAULT 15,
     reward_xp INTEGER DEFAULT 150,
     reward_credits INTEGER DEFAULT 500,
     badge_id VARCHAR(50),
     is_published BOOLEAN DEFAULT true,
     version INTEGER DEFAULT 1,
-    rubric_config JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Mission Attempts (Tracks in-progress and past play sessions)
+-- 3. Private Mission Rubrics (Server-only table — strictly protected from public access)
+CREATE TABLE IF NOT EXISTS game_mission_rubrics (
+    mission_id VARCHAR(50) PRIMARY KEY REFERENCES game_missions(id) ON DELETE CASCADE,
+    gold_query TEXT NOT NULL,
+    expected_explanation_id VARCHAR(100) NOT NULL,
+    passing_score NUMERIC(5, 2) DEFAULT 75.00,
+    rubric_weights JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 4. Mission Attempts (Tracks live player sessions)
 CREATE TABLE IF NOT EXISTS mission_attempts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES game_profiles(user_id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     mission_id VARCHAR(50) NOT NULL REFERENCES game_missions(id) ON DELETE CASCADE,
-    status VARCHAR(30) NOT NULL DEFAULT 'active', -- 'active', 'analysis', 'submitted', 'completed', 'failed'
+    status VARCHAR(30) NOT NULL DEFAULT 'active',
     current_step INTEGER DEFAULT 1,
     draft_query TEXT,
     hints_used INTEGER DEFAULT 0,
@@ -57,48 +65,49 @@ CREATE TABLE IF NOT EXISTS mission_attempts (
     last_interaction_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. Mission Submissions (Authoritative assessment records)
+-- 5. Mission Submissions (Immutable analytical attempt audit trail)
 CREATE TABLE IF NOT EXISTS mission_submissions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     attempt_id UUID NOT NULL REFERENCES mission_attempts(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL,
-    mission_id VARCHAR(50) NOT NULL,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    mission_id VARCHAR(50) NOT NULL REFERENCES game_missions(id) ON DELETE CASCADE,
     submitted_query TEXT NOT NULL,
     explanation_choice VARCHAR(100),
     is_passed BOOLEAN NOT NULL,
-    total_score NUMERIC(5, 2) NOT NULL, -- 0.00 to 100.00
-    score_breakdown JSONB NOT NULL, -- { calculation: 50, filter: 20, reasoning: 20, independence: 10 }
+    total_score NUMERIC(5, 2) NOT NULL,
+    score_breakdown JSONB NOT NULL,
     feedback_notes TEXT,
     execution_time_ms INTEGER,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Skill Mastery Radar (Academic skill progression)
+-- 6. Skill Mastery Radar (Separate academic development score)
 CREATE TABLE IF NOT EXISTS skill_mastery (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL,
-    skill_key VARCHAR(50) NOT NULL, -- 'sql_filtering', 'sql_aggregation', 'sql_joins', 'business_metrics'
-    mastery_score NUMERIC(5, 2) DEFAULT 0.00, -- 0 to 100
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    skill_key VARCHAR(50) NOT NULL,
+    mastery_score NUMERIC(5, 2) DEFAULT 0.00,
     assessments_count INTEGER DEFAULT 0,
     last_assessed_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, skill_key)
 );
 
--- 6. Reward Ledger (Audit trail for XP and BGAP Credits)
+-- 7. Reward Ledger (Deterministic once-only XP & Credit grants)
 CREATE TABLE IF NOT EXISTS reward_ledger (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL,
-    currency_type VARCHAR(20) NOT NULL, -- 'XP', 'CREDITS'
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    currency_type VARCHAR(20) NOT NULL,
     amount INTEGER NOT NULL,
-    reason VARCHAR(100) NOT NULL, -- 'MISSION_COMPLETE:ch1_cafe_revenue_mystery'
-    idempotency_key VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    reason VARCHAR(100) NOT NULL,
+    idempotency_key VARCHAR(100) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id, idempotency_key)
 );
 
--- 7. World Checkpoints (Saved character position & zone)
+-- 8. World Checkpoints (Saved character position & orientation)
 CREATE TABLE IF NOT EXISTS world_checkpoints (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL UNIQUE,
+    user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
     zone_id VARCHAR(50) NOT NULL,
     position_x NUMERIC(8, 3) NOT NULL DEFAULT 0.0,
     position_y NUMERIC(8, 3) NOT NULL DEFAULT 0.0,
@@ -107,20 +116,47 @@ CREATE TABLE IF NOT EXISTS world_checkpoints (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. Game Telemetry & Performance Events
-CREATE TABLE IF NOT EXISTS game_events (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID,
-    event_type VARCHAR(50) NOT NULL, -- 'world_loaded', 'fps_sample', 'shader_compile', 'interaction_trigger'
-    device_category VARCHAR(20), -- 'desktop', 'mobile', 'tablet'
-    graphics_profile VARCHAR(20), -- 'low', 'balanced', 'high'
-    fps_average NUMERIC(5, 2),
-    payload JSONB,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- =============================================================================
+-- ROW LEVEL SECURITY (RLS) POLICIES
+-- =============================================================================
 
--- Indexes for fast query performance
-CREATE INDEX IF NOT EXISTS idx_mission_attempts_user_mission ON mission_attempts(user_id, mission_id);
-CREATE INDEX IF NOT EXISTS idx_mission_submissions_attempt ON mission_submissions(attempt_id);
+ALTER TABLE game_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE game_missions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE game_mission_rubrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mission_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mission_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE skill_mastery ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reward_ledger ENABLE ROW LEVEL SECURITY;
+ALTER TABLE world_checkpoints ENABLE ROW LEVEL SECURITY;
+
+-- game_profiles: owner can read and update their own profile
+CREATE POLICY "Users can read own game profile" ON game_profiles FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can update own game profile" ON game_profiles FOR UPDATE USING (auth.uid() = user_id);
+
+-- game_missions: all authenticated users can view published missions
+CREATE POLICY "Authenticated users can read published missions" ON game_missions FOR SELECT USING (auth.role() = 'authenticated' AND is_published = true);
+
+-- game_mission_rubrics: NO PUBLIC ACCESS (service role only)
+
+-- mission_attempts: owner can read, insert, and update draft on their attempts
+CREATE POLICY "Users can read own mission attempts" ON mission_attempts FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own mission attempts" ON mission_attempts FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own mission attempts" ON mission_attempts FOR UPDATE USING (auth.uid() = user_id);
+
+-- mission_submissions: owner can read their submissions
+CREATE POLICY "Users can read own submissions" ON mission_submissions FOR SELECT USING (auth.uid() = user_id);
+
+-- skill_mastery: owner can read their mastery radar
+CREATE POLICY "Users can read own skill mastery" ON skill_mastery FOR SELECT USING (auth.uid() = user_id);
+
+-- reward_ledger: owner can view their reward transaction history
+CREATE POLICY "Users can view own reward ledger" ON reward_ledger FOR SELECT USING (auth.uid() = user_id);
+
+-- world_checkpoints: owner can read and update their checkpoint
+CREATE POLICY "Users can read own checkpoint" ON world_checkpoints FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can upsert own checkpoint" ON world_checkpoints FOR ALL USING (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_mission_attempts_user ON mission_attempts(user_id, mission_id);
 CREATE INDEX IF NOT EXISTS idx_reward_ledger_user ON reward_ledger(user_id);
-CREATE INDEX IF NOT EXISTS idx_skill_mastery_user ON skill_mastery(user_id);
+CREATE INDEX IF NOT EXISTS idx_world_checkpoints_user ON world_checkpoints(user_id);
