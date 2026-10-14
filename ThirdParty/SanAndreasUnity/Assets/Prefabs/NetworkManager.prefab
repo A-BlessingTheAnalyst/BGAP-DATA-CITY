@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4549513672316258300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 434938348018962339}
+  - component: {fileID: 2570981519678807036}
+  - component: {fileID: 4862460140142645991}
+  m_Layer: 0
+  m_Name: NetworkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &434938348018962339
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4549513672316258300}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2570981519678807036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4549513672316258300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155a544cb11c9481ea41b4e39d8c4b3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 1
+  runInBackground: 1
+  autoStartServerBuild: 0
+  serverTickRate: 30
+  offlineScene: 
+  onlineScene: 
+  transport: {fileID: 4862460140142645991}
+  networkAddress: localhost
+  maxConnections: 20
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 3871880573184668455, guid: 750f4b120647dadf39075cba7361800a,
+    type: 3}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  spawnPrefabs:
+  - {fileID: 1273918895060814, guid: 9d45d42a7408c1e4ab325d6840364b84, type: 3}
+  - {fileID: 5841438317718401360, guid: abddce9c98c1ba5a992f109cfd8c5a5c, type: 3}
+  - {fileID: 4054766663391349888, guid: df1f8ef3d99c152cfb414f719d5e2bbf, type: 3}
+  - {fileID: 5998353205578393877, guid: 919ee6fe912ab4940abdedd633508610, type: 3}
+  - {fileID: 100010, guid: 2894e2899fe860745afbc810459e2cc2, type: 3}
+  - {fileID: 100010, guid: 4f8c6e508a3f69243ab7b8813398b7ed, type: 3}
+  - {fileID: 8038540346792760480, guid: 858b1226127ef9f4e8d16c9610e691b6, type: 3}
+  - {fileID: 2141754834917738923, guid: 14d22e60f4926f64cbd36f393fe11b9a, type: 3}
+  - {fileID: 1597674083562683622, guid: f38745bb026a81e4c9711b36a5a262ae, type: 3}
+--- !u!114 &4862460140142645991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4549513672316258300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 7777
+  NoDelay: 1
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000

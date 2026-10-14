@@ -1,0 +1,64 @@
+﻿title: Banker_Intro
+tags: Banker
+---
+Julian Sterling: Welcome to Meridian Capital, Analyst.
+Julian Sterling: Our morning vault audits show an unverified $845,000 transfer between offshore settlement accounts.
+Julian Sterling: If the compliance committee finds an unauthorized outlier, our financial license is suspended.
+-> Analyst: Let me inspect the transactions on my Data Tablet.
+    Julian Sterling: Accessing the transaction gateway logs now. Look for transfers exceeding $50,000 without authorized clearance flags.
+    <<trigger_data_task "datasets/bank_transactions.csv" "banker_audit_01">>
+-> Analyst: Who had authorization credentials this morning?
+    Julian Sterling: Only three senior associates. Here is the transaction ledger. Filter by amount and status immediately.
+    <<trigger_data_task "datasets/bank_transactions.csv" "banker_audit_01">>
+===
+
+title: Banker_ValidationSuccess
+tags: Banker
+---
+Julian Sterling: Exemplary work! You caught the unauthorized routing on TX103!
+Julian Sterling: That single fraudulent record was camouflaged inside thousands of micro-transfers.
+Julian Sterling: I am updating your clearance credentials and flagging your milestone with the Analytics Guild.
+===
+
+title: Banker_ValidationRetry
+tags: Banker
+---
+Julian Sterling: The audit ledger is still out of balance.
+Julian Sterling: Ensure you include a WHERE condition that isolates transfers with amount > 50000 or status COMPLETED.
+<<trigger_data_task "datasets/bank_transactions.csv" "banker_audit_01">>
+===
+
+title: Lawyer_Intro
+tags: Lawyer
+---
+Claire Vance: Welcome to the High Court of Data City, Counselor.
+Claire Vance: We are evaluating the antitrust merger between Apex Logistics and Titan Freight.
+Claire Vance: If their combined market share exceeds the Herfindahl-Hirschman Index threshold, this merger violates federal law.
+-> Analyst: I will analyze the market share dataset now.
+    Claire Vance: Initializing market concentration metrics on your Data Tablet.
+    <<trigger_data_task "datasets/court_records.csv" "lawyer_antitrust_02">>
+===
+
+title: Lawyer_ValidationSuccess
+tags: Lawyer
+---
+Claire Vance: That calculation is decisive! An HHI of 2,840 confirms monopolistic concentration.
+Claire Vance: We are submitting your statistical findings directly to the magistrate's bench.
+===
+
+title: Doctor_Intro
+tags: Doctor
+---
+Dr. Marcus Reid: Thank goodness you arrived, Analyst. St. Jude Ward has a respiratory triage spike.
+Dr. Marcus Reid: We need to establish whether this is random variance or a localized cluster outbreak across district zip codes.
+-> Analyst: Opening triage epidemiology telemetry on the Data Tablet.
+    Dr. Marcus Reid: Stream the vitals logs. We must isolate the outlier zip codes immediately.
+    <<trigger_data_task "datasets/patient_vitals.csv" "doctor_outlier_03">>
+===
+
+title: Doctor_ValidationSuccess
+tags: Doctor
+---
+Dr. Marcus Reid: Superb statistical epidemiology! The variance localized to Sector 4.
+Dr. Marcus Reid: Medical supplies have been rerouted. You saved hundreds of patients today, Analyst!
+===

@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1911095784419342
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4141056491348262}
+  - component: {fileID: 114720109693249180}
+  - component: {fileID: 114351707393174560}
+  - component: {fileID: 2678698450768307753}
+  m_Layer: 0
+  m_Name: VehicleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4141056491348262
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911095784419342}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114720109693249180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911095784419342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82a245a7166802b41bcb706255d566f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DragScale: 0.05
+  AccelerationScale: 75
+  BreakingScale: 1
+  SuspensionForceScale: 100000
+  SuspensionDampingScale: 50000
+  MassScale: 1
+  ForwardFrictionExtremumSlip: 0.125
+  ForwardFrictionExtremumValue: 2.5
+  ForwardFrictionAsymptoteSlip: 1
+  ForwardFrictionAsymptoteValue: 2
+  SideFrictionExtremumSlip: 0.5
+  SideFrictionExtremumValue: 2.5
+  SideFrictionAsymptoteSlip: 1
+  SideFrictionAsymptoteValue: 2
+  AntiRollScale: 20000
+--- !u!114 &114351707393174560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911095784419342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 409653cfe36614ceab3cbfbf9ed04fce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2678698450768307753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911095784419342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 281f9d7d528c8afe8b6bb64c9687424e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vehiclePrefab: {fileID: 5841438317718401360, guid: abddce9c98c1ba5a992f109cfd8c5a5c,
+    type: 3}
+  cameraDistanceFromVehicle: 10
+  rigidbodyInterpolationOnServer: 1
+  rigidbodyInterpolationOnClient: 1
+  rigidBodyCollisionDetectionMode: 2
+  syncLinearVelocity: 1
+  syncAngularVelocity: 1
+  destroyRigidBodyOnClients: 1
+  syncPedTransformWhileInVehicle: 0
+  controlInputOnLocalPlayer: 0
+  controlWheelsOnLocalPlayer: 0
+  destroyWheelCollidersOnClient: 1
+  vehicleSyncRate: 30
+  massToHealthExponent: 1
+  explosionDamageRadius: 7
+  explosionDamageOverDistanceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1.8359536
+      outSlope: -1.8359536
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.049225323
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.15980668
+      outSlope: -0.15980668
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.08929417
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  explosionMassToDamageExponent: 1
+  explosionLeftoverPartPrefab: {fileID: 5998353205578393877, guid: 919ee6fe912ab4940abdedd633508610,
+    type: 3}
+  explosionLeftoverPartsLifetime: 30
+  explosionLeftoverPartsMaxDepenetrationVelocity: 15
+  explosionLeftoverPartsMass: 100
+  smokePrefab: {fileID: 100000, guid: c5d4e25823f45c946b9dd01264b40a1b, type: 3}
+  flamePrefab: {fileID: 100000, guid: 5b0110178dbbb784cab63b7529b07cc1, type: 3}
+  explosionPrefab: {fileID: 100010, guid: 2894e2899fe860745afbc810459e2cc2, type: 3}
+  radioVolume: 1

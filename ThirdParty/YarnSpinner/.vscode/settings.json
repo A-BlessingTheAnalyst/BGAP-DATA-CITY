@@ -1,0 +1,25 @@
+{
+    "protoc": {
+        "options": [
+            "-I=${workspaceRoot}/YarnSpinner",
+            "--csharp_out=${workspaceRoot}/YarnSpinner",
+            "${workspaceRoot}/YarnSpinner/yarn_spinner.proto"
+        ]
+    },
+    "antlr4.generation": {
+        "mode": "external",
+        "language": "CSharp",
+        "listeners": true,
+        "visitors": true,
+        "outputDir": ".",
+        "package": "Yarn.Compiler"
+    },
+    "coverage-gutters.coverageFileNames": [
+        "coverage*.info",
+    ],
+    "omnisharp.useModernNet": true,
+    "dotnet-test-explorer.testProjectPath": "**/*Tests.csproj",
+    "[antlr]": {
+        "editor.formatOnSave": false,
+    }
+}

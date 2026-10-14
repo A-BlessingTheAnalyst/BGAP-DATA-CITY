@@ -1,0 +1,36 @@
+name: Build Yarn Spinner
+
+on:
+  push:
+    branches: [main, "feature/**", "release/**"]
+  pull_request:
+    branches: [main, "feature/**", "release/**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Fetch all commits
+        run: git fetch --unshallow
+
+      - name: Update version
+        id: version
+        run: ./get-version.sh
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-build --configuration Release --verbosity normal
