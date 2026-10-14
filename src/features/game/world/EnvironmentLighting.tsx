@@ -10,27 +10,30 @@ export const EnvironmentLighting: React.FC = () => {
 
   return (
     <>
-      {/* Ambient Lighting */}
-      <ambientLight intensity={0.45} color="#C8D6E5" />
+      {/* Rich Sky & Ground Ambient Hemispherical Fill */}
+      <hemisphereLight args={['#C7D2FE', '#1E293B', 1.0]} />
 
-      {/* Main Warm Sunlight */}
+      {/* Warm Main Key Sunlight */}
       <directionalLight
-        position={[35, 45, 25]}
-        intensity={1.2}
-        color="#FFF6E5"
+        position={[45, 55, 35]}
+        intensity={2.4}
+        color="#FFFBF0"
         castShadow={enableShadows}
         shadow-mapSize-width={enableShadows ? 2048 : 512}
         shadow-mapSize-height={enableShadows ? 2048 : 512}
-        shadow-camera-far={120}
-        shadow-camera-left={-40}
-        shadow-camera-right={40}
-        shadow-camera-top={40}
-        shadow-camera-bottom={-40}
+        shadow-camera-far={150}
+        shadow-camera-left={-65}
+        shadow-camera-right={65}
+        shadow-camera-top={65}
+        shadow-camera-bottom={-65}
         shadow-bias={-0.0001}
       />
 
-      {/* Soft Blue Skylight fill */}
-      <directionalLight position={[-20, 20, -20]} intensity={0.3} color="#4FACFE" />
+      {/* Cyber Blue Skylight Fill */}
+      <directionalLight position={[-35, 30, -35]} intensity={0.8} color="#38BDF8" />
+
+      {/* Golden Sunset Rim Light */}
+      <directionalLight position={[0, 20, -50]} intensity={0.7} color="#FBBF24" />
     </>
   );
 };

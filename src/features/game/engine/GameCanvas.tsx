@@ -15,7 +15,7 @@ export const GameCanvas: React.FC = () => {
       <Canvas
         shadows={config.shadows}
         dpr={config.pixelRatio}
-        camera={{ position: [0, 3, -5], fov: GAME_CONFIG.camera.fov }}
+        camera={{ position: [0, 3, -5], fov: GAME_CONFIG.camera.fov, near: 0.1, far: 350 }}
         gl={{ antialias: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>

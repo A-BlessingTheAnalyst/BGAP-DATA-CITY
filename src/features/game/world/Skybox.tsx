@@ -5,15 +5,22 @@ import { Sky } from '@react-three/drei';
 
 export const Skybox: React.FC = () => {
   return (
-    <Sky
-      distance={450000}
-      sunPosition={[35, 45, 25]}
-      inclination={0.4}
-      azimuth={0.25}
-      mieCoefficient={0.005}
-      mieDirectionalG={0.8}
-      rayleigh={0.6}
-      turbidity={8}
-    />
+    <>
+      {/* Cinematic Deep Navy/Slate Cyber Dusk Background & Fog */}
+      <color attach="background" args={['#0B1120']} />
+      <fog attach="fog" args={['#0B1120', 25, 260]} />
+
+      {/* Atmospheric Sky Dome within camera frustum */}
+      <Sky
+        distance={240}
+        sunPosition={[45, 55, 35]}
+        inclination={0.45}
+        azimuth={0.25}
+        mieCoefficient={0.005}
+        mieDirectionalG={0.8}
+        rayleigh={0.8}
+        turbidity={6}
+      />
+    </>
   );
 };
