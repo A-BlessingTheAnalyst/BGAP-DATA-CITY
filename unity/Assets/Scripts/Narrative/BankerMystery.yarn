@@ -1,0 +1,30 @@
+title: Banker_Intro
+tags:
+---
+CFO Adeleke: Welcome to Meridian Capital, Analyst.
+CFO Adeleke: Our morning ledger showed a 4.2 million naira shortfall between POS receipts and actual recognized revenue.
+CFO Adeleke: The board of directors is meeting in twenty minutes. If we don't isolate the discrepancy, trading will be halted.
+-> Analyst: I have my analytical tablet ready. Let me inspect the transaction callset.
+    CFO Adeleke: Good. Here is the direct database pipeline into our payment gateway logs.
+    <<trigger_data_task "datasets/meridian_bank_ledger.csv" "meridian_revenue_audit">>
+-> Analyst: What payment channels should I be most skeptical of?
+    CFO Adeleke: Pay special attention to pending and reversed merchant transactions. Some tellers recorded them as finalized revenue.
+    <<trigger_data_task "datasets/meridian_bank_ledger.csv" "meridian_revenue_audit">>
+===
+
+title: Banker_Success
+tags:
+---
+CFO Adeleke: Brilliant work! You isolated the pending reversals!
+CFO Adeleke: The true recognized revenue is exactly 18,420,500 naira. The board was about to panic over phantom funds.
+CFO Adeleke: Here is your Certified Financial Forensic badge. Take the expressway north to the Courthouse—the Crown Prosecutor needs your assistance.
+===
+
+title: Banker_Retry
+tags:
+---
+CFO Adeleke: Wait... these figures don't balance. 
+CFO Adeleke: Look closely at the transaction statuses. Did you filter out the refunded and processing charges?
+CFO Adeleke: Re-open your tablet and verify the status column.
+<<trigger_data_task "datasets/meridian_bank_ledger.csv" "meridian_revenue_audit">>
+===
