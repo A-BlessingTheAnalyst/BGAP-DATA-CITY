@@ -12,6 +12,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test:grader": "tsx scripts/test-grader.ts",
+    "test:shop": "tsx scripts/test-shop.ts",
     "validate:missions": "tsx scripts/validate-missions.ts",
     "validate:layout": "tsx scripts/validate-layout.ts",
     "postinstall": "node scripts/copy-duckdb.mjs"

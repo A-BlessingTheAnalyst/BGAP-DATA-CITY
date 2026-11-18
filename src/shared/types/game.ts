@@ -16,7 +16,7 @@ export interface PlayerSpawn {
 
 export interface InteractionTarget {
   id: string;
-  type: 'npc' | 'workstation' | 'door' | 'item' | 'evidence';
+  type: 'npc' | 'workstation' | 'door' | 'item' | 'evidence' | 'shop';
   label: string;
   actionText: string;
   position: [number, number, number];

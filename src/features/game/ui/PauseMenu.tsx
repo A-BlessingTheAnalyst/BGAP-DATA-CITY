@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Play, Settings, Compass, BookOpen, LogOut } from 'lucide-react';
+import { Play, Settings, Compass, BookOpen, LogOut, UserRound } from 'lucide-react';
+import { useGameState } from '../engine/GameState';
 
 interface Props {
   onClose: () => void;
@@ -31,6 +32,14 @@ export const PauseMenu: React.FC<Props> = ({ onClose, onOpenSettings }) => {
             <Compass className="w-4 h-4 text-bgap-gold" />
             Missions Log
           </Link>
+
+          <button
+            onClick={() => { onClose(); useGameState.getState().setCreatorOpen(true); }}
+            className="w-full py-3 rounded-xl bg-bgap-card border border-bgap-border text-bgap-text font-semibold flex items-center justify-center gap-2 hover:bg-bgap-border/50 transition"
+          >
+            <UserRound className="w-4 h-4 text-bgap-neon" />
+            Edit cadet
+          </button>
 
           <button
             onClick={onOpenSettings}

@@ -1,15 +1,16 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Briefcase, Wallet as WalletIcon, MapPin, Laptop, CheckCircle2, X, RefreshCw } from 'lucide-react';
+import { Briefcase, Wallet as WalletIcon, MapPin, Laptop, CheckCircle2, X, RefreshCw, Shirt } from 'lucide-react';
+import { WardrobeApp } from '../wardrobe/WardrobeApp';
 import { useGameState } from '../../engine/GameState';
 import { AudioManager } from '../../audio/AudioManager';
 import { loadMissions, naira, refreshWallet, useCareerStore } from './useCareer';
 import type { PublicMission } from '@/shared/types/content';
 
 // The DataPhone: the player's hub. Jobs lists story cases and today's generated gigs;
-// Wallet shows the server ledger. Opens with Tab or the phone button.
+// Wallet shows the server ledger; Wardrobe changes outfits. Opens with Tab or the phone button.
 
-type App = 'jobs' | 'wallet';
+type App = 'jobs' | 'wallet' | 'wardrobe';
 
 const TIER_COLOUR = ['', 'text-emerald-400 border-emerald-400/50', 'text-cyan-300 border-cyan-300/50', 'text-indigo-300 border-indigo-300/50', 'text-amber-400 border-amber-400/50', 'text-rose-400 border-rose-400/50'];
 
@@ -133,9 +134,9 @@ export function DataPhone() {
         </div>
         <button onClick={() => setOpen(false)} aria-label="Close DataPhone" className="w-8 h-8 rounded-full bg-bgap-card text-bgap-muted hover:text-bgap-text flex items-center justify-center"><X className="w-4 h-4" /></button>
       </div>
-      <div className="flex-1 overflow-y-auto p-3">{app === 'jobs' ? <Jobs /> : <Wallet />}</div>
-      <nav className="grid grid-cols-2 border-t border-bgap-border">
-        {([['jobs', 'Jobs', Briefcase], ['wallet', 'Wallet', WalletIcon]] as const).map(([id, label, Icon]) => (
+      <div className="flex-1 overflow-y-auto p-3">{app === 'jobs' ? <Jobs /> : app === 'wallet' ? <Wallet /> : <WardrobeApp />}</div>
+      <nav className="grid grid-cols-3 border-t border-bgap-border">
+        {([['jobs', 'Jobs', Briefcase], ['wallet', 'Wallet', WalletIcon], ['wardrobe', 'Wardrobe', Shirt]] as const).map(([id, label, Icon]) => (
           <button key={id} onClick={() => { setApp(id); if (id === 'wallet') refreshWallet(); }} aria-pressed={app === id} className={`py-2.5 text-[11px] flex flex-col items-center gap-0.5 ${app === id ? 'text-bgap-cyan' : 'text-bgap-muted hover:text-bgap-text'}`}>
             <Icon className="w-4 h-4" />
             {label}

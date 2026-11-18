@@ -32,6 +32,9 @@ jobs:
       - name: Grader acceptance tests
         run: npm run test:grader
 
+      - name: Shop and profile tests
+        run: npm run test:shop
+
       - name: Validate missions
         run: npm run validate:missions
 

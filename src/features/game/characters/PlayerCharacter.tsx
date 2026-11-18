@@ -6,9 +6,7 @@ import { Group, Vector3, MathUtils } from 'three';
 import { useGameState } from '../engine/GameState';
 import { useInput } from '../input/useInput';
 import { CastMember } from '../world/kit/CastMember';
-import { CHARACTERS } from '../world/kit/characters';
-
-const PLAYER = CHARACTERS.find((c) => c.id === 'player_analyst')!;
+import { usePlayerDef, useWardrobe } from '../ui/wardrobe/useWardrobe';
 import { AudioManager } from '../audio/AudioManager';
 import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
 import { CITY_BOUNDS } from '../world/kit/cityPlan';
@@ -23,6 +21,7 @@ export function PlayerCharacter() {
   const controller = useRef<ReturnType<typeof world.createCharacterController>>();
   const input = useInput(), velocity = useRef(new Vector3()), elapsed = useRef(0), stepClock = useRef(0);
   const [animAction, setAnimAction] = useState<'Idle' | 'Run' | 'Sprint' | 'Type'>('Idle');
+  const player = usePlayerDef();
 
   // Development-only play-test handle: read the player position or teleport (x, z) from the console.
   useEffect(() => {
@@ -50,7 +49,9 @@ export function PlayerCharacter() {
   useFrame((_, dt) => {
     if (!body.current || !controller.current) return;
     const delta = Math.min(dt, 0.04), s = useGameState.getState();
-    const blocked = s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isMapOpen;
+    // Frozen while any full-screen UI is up, including the character creator before first spawn.
+    const w = useWardrobe.getState();
+    const blocked = s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isMapOpen || s.isCreatorOpen || s.isShopOpen || (w.loaded && !w.profile);
     let x = blocked ? 0 : Number(input.right) - Number(input.left) + input.axisX;
     let z = blocked ? 0 : Number(input.backward) - Number(input.forward) + input.axisZ;
     const length = Math.max(1, Math.hypot(x, z));
@@ -121,7 +122,7 @@ export function PlayerCharacter() {
     <RigidBody ref={body} type="kinematicPosition" colliders={false} position={MARKET_LAYOUT.spawn} enabledRotations={[false, false, false]}>
       <CapsuleCollider args={[0.55, 0.32]} />
       <group ref={visual} position={[0, -0.87, 0]}>
-        <CastMember def={PLAYER} action={animAction} />
+        <CastMember def={player} action={animAction} />
       </group>
     </RigidBody>
   );

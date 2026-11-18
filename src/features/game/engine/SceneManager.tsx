@@ -15,6 +15,7 @@ import { InteractiveGuard } from '../characters/NPCs/InteractiveGuard';
 import { ThirdPersonCamera } from '../camera/ThirdPersonCamera';
 import { MissionClients } from '../world/MissionClients';
 import { CustomWaypoint } from '../world/CustomWaypoint';
+import { TailorCounter } from '../world/TailorCounter';
 import { CityAudio } from '../audio/CityAudio';
 import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
 
@@ -42,6 +43,7 @@ export const SceneManager: React.FC = () => {
         {/* Clients from the mission files, plus the waypoint for the tracked job */}
         <MissionClients />
         <CustomWaypoint />
+        <TailorCounter />
 
         <PlayerCharacter />
         <ThirdPersonCamera />

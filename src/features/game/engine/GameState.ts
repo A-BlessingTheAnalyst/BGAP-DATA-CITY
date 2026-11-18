@@ -59,6 +59,12 @@ interface GameStateStore {
   pickUpEvidence: (missionId: string, evidenceId: string) => void;
   closeEvidence: () => void;
 
+  // Phase B: the character creator (edit mode) and the tailor shop
+  isCreatorOpen: boolean;
+  setCreatorOpen: (open: boolean) => void;
+  isShopOpen: boolean;
+  setShopOpen: (open: boolean) => void;
+
   // Mission State
   missionState: MissionState;
   activeMissionId: string;
@@ -154,6 +160,11 @@ export const useGameState = create<GameStateStore>((set) => ({
     return { foundEvidence, openEvidence: { missionId, evidenceId } };
   }),
   closeEvidence: () => set({ openEvidence: null }),
+
+  isCreatorOpen: false,
+  setCreatorOpen: (open) => set({ isCreatorOpen: open, isPhoneOpen: false }),
+  isShopOpen: false,
+  setShopOpen: (open) => set({ isShopOpen: open, isPhoneOpen: false }),
 
   missionState: 'available',
   activeMissionId: 'ch1_cafe_revenue_mystery',

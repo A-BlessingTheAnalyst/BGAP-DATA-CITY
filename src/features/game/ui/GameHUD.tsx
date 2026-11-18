@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import { Minimap, DistrictBanner } from './Minimap';
 import { CityMap } from './map/CityMap';
+import { CharacterCreator } from './wardrobe/CharacterCreator';
+import { TailorShop } from './wardrobe/TailorShop';
+import { loadWardrobe } from './wardrobe/useWardrobe';
 import { MissionTrackerHUD } from '../missions/MissionTrackerHUD';
 import { PauseMenu } from './PauseMenu';
 import { SettingsModal } from './SettingsModal';
@@ -22,6 +25,7 @@ export const GameHUD: React.FC = () => {
   const isPhoneOpen = useGameState((s) => s.isPhoneOpen);
   const setPhoneOpen = useGameState((s) => s.setPhoneOpen);
   useCareerBootstrap();
+  React.useEffect(() => { loadWardrobe(); }, []);
 
   return (
     <div className="absolute inset-0 pointer-events-none select-none z-10 overflow-hidden">
@@ -70,6 +74,8 @@ export const GameHUD: React.FC = () => {
       <DistrictBanner />
       <DataPhone />
       <CityMap />
+      <TailorShop />
+      <CharacterCreator />
 
       {/* Mobile Touch Controls Overlay */}
       <MobileTouchControls />

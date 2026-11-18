@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 18 November 2026 (Phase A complete; city expansion, map and GPS, spatial audio) · branch `feat/world-kit` · nothing committed since `2a615bf`.*
+> *Last updated: 18 November 2026 (Phase B complete: character creator, wardrobe, tailor shop) · branch `feat/world-kit` · nothing committed since `68e411d`.*
 
 ---
 
@@ -491,22 +491,14 @@ All eight tasks landed: browser play-through (and its bug fixes), server-side at
 
 **Dev play-test handles (development builds only):** `window.__player.teleport(x, z)` and `window.__player.runtime.position`; `window.__dataCity` (R3F state).
 
-### Phase B: character creator, wardrobe and shops
-- **Character creator** before first spawn (new `/game` intro overlay):
-  - quick-pick 6 cadets, or custom body, skin-tone slider (PALETTE.skin), hair, and outfit colours;
-  - saved to the profile (server);
-  - the player uses `CastMember` with the saved look.
-- **Outfit catalog** in `content/outfits.json`:
-  - slots: top, bottom, dress, shoes, headwear, accessory; colours; price; tags (casual / corporate / traditional);
-  - fabric pattern textures (ankara, aso-oke, pinstripe) as procedural canvas textures applied to the generated clothing (needs UVs; use body UVs).
-- **Tailor shop** on Market Boulevard (Zee Fabrics or a new tailor):
-  - try-on view (orbit + mirror);
-  - `POST /api/game/shop/buy` checks the balance and writes a ledger `purchase` (negative), idempotent per item;
-  - inventory table (`0003_inventory.sql`).
-- **Attire effects:** corporate attire is required at Tier 4 front desks; traditional attire gives bonuses with family firms (rubric pay modifier); compliment barks.
-- **Later:** authored Blender outfits on the UE skeleton (wide-sleeve agbada, gele variants, suits) swapped in through the catalog.
+### Phase B: character creator, wardrobe and shops ✅ done (18 Nov 2026)
+- **Character creator** (`ui/wardrobe/CharacterCreator.tsx`): shows before first spawn (the player is frozen until a cadet exists) and reopens from the pause menu ("Edit cadet") or the DataPhone Wardrobe tab. Quick-pick 6 cadets (`PRESET_CADETS`) or a "Surprise me" randomiser, custom body (two rigs), skin swatches + fine shade slider, hairstyle (body-specific list) and hair colour, starter top/bottom/shoes. Live-rotating 3D preview (`CadetPreview.tsx`, drag to spin). Saved to `PlayerProfile` on the server (`PUT /api/game/profile`); the player (`PlayerCharacter.tsx`) renders with `usePlayerDef()`, the saved look.
+- **Outfit catalog** (`content/outfits.json`, loaded by `server/content/outfits.ts`): 27 items across slots top/bottom/dress/shoes/head, tags starter/casual/corporate/traditional, prices from docs/game-design.md §4. A dress (boubou/kaftan) replaces top+bottom; a gele or kufi replaces hair. Validated by `checkCatalog()` (also run from `validate-missions.ts`-style checks in `test-shop.ts`).
+- **Tailor shop**: Zee Fabrics Tailoring counter in the world (`world/TailorCounter.tsx`, fabric rolls + sign + mannequin, `MARKET_LAYOUT.tailor`), opened with E. Try-on changes the 3D preview live before buying; **Buy** calls `POST /api/game/shop/buy` (price from the catalog only, never the client); **Wear** swaps the equipped item instantly. Wardrobe tab in the DataPhone lets you re-wear anything already owned without visiting the shop.
+- **Money safety**: `wallet.debit()` (file store) / `wallet_debit()` Postgres function (`db/migrations/0003_shop.sql`, advisory-locked, atomic balance-check-then-insert) — buying something twice, or N simultaneous clicks, charges once; buying what you can't afford is refused with the exact shortfall. Covered by `scripts/test-shop.ts` (22 checks, incl. 3 simultaneous buys → 1 charge).
+- **Not yet built:** fabric pattern textures (flat colours only — UVs on the generated clothing would be needed for ankara/aso-oke print textures); attire gating at Tier 4 fronts / traditional-wear pay bonuses (ties into Phase E rubric work); compliment barks (Phase C); authored Blender outfits.
 
-**Done when:** you create a custom cadet, buy an outfit, reload, and the look persists; the balance is debited once.
+**Done when:** you create a custom cadet, buy an outfit, reload, and the look persists; the balance is debited once. ✅ verified in-browser 18 Nov 2026 (Zara preset → saved → spawned with that look; bought an ankara shirt for ₦12,000, balance debited once, worn instantly).
 
 ### Phase C: reactive street
 - **Lane graph** (`world/roads.json`) with junctions and **traffic lights** at the crossroad; give-way rules; danfos stop at the bus stop with conductor barks.

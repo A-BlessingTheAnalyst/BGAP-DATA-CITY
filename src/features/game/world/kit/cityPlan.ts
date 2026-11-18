@@ -559,6 +559,7 @@ export function mapPlaces(): { name: string; x: number; z: number; kind: 'landma
     { name: 'Open Market', x: -30, z: 14, kind: 'market' },
     { name: "Baba Sola's Kiosk", x: 18, z: -7.6, kind: 'market' },
     { name: 'Market Stop', x: 7, z: 22, kind: 'market' },
+    { name: 'Zee Tailoring', x: -7.4, z: 31.6, kind: 'market' },
   );
   return out;
 }

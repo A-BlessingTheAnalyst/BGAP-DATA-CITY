@@ -55,6 +55,7 @@ const points: { name: string; p: number[] }[] = [
   { name: 'guard', p: MARKET_LAYOUT.guard },
   { name: 'café laptop', p: MARKET_LAYOUT.cafe.laptop },
   { name: 'café owner', p: MARKET_LAYOUT.cafe.owner },
+  { name: 'tailor counter', p: MARKET_LAYOUT.tailor },
 ];
 const missionsDir = path.join(process.cwd(), 'content', 'missions');
 for (const id of fs.readdirSync(missionsDir)) {

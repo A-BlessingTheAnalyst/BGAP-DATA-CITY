@@ -5,5 +5,6 @@ export const MARKET_LAYOUT = {
   spawn: [-7, 0.95, -14] as [number, number, number],
   cafe: { laptop: [11.4, 0, 60] as [number, number, number], owner: [12.6, 0, 53.5] as [number, number, number] },
   guard: [-7.5, 0, -18] as [number, number, number],
-  bounds: 72,
+  /** Zee Fabrics Tailoring counter (Phase B shop), on the west sidewalk past the fabric shop. */
+  tailor: [-7.4, 0, 31.6] as [number, number, number],
 };

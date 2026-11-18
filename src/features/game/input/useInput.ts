@@ -5,8 +5,13 @@ import { useGameState } from '../engine/GameState';
 import { AudioManager } from '../audio/AudioManager';
 export function interact() {
  const s = useGameState.getState();
- if (!s.activeTarget || s.isPaused || s.isDialogueActive || s.isWorkstationActive) return;
+ if (!s.activeTarget || s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isShopOpen || s.isCreatorOpen) return;
  AudioManager.playUi('open');
+ if (s.activeTarget.type === 'shop') {
+  s.setShopOpen(true);
+  resetInput();
+  return;
+ }
  if (s.activeTarget.type === 'evidence') {
   // id is "evidence:<missionId>:<evidenceId>"; reading it doesn't move the camera.
   const [, missionId, evidenceId] = s.activeTarget.id.split(':');
