@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { VehicleBody, VehicleDef } from '@/shared/types/garage';
 
 const FILE = path.join(process.cwd(), 'content', 'vehicles.json');
-const BODIES: VehicleBody[] = ['hatchback', 'sedan', 'taxi', 'suv', 'pickup', 'keke'];
+const BODIES: VehicleBody[] = ['hatchback', 'sedan', 'taxi', 'suv', 'pickup', 'keke', 'chopper'];
 
 export function checkVehicles(items: VehicleDef[]): string[] {
   const errors: string[] = [];
@@ -16,6 +16,8 @@ export function checkVehicles(items: VehicleDef[]): string[] {
     if (!/^#[0-9A-Fa-f]{6}$/.test(v.color ?? '')) errors.push(`${at}: color must be #RRGGBB`);
     if (!Number.isInteger(v.price) || v.price <= 0) errors.push(`${at}: price must be a positive whole number`);
     if (!(v.maxSpeed > 0 && v.maxSpeed < 60)) errors.push(`${at}: maxSpeed should be a sane arcade value (m/s)`);
+    if (v.licence && v.licence !== 'driving' && v.licence !== 'flight') errors.push(`${at}: licence must be 'driving' or 'flight'`);
+    if (v.body === 'chopper' && v.licence !== 'flight') errors.push(`${at}: a chopper needs licence: 'flight'`);
     if (!v.name || !v.description) errors.push(`${at}: needs a name and description`);
   }
   return errors;

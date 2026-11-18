@@ -17,6 +17,7 @@ import { MissionClients } from '../world/MissionClients';
 import { CustomWaypoint } from '../world/CustomWaypoint';
 import { TailorCounter } from '../world/TailorCounter';
 import { GarageWorld } from '../world/GarageWorld';
+import { Airfield } from '../world/Airfield';
 import { loadGarage } from '../ui/garage/useGarage';
 import { CityAudio } from '../audio/CityAudio';
 import { BarkLayer } from '../world/BarkLayer';
@@ -52,6 +53,7 @@ export const SceneManager: React.FC = () => {
         <CustomWaypoint />
         <TailorCounter />
         <GarageWorld />
+        <Airfield />
 
         <PlayerCharacter />
         <ThirdPersonCamera />

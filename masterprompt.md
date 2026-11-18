@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 18 November 2026 (Phase E partial: 2 new T2 cases, reputation system) · branch `feat/world-kit` · nothing committed since `f8f3824`.*
+> *Last updated: 18 November 2026 (Phase F foundation: airfield, flight licence, chopper) · branch `feat/world-kit` · nothing committed since `49419eb`.*
 
 ---
 
@@ -544,12 +544,15 @@ All eight tasks landed: browser play-through (and its bug fixes), server-side at
 
 **Done when:** scenarios 4–10 pass validation and are playable; the spreadsheet and chart tools grade; reputation gates work. **Partially met**: 2 of 7 new scenarios (both T2) pass validation, are graded with full fixture coverage, and have in-world NPCs — verified via `validate:missions`, `validate:layout`, `test:grader` (9 new checks across both cases) and live in-browser (both "Talk to [client]" prompts confirmed on approach; the full dialogue→terminal→submit loop was *not* re-verified live for these two specific cases in this session, since the user began actively playing partway through testing and further automated input would have fought them for control — the dialogue/terminal pipeline itself is unchanged, shared code already proven live for the three Tier 1 cases). Reputation is real and visible (not gated on anything yet, since nothing above T2 exists to gate). Spreadsheet/chart tools: not built.
 
-### Phase F: aviation
-- Airfield district; flight-school lesson for the licence (₦15M).
-- Chopper (hover model) and light plane (lift/drag), with a flight camera; helipads (bank roof, Tech Park).
-- Tier 5 aerial-survey gig as a data source; the BRT authority case (scenario 12) and the Vantage claims case (11).
+### Phase F: aviation — foundation only, honestly scoped down (18 Nov 2026)
+**Why minimal:** every payoff this phase promises (the aerial-survey gig, the BRT authority case, the Vantage claims case) is Tier 5 content that depends on Tier 3/4 cases Phase E didn't build. Flying a chopper with nothing to do up there is decoration, not gameplay, so this pass builds the structure and stops rather than inventing rushed Tier 5 missions that wouldn't meet the grading-quality bar the rest of the game holds to.
+- **Airfield** (`world/Airfield.tsx`): a helipad + control hut + windsock in City Gateway (`MARKET_LAYOUT.airfield`). **No runway and no light plane** — only the hover model was built (see below), so a landing strip isn't needed yet.
+- **Flight licence**: `flight_licence`, ₦15,000,000 (docs/game-design.md §4), bought through the same dealership/wallet machinery as the driving licence (`shared/types/garage.ts`'s `licence: 'driving' | 'flight'` field on `VehicleDef` picks which one a vehicle needs; `useInput.ts` looks it up per-vehicle rather than assuming driving).
+- **Chopper** (`content/vehicles.json`'s `chopper_light`, ₦500,000,000 per docs/game-design.md §4; procedural model in `world/kit/vehicles.tsx`'s `Chopper`, spinning main + tail rotors): bought like any other vehicle, but spawns at the Airfield instead of the car garage spot. Reuses the whole garage/ownership/entry-exit system from Phase D — **not** a separate vehicle type.
+- **Flight physics** (`world/DrivableCar.tsx`, a new branch keyed on `def.body === 'chopper'`): free-flying hover — W/S thrust, A/D yaw (can turn in place, unlike a car), Space climbs, Shift descends, clamped between the ground and a 140 m ceiling. **Deliberately simpler than ground vehicles**: no collision against buildings (a chopper's collider is a sensor, not solid) — full 3D obstacle avoidance is real future work, not attempted here. This is the one system in the whole session built to a visibly lower standard than its ground counterpart, and that gap is intentional, not an oversight.
+- **Not built:** the light plane (lift/drag physics is a different system from a hover model); helipads on the bank roof or in Tech Park (only the Airfield's own pad exists); a dedicated flight camera (the existing orbit chase camera is reused, unchanged); Tier 5 content of any kind.
 
-**Done when:** you earn the licence, fly the chopper and land on the bank helipad.
+**Done when:** you earn the licence, fly the chopper and land on the bank helipad. **Not met** — there is no bank helipad to land on (see above). What *is* done: buy the chopper, pass flight school, take off from the Airfield, fly, land back. 28 garage/vehicle tests pass (`scripts/test-garage.ts`, 8 of them new for Phase F), the Airfield's helipad mesh was confirmed present in a live scene check, and the layout validator confirms the helipad is clear of buildings — but the actual takeoff-to-landing loop was **not** flown live in this session (the user was actively playing when this phase was built, and taking the controls to test flight would have interrupted them; the next session should fly it manually or via the dev `window.__player`-style handle before trusting it fully).
 
 ### Phase G: polish and launch
 - **Performance:** asset LODs, KTX2 textures, district streaming, 60 fps on desktop and 30 fps on a mid-range phone with measured devices (T70/T71).

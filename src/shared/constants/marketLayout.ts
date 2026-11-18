@@ -9,4 +9,6 @@ export const MARKET_LAYOUT = {
   tailor: [-7.4, 0, 31.6] as [number, number, number],
   /** Phase D: the player's garage spot, where a bought/called car parks. East sidewalk near the kiosk. */
   garage: [9.5, 0, -16] as [number, number, number],
+  /** Phase F: the Airfield helipad in City Gateway (south block), where a bought/called chopper parks. */
+  airfield: [205, 0, -226] as [number, number, number],
 };

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Car, GraduationCap, MapPin, Navigation } from 'lucide-react';
+import { Car, GraduationCap, MapPin, Navigation, Plane } from 'lucide-react';
 import { useGameState } from '../../engine/GameState';
 import { AudioManager } from '../../audio/AudioManager';
 import { naira } from '../phone/useCareer';
@@ -11,7 +11,7 @@ import { useNavTarget } from '../../world/navigation';
 
 /** DataPhone app: pass your driving test, buy a car from the dealership, call your cars to you, or hail a ride. */
 export function GarageApp() {
-  const { owned, hasLicence, catalog, licencePrice, loaded } = useGarage();
+  const { owned, hasLicence, hasFlightLicence, catalog, licencePrice, flightLicencePrice, loaded } = useGarage();
   const balance = useGameState((s) => s.walletBalance);
   const target = useNavTarget();
   const [busy, setBusy] = useState<string | null>(null);
@@ -71,12 +71,21 @@ export function GarageApp() {
         </div>
       </section>
 
-      {!hasLicence && (
+{!hasLicence && (
         <section className="rounded-xl border border-bgap-gold/30 bg-bgap-gold/5 p-3">
           <div className="flex items-center gap-2 mb-1 text-bgap-gold text-xs font-bold"><GraduationCap className="w-4 h-4" />Driving licence required to drive</div>
           <p className="text-[11px] text-bgap-muted mb-2">Pass a quick lesson at the Academy to drive any car you own. One-time fee.</p>
           <button onClick={() => buy('driving_licence', 'the driving licence')} disabled={busy === 'driving_licence'} className="text-[11px] px-2.5 py-1 rounded-lg bg-bgap-gold text-[#2B1A05] font-bold">
             Take the test — {naira(licencePrice)}
+          </button>
+        </section>
+      )}
+      {!hasFlightLicence && catalog.some((v) => v.body === 'chopper') && (
+        <section className="rounded-xl border border-bgap-cyan/30 bg-bgap-cyan/5 p-3">
+          <div className="flex items-center gap-2 mb-1 text-bgap-cyan text-xs font-bold"><Plane className="w-4 h-4" />Flight licence required to fly</div>
+          <p className="text-[11px] text-bgap-muted mb-2">Pass flight school at the Airfield to fly anything you own. One-time fee — expensive, but so is the chopper.</p>
+          <button onClick={() => buy('flight_licence', 'the flight licence')} disabled={busy === 'flight_licence' || balance === null || balance < flightLicencePrice} className="text-[11px] px-2.5 py-1 rounded-lg bg-bgap-cyan text-bgap-dark font-bold disabled:opacity-40">
+            Take flight school — {naira(flightLicencePrice)}
           </button>
         </section>
       )}
@@ -93,7 +102,7 @@ export function GarageApp() {
               return (
                 <li key={o.vehicleId} className="flex items-center gap-2 text-xs text-bgap-text bg-bgap-card rounded-lg p-2 border border-bgap-border">
                   <span className="w-5 h-5 rounded shrink-0" style={{ background: def.color }} />
-                  <Car className="w-3.5 h-3.5 text-bgap-muted shrink-0" />
+                  {def.body === 'chopper' ? <Plane className="w-3.5 h-3.5 text-bgap-muted shrink-0" /> : <Car className="w-3.5 h-3.5 text-bgap-muted shrink-0" />}
                   {def.name}
                 </li>
               );
@@ -126,7 +135,7 @@ export function GarageApp() {
             );
           })}
         </ul>
-        <p className="text-[11px] text-bgap-muted mt-2">Approach your car in the world and press E to drive — WASD to steer, Shift for speed, E to get out.</p>
+        <p className="text-[11px] text-bgap-muted mt-2">Approach your car in the world and press E to drive — WASD to steer, Shift for speed, E to get out. The chopper (at the Airfield) flies instead: Space climbs, Shift descends.</p>
       </section>
     </div>
   );

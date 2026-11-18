@@ -11,8 +11,12 @@ export function interact() {
  if (!s.activeTarget || s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isShopOpen || s.isCreatorOpen) return;
  AudioManager.playUi('open');
  if (s.activeTarget.type === 'vehicle') {
-  if (!useGarage.getState().hasLicence) { AudioManager.playUi('error'); resetInput(); return; }
-  s.setDriving(s.activeTarget.id.slice('vehicle:'.length));
+  const vehicleId = s.activeTarget.id.slice('vehicle:'.length);
+  const g = useGarage.getState();
+  const def = g.catalog.find((v) => v.id === vehicleId);
+  const ok = def?.licence === 'flight' ? g.hasFlightLicence : g.hasLicence;
+  if (!ok) { AudioManager.playUi('error'); resetInput(); return; }
+  s.setDriving(vehicleId);
   resetInput();
   return;
  }

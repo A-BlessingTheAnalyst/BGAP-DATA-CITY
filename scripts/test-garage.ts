@@ -18,7 +18,8 @@ async function main() {
   const G = await import('../src/server/game/garage');
   const W = await import('../src/server/economy/wallet');
   const { fareFor } = await import('../src/server/economy/fares');
-  const { DRIVING_LICENCE_PRICE } = await import('../src/shared/types/garage');
+  const { DRIVING_LICENCE_PRICE, FLIGHT_LICENCE_PRICE } = await import('../src/shared/types/garage');
+  const { MARKET_LAYOUT } = await import('../src/shared/constants/marketLayout');
 
   console.log('Vehicle catalog');
   const { items, byId } = vehicleCatalog();
@@ -62,6 +63,21 @@ async function main() {
 
   console.log('Driving licence price matches the catalog type');
   check(DRIVING_LICENCE_PRICE === 200_000, 'the licence costs ₦200,000 (docs/game-design.md §4)');
+
+  console.log('Phase F: the chopper and the flight licence');
+  const chopper = items.find((v) => v.body === 'chopper')!;
+  check(!!chopper && chopper.licence === 'flight', 'the catalog has exactly one chopper, gated by the flight licence');
+  check(checkVehicles([{ ...chopper, licence: 'driving' }]).length > 0, 'a chopper without licence: "flight" is caught');
+  const flier = 'aviator';
+  check((await G.getGarageView(flier)).hasFlightLicence === false, 'new players have no flight licence');
+  await W.creditMissionReward({ userId: flier, missionId: 'test-job', amount: 600_000_000, xp: 0, reason: 'test windfall' });
+  const boughtChopper = await G.buyVehicleOrLicence(flier, chopper.id);
+  check(boughtChopper.created, 'buying the chopper succeeds with enough money');
+  check((await G.getGarageView(flier)).owned.find((o) => o.vehicleId === chopper.id)?.position[0] === MARKET_LAYOUT.airfield[0], 'a new chopper is parked at the Airfield, not the car garage spot');
+  const flightLicence = await G.buyVehicleOrLicence(flier, 'flight_licence');
+  check(flightLicence.created, 'buying the flight licence succeeds');
+  check((await G.getGarageView(flier)).hasFlightLicence, 'the flight licence now shows as owned');
+  check((FLIGHT_LICENCE_PRICE as number) === 15_000_000, 'flight school costs ₦15,000,000 (docs/game-design.md §4), separately from the driving licence');
 
   console.log(failures ? `\n${failures} check(s) failed` : '\nAll garage checks passed');
   process.exit(failures ? 1 : 0);

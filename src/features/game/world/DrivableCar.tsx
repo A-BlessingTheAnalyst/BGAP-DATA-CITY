@@ -5,20 +5,25 @@ import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-th
 import { Group, MathUtils } from 'three';
 import { useGameState } from '../engine/GameState';
 import { InteractionTrigger } from '../physics/InteractionTrigger';
-import { Car, Tricycle } from './kit/vehicles';
+import { Car, Tricycle, Chopper } from './kit/vehicles';
 import { runtimeInput } from '../input/InputManager';
 import { driveRuntime, playerRuntime } from '../characters/PlayerCharacter';
 import { callCar, useGarage } from '../ui/garage/useGarage';
+import { CITY_BOUNDS } from './kit/cityPlan';
 import type { OwnedVehicle, VehicleDef } from '@/shared/types/garage';
 
 /** Rough box footprint per body style, matching the kit models closely enough for collision. */
 const FOOTPRINT: Record<VehicleDef['body'], [number, number, number]> = {
   hatchback: [1.8, 1.6, 3.9], sedan: [1.8, 1.6, 4.5], taxi: [1.8, 1.7, 4.4],
-  suv: [2, 2, 4.7], pickup: [1.9, 2, 5.2], keke: [1.4, 2.2, 2.4],
+  suv: [2, 2, 4.7], pickup: [1.9, 2, 5.2], keke: [1.4, 2.2, 2.4], chopper: [2.1, 2.5, 4.6],
 };
 const ACCEL = 6, BRAKE = 10, TURN_RATE = 1.8, DRAG = 2.2;
+// Phase F: the chopper is a floaty hover model, not a ray-cast ground controller — it free-flies
+// with an altitude clamp and the city bounds, but (unlike ground vehicles) no collision against
+// buildings. That full 3D obstacle-avoidance is out of scope for this pass; see masterprompt.md.
+const FLIGHT_CEILING = 140, FLIGHT_FLOOR = 1.4, VERTICAL_RATE = 9, FLIGHT_TURN = 1.6;
 
-/** A car the player owns, parked where the garage/server says. Drive it with E, WASD, exit with E. */
+/** A vehicle the player owns, parked where the garage/server says. Drive/fly it with E, WASD, exit with E. */
 export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleDef }) {
   const { world } = useRapier();
   const body = useRef<RapierRigidBody>(null);
@@ -29,7 +34,8 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
   const pos = useRef<[number, number, number]>(owned.position);
   const isMine = useGameState((s) => s.isDriving && s.drivingVehicleId === def.id);
   const anyoneDriving = useGameState((s) => s.isDriving);
-  const hasLicence = useGarage((s) => s.hasLicence);
+  const hasLicence = useGarage((s) => (def.licence === 'flight' ? s.hasFlightLicence : s.hasLicence));
+  const isChopper = def.body === 'chopper';
 
   useEffect(() => {
     const c = world.createCharacterController(0.02);
@@ -38,7 +44,7 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
     return () => { world.removeCharacterController(c); controller.current = undefined; };
   }, [world]);
 
-  // Re-sync from the server's last known position/rotation whenever this car is (re)called or bought.
+  // Re-sync from the server's last known position/rotation whenever this vehicle is (re)called or bought.
   useEffect(() => {
     pos.current = owned.position;
     yaw.current = owned.rotationY;
@@ -51,7 +57,23 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
     const delta = Math.min(dt, 0.04);
     const [x0, y0, z0] = pos.current;
 
-    if (isMine) {
+    if (isMine && isChopper) {
+      // Free flight: W/S thrust, A/D yaw (can turn on the spot), Space climbs, Shift descends.
+      const throttle = (runtimeInput.forward ? 1 : 0) - (runtimeInput.backward ? 1 : 0);
+      const steer = (runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0);
+      const vertical = (runtimeInput.jump ? 1 : 0) - (runtimeInput.sprint ? 1 : 0);
+      const maxSpeed = def.maxSpeed;
+      speed.current = MathUtils.damp(speed.current, throttle * maxSpeed, 4, delta);
+      yaw.current += steer * FLIGHT_TURN * delta;
+      const B = CITY_BOUNDS, m = 2;
+      const nx = MathUtils.clamp(x0 + Math.sin(yaw.current) * speed.current * delta, B.minX + m, B.maxX - m);
+      const nz = MathUtils.clamp(z0 + Math.cos(yaw.current) * speed.current * delta, B.minZ + m, B.maxZ - m);
+      const ny = MathUtils.clamp(y0 + vertical * VERTICAL_RATE * delta, FLIGHT_FLOOR, FLIGHT_CEILING);
+      pos.current = [nx, ny, nz];
+      body.current.setNextKinematicTranslation({ x: nx, y: ny, z: nz });
+      driveRuntime.position.set(nx, ny + 0.4, nz);
+      driveRuntime.rotationY = yaw.current;
+    } else if (isMine) {
       const throttle = (runtimeInput.forward ? 1 : 0) - (runtimeInput.backward ? 1 : 0);
       const steer = (runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0);
       const maxSpeed = def.maxSpeed * (runtimeInput.sprint ? 1 : 0.6);
@@ -75,16 +97,18 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
     if (visual.current) { visual.current.position.set(...pos.current); visual.current.rotation.y = yaw.current; }
   });
 
-  const enterTarget = { id: `vehicle:${def.id}`, type: 'vehicle' as const, label: def.name, actionText: hasLicence ? `Enter ${def.name} [E]` : `${def.name} — pass your driving test first`, position: pos.current, radius: 2.4 };
+  const verb = isChopper ? 'Fly' : 'Enter';
+  const licenceName = def.licence === 'flight' ? 'flight test' : 'driving test';
+  const enterTarget = { id: `vehicle:${def.id}`, type: 'vehicle' as const, label: def.name, actionText: hasLicence ? `${verb} ${def.name} [E]` : `${def.name} — pass your ${licenceName} first`, position: pos.current, radius: 2.4 };
   const [w, h, len] = FOOTPRINT[def.body];
 
   return (
     <>
       <RigidBody ref={body} type="kinematicPosition" colliders={false} position={owned.position} enabledRotations={[false, false, false]}>
-        <CuboidCollider args={[w / 2, h / 2, len / 2]} position={[0, h / 2, 0]} />
+        <CuboidCollider args={[w / 2, h / 2, len / 2]} position={[0, h / 2, 0]} sensor={isChopper} />
       </RigidBody>
       <group ref={visual} position={owned.position} rotation={[0, owned.rotationY, 0]}>
-        {def.body === 'keke' ? <Tricycle color={def.color} /> : <Car body={def.body === 'taxi' ? 'taxi' : def.body} color={def.color} />}
+        {def.body === 'keke' ? <Tricycle color={def.color} /> : def.body === 'chopper' ? <Chopper color={def.color} flying={isMine} /> : <Car body={def.body} color={def.color} />}
       </group>
       {!isMine && !anyoneDriving && <InteractionTrigger target={enterTarget} />}
     </>

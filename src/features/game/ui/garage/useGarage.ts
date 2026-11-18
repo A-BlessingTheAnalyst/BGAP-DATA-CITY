@@ -10,9 +10,10 @@ interface GarageStore extends GarageView {
   loaded: boolean;
   catalog: VehicleDef[];
   licencePrice: number;
+  flightLicencePrice: number;
 }
 
-export const useGarage = create<GarageStore>(() => ({ loaded: false, owned: [], hasLicence: false, garageSpot: [0, 0, 0], catalog: [], licencePrice: 200_000 }));
+export const useGarage = create<GarageStore>(() => ({ loaded: false, owned: [], hasLicence: false, hasFlightLicence: false, garageSpot: [0, 0, 0], catalog: [], licencePrice: 200_000, flightLicencePrice: 15_000_000 }));
 
 const json = async (r: Response) => {
   const data = await r.json().catch(() => ({}));
@@ -23,7 +24,7 @@ const json = async (r: Response) => {
 let loading: Promise<void> | null = null;
 export function loadGarage(force = false) {
   if (loading && !force) return loading;
-  loading = fetch('/api/game/garage').then(json).then((v: GarageView & { catalog: VehicleDef[]; licencePrice: number }) => {
+  loading = fetch('/api/game/garage').then(json).then((v: GarageView & { catalog: VehicleDef[]; licencePrice: number; flightLicencePrice: number }) => {
     useGarage.setState({ loaded: true, ...v });
   }).catch(() => { loading = null; });
   return loading;
@@ -31,7 +32,7 @@ export function loadGarage(force = false) {
 
 export async function buyFromDealership(itemId: string): Promise<{ created: boolean; name: string }> {
   const res = await fetch('/api/game/garage/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId }) }).then(json);
-  useGarage.setState({ owned: res.owned, hasLicence: res.hasLicence, garageSpot: res.garageSpot });
+  useGarage.setState({ owned: res.owned, hasLicence: res.hasLicence, hasFlightLicence: res.hasFlightLicence, garageSpot: res.garageSpot });
   useGameState.getState().setWalletBalance(res.balance);
   return { created: res.created, name: res.name };
 }

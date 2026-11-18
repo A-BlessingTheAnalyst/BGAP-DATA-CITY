@@ -1,5 +1,7 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import type { Group } from 'three';
 import { PALETTE } from './palette';
 import { Box, Cyl, Sign, V3 } from './parts';
 
@@ -163,6 +165,45 @@ export function DeliveryVan({ company = 'KORA LOGISTICS', brand = PALETTE.brand.
       ))}
       <Lights w={W} y={y0 + 0.4} zFront={L / 2 - 0.08} zBack={-2.62} />
       {[[-1, 1.8], [1, 1.8], [-1, -1.8], [1, -1.8]].map(([sx, z], i) => <Wheel key={i} r={0.36} position={[sx * (W / 2 - 0.1), 0.36, z]} />)}
+    </group>
+  );
+}
+
+/** Light utility helicopter (Phase F). Rotors spin whenever `flying` is true. */
+export function Chopper({ color = '#E8E0D0', flying = false }: { color?: string; flying?: boolean }) {
+  const main = useRef<Group>(null), tail = useRef<Group>(null);
+  useFrame((_, dt) => {
+    const speed = flying ? 22 : 2.5;
+    if (main.current) main.current.rotation.y += dt * speed;
+    if (tail.current) tail.current.rotation.x += dt * speed * 3;
+  });
+  return (
+    <group>
+      {/* Cabin */}
+      <Box size={[1.9, 1.5, 2.6]} position={[0, 1.1, 0.3]} color={color} rough={0.35} metal={0.3} />
+      <Box size={[1.6, 0.9, 1.6]} position={[0, 1.35, 1.1]} rotation={[0.08, 0, 0]} {...glassProps} />
+      {/* Tail boom */}
+      <Cyl r={0.26} h={3.4} rotation={[Math.PI / 2, 0, 0]} position={[0, 1.15, -2.6]} color={color} rough={0.4} metal={0.2} seg={12} />
+      <Box size={[0.9, 1.1, 0.12]} position={[0, 1.7, -4.1]} rotation={[0.3, 0, 0]} color={color} rough={0.4} metal={0.2} />
+      {/* Tail rotor */}
+      <group ref={tail} position={[0.1, 1.7, -4.2]}>
+        <Box size={[0.05, 0.9, 0.09]} color="#1B1C20" />
+        <Box size={[0.05, 0.09, 0.9]} color="#1B1C20" />
+      </group>
+      {/* Skids */}
+      {[-0.75, 0.75].map((x) => (
+        <group key={x}>
+          <Box size={[0.08, 0.08, 2.6]} position={[x, 0.35, 0.2]} color="#1B1C20" />
+          <Box size={[0.08, 0.5, 0.08]} position={[x, 0.55, 1.3]} rotation={[0.3, 0, 0]} color="#1B1C20" />
+          <Box size={[0.08, 0.5, 0.08]} position={[x, 0.55, -0.9]} rotation={[-0.3, 0, 0]} color="#1B1C20" />
+        </group>
+      ))}
+      {/* Main rotor mast + blades */}
+      <Cyl r={0.08} h={0.5} position={[0, 2.05, 0.3]} color="#2B2F36" metal={0.5} rough={0.3} seg={8} />
+      <group ref={main} position={[0, 2.3, 0.3]}>
+        <Box size={[6.6, 0.06, 0.26]} color="#1B1C20" rough={0.5} />
+        <Box size={[0.26, 0.06, 6.6]} color="#1B1C20" rough={0.5} />
+      </group>
     </group>
   );
 }

@@ -3,7 +3,7 @@ import { vehicleCatalog } from '@/server/content/vehicles';
 import { purchaseItem, purchasedItems } from '@/server/economy/wallet';
 import { CITY_BOUNDS } from '@/features/game/world/kit/cityPlan';
 import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
-import { DRIVING_LICENCE_PRICE, type GarageView, type OwnedVehicle } from '@/shared/types/garage';
+import { DRIVING_LICENCE_PRICE, FLIGHT_LICENCE_PRICE, type GarageView, type OwnedVehicle } from '@/shared/types/garage';
 
 // A player's garage: which vehicles they own and where each one is parked. Ownership itself piggy-
 // backs on the wallet ledger (same pattern as outfits: 'buy:<vehicleId>'); only *positions* need
@@ -27,11 +27,15 @@ export async function hasDrivingLicence(userId: string): Promise<boolean> {
   return (await purchasedItems(userId)).includes('driving_licence');
 }
 
+export async function hasFlightLicence(userId: string): Promise<boolean> {
+  return (await purchasedItems(userId)).includes('flight_licence');
+}
+
 export async function getGarageView(userId: string): Promise<GarageView> {
   const ids = await ownedVehicleIds(userId);
   const row = readRow(userId);
   const owned: OwnedVehicle[] = ids.map((vehicleId) => row.vehicles.find((v) => v.vehicleId === vehicleId) ?? { vehicleId, position: MARKET_LAYOUT.garage, rotationY: 0 });
-  return { owned, hasLicence: await hasDrivingLicence(userId), garageSpot: MARKET_LAYOUT.garage };
+  return { owned, hasLicence: await hasDrivingLicence(userId), hasFlightLicence: await hasFlightLicence(userId), garageSpot: MARKET_LAYOUT.garage };
 }
 
 /** Buys a car from the dealership (price from the catalog only) or the driving licence. */
@@ -40,12 +44,17 @@ export async function buyVehicleOrLicence(userId: string, itemId: string) {
     const { created } = await purchaseItem({ userId, itemId, price: DRIVING_LICENCE_PRICE, name: 'Driving licence' });
     return { created, name: 'Driving licence' };
   }
+  if (itemId === 'flight_licence') {
+    const { created } = await purchaseItem({ userId, itemId, price: FLIGHT_LICENCE_PRICE, name: 'Flight licence' });
+    return { created, name: 'Flight licence' };
+  }
   const v = vehicleCatalog().byId.get(itemId);
   if (!v) throw new Error('That vehicle is not sold here.');
   const { created } = await purchaseItem({ userId, itemId: v.id, price: v.price, name: v.name });
   if (created) {
     const row = readRow(userId);
-    await writeRow(userId, [...row.vehicles.filter((x) => x.vehicleId !== v.id), { vehicleId: v.id, position: MARKET_LAYOUT.garage, rotationY: 0 }]);
+    const spawn = v.body === 'chopper' ? MARKET_LAYOUT.airfield : MARKET_LAYOUT.garage;
+    await writeRow(userId, [...row.vehicles.filter((x) => x.vehicleId !== v.id), { vehicleId: v.id, position: spawn, rotationY: 0 }]);
   }
   return { created, name: v.name };
 }
