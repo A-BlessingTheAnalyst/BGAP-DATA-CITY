@@ -1,0 +1,411 @@
+<title>Data City Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a game-HUD control room. Sticky tab bar, phase rail on the left, task cards on the right; every chip is a cross-reference link. */
+:root{
+  --bg:#F2F5F7; --panel:#FFFFFF; --panel-2:#E8EDF2; --line:#CFD8E3;
+  --ink:#0E1626; --muted:#566279;
+  --accent:#0391A8; --accent-ink:#FFFFFF; --gold:#B86E00; --emerald:#08865C; --ruby:#C8323A;
+  --gold-bg:#FDF1DC; --em-bg:#DDF4EA; --ruby-bg:#FBE3E4; --acc-bg:#DCF2F6;
+  --f-display:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#080C14; --panel:#0F1626; --panel-2:#162035; --line:#22304E;
+  --ink:#F1F5FA; --muted:#94A3B8;
+  --accent:#00D9E6; --accent-ink:#04121A; --gold:#F5A524; --emerald:#2FCB94; --ruby:#F2676D;
+  --gold-bg:#2A1F0A; --em-bg:#0B2A20; --ruby-bg:#2D1216; --acc-bg:#06262E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#080C14; --panel:#0F1626; --panel-2:#162035; --line:#22304E;
+  --ink:#F1F5FA; --muted:#94A3B8;
+  --accent:#00D9E6; --accent-ink:#04121A; --gold:#F5A524; --emerald:#2FCB94; --ruby:#F2676D;
+  --gold-bg:#2A1F0A; --em-bg:#0B2A20; --ruby-bg:#2D1216; --acc-bg:#06262E; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:.01em}
+code,.mono{font-family:var(--f-mono);font-size:.82em}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.hero{padding-block:40px 24px;display:grid;gap:20px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.05;font-weight:700}
+.hero p.lede{max-width:68ch;color:var(--muted);font-size:16.5px;margin:0}
+.loop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--f-display);font-weight:600;font-size:14px}
+.loop span.step{padding:6px 11px;border:1px solid var(--line);background:var(--panel);border-radius:4px}
+.loop span.arrow{color:var(--muted)}
+.loop span.step.hot{border-color:var(--accent);color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);padding:12px 14px;border-radius:6px}
+.stat b{display:block;font-family:var(--f-display);font-size:26px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:4px;flex-wrap:wrap;padding-block:10px;border-bottom:1px solid var(--line)}
+nav.tabs button{background:none;border:1px solid transparent;padding:7px 13px;border-radius:4px;cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:14px;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--line);background:var(--panel)}
+nav.tabs .spacer{flex:1}
+.filters{display:flex;flex-wrap:wrap;gap:6px;padding-block:14px 4px}
+.pill{border:1px solid var(--line);background:var(--panel);padding:4px 10px;border-radius:999px;font-size:12.5px;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+section.view{padding-block:18px}
+.phase{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;padding-block:26px;border-top:1px solid var(--line)}
+.phase:first-child{border-top:0}
+.phase aside{position:sticky;top:70px;align-self:start;display:grid;gap:8px}
+.phase .pnum{font-family:var(--f-mono);font-size:12px;color:var(--accent);letter-spacing:.12em}
+.phase h2{font-size:22px}
+.phase aside p{margin:0;color:var(--muted);font-size:13.5px}
+.phase .days{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.gate{font-size:13px;border-left:3px solid var(--emerald);padding:6px 10px;background:var(--em-bg);border-radius:0 4px 4px 0}
+.gate b{font-family:var(--f-display);display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--emerald)}
+.tasks{display:grid;gap:10px;min-width:0}
+.task{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:8px;scroll-margin-top:80px}
+.task.flash{animation:flash 1.4s ease-out}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.task.flash{animation:none;outline:2px solid var(--accent)}}
+.task .top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.tid{font-family:var(--f-mono);font-size:12px;color:var(--accent);font-weight:500}
+.task h3{font-size:16.5px;flex:1;min-width:200px}
+.size{font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:3px;border:1px solid var(--line);color:var(--muted)}
+.slice{font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:3px;background:var(--acc-bg);color:var(--accent);border:1px solid var(--accent)}
+.task p{margin:0;font-size:14px}
+.task .done{font-size:13px;color:var(--muted)}
+.task .done b{color:var(--emerald);font-weight:600}
+.refs{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12px}
+.refs .lbl{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-right:2px}
+.chip{border:1px solid var(--line);background:var(--panel-2);padding:1px 7px;border-radius:3px;cursor:pointer;font-family:var(--f-mono);font-size:11.5px;color:var(--ink)}
+.chip:hover{border-color:var(--accent)}
+.chip.f{background:var(--gold-bg);border-color:transparent;color:var(--gold)}
+.chip.d{background:var(--acc-bg);border-color:transparent;color:var(--accent)}
+.chip.p{background:none;font-family:var(--f-body)}
+
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.pillar{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:6px;align-content:start}
+.pillar h3{font-size:17px}
+.pillar p{margin:0;font-size:14px;color:var(--muted)}
+.pillar .now{font-size:13px}
+.pillar .now b{color:var(--ruby)}
+.pillar .then{font-size:13px}
+.pillar .then b{color:var(--emerald)}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-display);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--panel-2)}
+tr:last-child td{border-bottom:0}
+tr.sev-high td:first-child{box-shadow:inset 3px 0 var(--ruby)}
+tr.sev-med td:first-child{box-shadow:inset 3px 0 var(--gold)}
+tr.sev-low td:first-child{box-shadow:inset 3px 0 var(--line)}
+tr.hit td{background:var(--acc-bg)}
+.sev{font-family:var(--f-mono);font-size:11px;text-transform:uppercase}
+.sev.high{color:var(--ruby)} .sev.med{color:var(--gold)} .sev.low{color:var(--muted)}
+.search{display:flex;gap:8px;align-items:center;padding-block:4px 14px}
+.search input{flex:1;max-width:420px;padding:8px 11px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink);font-family:var(--f-mono);font-size:13px}
+.note{color:var(--muted);font-size:13px;margin:0 0 12px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.box h3{font-size:16px;margin-bottom:8px}
+.box ul{margin:0;padding-left:18px;font-size:14px;display:grid;gap:4px}
+.empty{color:var(--muted);padding:20px;text-align:center}
+
+@media (max-width:820px){
+  .phase{grid-template-columns:1fr;gap:12px}
+  .phase aside{position:static}
+}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Data City · build plan · Nov 2026</div>
+  <h1>From tech demo to a city you want to play in</h1>
+  <p class="lede">The web build already runs: a third-person analyst, a café, two NPCs and a SQL terminal. What it lacks is honesty underneath (grading, saves, login) and life on top (sound, crowds, a story that reacts). This plan fixes both in eight phases, each ending in something playable. Every task links to the files it touches, the problem it fixes, and what it depends on.</p>
+  <p class="lede">What the game is meant to become (core loop, analysis tiers, economy, characters, reactive streets) lives in the <a href="https://claude.ai/artifact/NxbRmsRypEErfMBG7eWj6s" target="_blank" rel="noopener">Data City Game Design</a> page and in <code>docs/game-design.md</code>.</p>
+  <div class="loop" aria-label="Core game loop">
+    <span class="step">Explore</span><span class="arrow">→</span>
+    <span class="step">Meet</span><span class="arrow">→</span>
+    <span class="step">Gather evidence</span><span class="arrow">→</span>
+    <span class="step hot">Query the data</span><span class="arrow">→</span>
+    <span class="step">Confront with findings</span><span class="arrow">→</span>
+    <span class="step hot">City changes</span><span class="arrow">↺</span>
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Plan views">
+  <button role="tab" data-view="phases" aria-selected="true">Phases</button>
+  <button role="tab" data-view="pillars" aria-selected="false">What "pleasant" means</button>
+  <button role="tab" data-view="findings" aria-selected="false">Findings</button>
+  <button role="tab" data-view="files" aria-selected="false">Files</button>
+  <button role="tab" data-view="slice" aria-selected="false">First slice</button>
+  <span class="spacer"></span>
+  <button id="themeBtn" aria-label="Toggle theme" title="Toggle theme">◐</button>
+</nav>
+
+<section class="view" id="v-phases">
+  <div class="filters" id="pillarFilters" aria-label="Filter by pillar"></div>
+  <div id="phaseList"></div>
+</section>
+
+<section class="view" id="v-pillars" hidden>
+  <p class="note">These are the qualities that make a game feel good to sit in, and where Data City stands on each today. Each pillar lists the tasks that deliver it.</p>
+  <div class="pillars" id="pillarList"></div>
+</section>
+
+<section class="view" id="v-findings" hidden>
+  <p class="note">What the code review turned up, ranked by how much each one blocks a real release. The right-hand column shows which tasks fix it.</p>
+  <div class="table-wrap"><table><thead><tr><th>ID</th><th>Finding</th><th>Where</th><th>Fixed by</th></tr></thead><tbody id="findingRows"></tbody></table></div>
+</section>
+
+<section class="view" id="v-files" hidden>
+  <div class="search"><input id="fileSearch" type="search" placeholder="Filter files, e.g. camera or route.ts" aria-label="Filter files"></div>
+  <p class="note">Every file the plan touches, with the tasks that change it. Use this to avoid two people editing the same file at once.</p>
+  <div class="table-wrap"><table><thead><tr><th>File or folder</th><th>Tasks</th><th>Findings</th></tr></thead><tbody id="fileRows"></tbody></table></div>
+</section>
+
+<section class="view" id="v-slice" hidden>
+  <p class="note">The first two weeks. This slice is small on purpose: by the end, Chapter 1 is honest (real grading), feels better to move through (camera, sound, interactions), and the repo is clean enough to build on.</p>
+  <div class="cols" id="sliceCols"></div>
+</section>
+</div>
+
+<script>
+const PILLARS={
+  feel:{name:"Game feel",desc:"Movement, camera and input that feel responsive and weighty.",now:"Movement works, but turns are instant, there's no jump, the camera clips through walls and conversation framing is a fixed offset.",then:"Smooth acceleration, a blended animation set, a camera that avoids walls and frames conversations over the shoulder."},
+  sound:{name:"Sound",desc:"A city you can hear: ambience, footsteps, music that reacts.",now:"The game is completely silent. AudioManager exists but nothing calls it.",then:"Layered district ambience, footsteps synced to steps, music that ducks during dialogue and the terminal."},
+  world:{name:"Living world",desc:"A place that looks lived-in and keeps moving when you stand still.",now:"Box buildings and flat untextured materials. Two capsule pedestrians walk straight lines. Walk too far and you teleport back to the centre.",then:"Warm Lagos-afternoon lighting, an enterable café, dressed streets, crowds on sidewalks, natural district edges."},
+  story:{name:"Story & choice",desc:"An investigation you solve yourself, and a city that reacts to the result.",now:"One mission. Dialogue is hard-coded, the answer is pre-typed, and the 'finding' is a radio button.",then:"Evidence found in the world, findings argued in dialogue, and consequences you can see in the street."},
+  analysis:{name:"Honest analysis",desc:"Real SQL, real feedback, grading you can trust.",now:"The grader looks for keywords in your query text. The client fallback makes up results.",then:"Queries run on hidden datasets, results are compared row by row, and hints come in tiers."},
+  progress:{name:"Progression",desc:"Your work persists and adds up to something.",now:"XP lives in server memory and the HUD level is hard-coded. Any token logs in as the same user.",then:"Real accounts, saves, XP, badges and resume-where-you-left-off."},
+  platform:{name:"Runs everywhere",desc:"Smooth on a laptop, playable on a phone, accessible to everyone.",now:"Quality is guessed from the user agent. There's no test suite or CI.",then:"Measured adaptive quality, optimised assets, a mobile pass, accessibility options, CI."}
+};
+
+const F={
+ F1:{s:"high",t:"Unity track can't ship. SanAndreasUnity needs the original GTA SA game files; unity/ has no ProjectSettings; scripts are duplicated in DataCity_Core/. ThirdParty/ (199 MB) is committed.",w:["unity/","DataCity_Core/","ThirdParty/"]},
+ F2:{s:"high",t:"Grader never runs SQL. It checks the query text for substrings like payment_status = 'completed'.",w:["src/server/assessment/SqlEvaluator.ts"]},
+ F3:{s:"high",t:"The terminal opens with the correct answer already typed in.",w:["src/features/analysis/sql-editor/AnalyticsTerminalModal.tsx:15"]},
+ F4:{s:"high",t:"If DuckDB-Wasm fails, a regex fallback returns made-up results for any query.",w:["src/features/analysis/sql-worker/useDuckDb.ts"]},
+ F5:{s:"high",t:"Rewards are stored in an in-memory Set, lost on restart. The Supabase client is created but never called.",w:["src/server/rewards/RewardLedgerService.ts","src/server/db/supabase.ts","src/server/game/GameRepository.ts"]},
+ F6:{s:"high",t:"Any bearer token logs in as the same hard-coded user.",w:["src/server/game/SessionValidator.ts"]},
+ F19:{s:"high",t:"The checkpoint API takes userId from the request body, so anyone can write anyone's save.",w:["src/app/api/game/checkpoint/route.ts"]},
+ F7:{s:"med",t:"The game is silent. AudioManager and SoundEffects are never called.",w:["src/features/game/audio/AudioManager.ts","src/features/game/audio/SoundEffects.ts"]},
+ F8:{s:"med",t:"Pedestrians are primitive capsules walking back and forth on two-point lines, with no avoidance.",w:["src/features/game/characters/NPCs/AmbientPedestrian.tsx"]},
+ F9:{s:"med",t:"Camera ignores CameraCollision.ts, uses a fixed world offset for conversations and allocates new vectors every frame.",w:["src/features/game/camera/ThirdPersonCamera.tsx"]},
+ F12:{s:"med",t:"Mission state is client-only. MissionStateMachine exists but nothing uses it.",w:["src/features/game/engine/GameState.ts","src/features/game/missions/MissionStateMachine.ts"]},
+ F14:{s:"med",t:"Characters have no textures and only 3–4 clips each. Animation switches between discrete states instead of blending.",w:["src/features/game/characters/RiggedHumanoid.tsx","public/assets/characters/"]},
+ F15:{s:"med",t:"Only one mission, with dialogue hard-coded in TypeScript. Adding a chapter means writing code.",w:["src/features/game/interactions/DialogueTrees.ts","src/features/game/missions/chapter1-cafe/"]},
+ F16:{s:"med",t:"The city is mostly boxes. Walk past ±55 m and you teleport back to the centre.",w:["src/features/game/characters/PlayerCharacter.tsx","src/features/game/world/CityBlock.tsx"]},
+ F17:{s:"med",t:"There are no tests and no CI.",w:["package.json"]},
+ F18:{s:"med",t:"The business finding is a radio button, and the correct option ID is hard-coded in the rubric.",w:["src/server/assessment/RubricEngine.ts"]},
+ F21:{s:"med",t:"DuckDB-Wasm loads from jsDelivr at runtime, so the terminal breaks offline or under a strict CSP.",w:["src/features/analysis/sql-worker/useDuckDb.ts"]},
+ F10:{s:"low",t:"The minimap has a hard-coded café pin and no map drawing.",w:["src/features/game/ui/Minimap.tsx"]},
+ F11:{s:"low",t:"The HUD shows a hard-coded LVL 1 and 45% XP bar.",w:["src/features/game/ui/GameHUD.tsx"]},
+ F13:{s:"low",t:"Adaptive quality is user-agent sniffing. PerformanceMonitor is never used.",w:["src/features/game/performance/AdaptiveQuality.ts","src/features/game/performance/PerformanceMonitor.ts"]},
+ F20:{s:"low",t:"Nine modules are never imported: GameLoop, DistrictZones, AvatarCustomization, CharacterAnimationController, MissionStateMachine, PerformanceMonitor, CameraCollision, SoundEffects, BadgeService.",w:["src/features/game/","src/server/rewards/BadgeService.ts"]},
+ F22:{s:"low",t:"IMPLEMENTATION-PLAN.md is out of date (for example, it says no GLB assets exist).",w:["IMPLEMENTATION-PLAN.md"]}
+};
+
+const PHASES=[
+ {id:"P0",name:"Clean foundation",why:"Make the repo light, testable and safe to build on.",gate:"Repo clones in seconds, CI is green, production refuses mock login."},
+ {id:"P1",name:"The first 60 seconds",why:"Make walking, looking and interacting feel good before adding more content.",gate:"A new player walks from the academy to the café and it feels smooth and sounds alive."},
+ {id:"P2",name:"Honest analysis",why:"Make the SQL work real, so passing means something.",gate:"Equivalent correct queries pass, keyword-stuffed wrong queries fail, and nothing is invented."},
+ {id:"P3",name:"A living district",why:"Make one district beautiful and busy, without trying to build a whole city.",gate:"Screenshots of the café street look like a game, not a prototype."},
+ {id:"P4",name:"Story you play",why:"Turn Chapter 1 from a form into an investigation with consequences.",gate:"A playtester solves the case without help and notices the city change."},
+ {id:"P5",name:"Progress that sticks",why:"Make accounts, saves and rewards real.",gate:"Refresh resumes exactly; two accounts can't touch each other's data; rewards are granted once."},
+ {id:"P6",name:"Content pipeline + Chapter 2",why:"Make a new chapter a matter of content, not code.",gate:"Chapter 2 ships as a content folder, plus a few lines registering it."},
+ {id:"P7",name:"Polish & launch",why:"Make it smooth on real devices, accessible, measured and deployed.",gate:"Runs at 60 FPS on a target laptop and 30 FPS on a target phone, passes the accessibility checklist, deployed with telemetry."}
+];
+
+const T=[
+ // P0
+ {id:"T01",p:"P0",pl:"platform",sz:"S",sl:1,t:"Move Unity and ThirdParty out of the repo",d:"Stop tracking unity/, DataCity_Core/ and ThirdParty/ and gitignore them. Keep the Yarn scripts as narrative source text in content/narrative/.",f:["F1"],files:["unity/","DataCity_Core/","ThirdParty/",".gitignore","content/narrative/"],dep:[],done:"Tracked tree under 20 MB; npm run build still passes."},
+ {id:"T02",p:"P0",pl:"platform",sz:"S",sl:1,t:"Wire or delete the nine dead modules",d:"Wire the ones later tasks need (CameraCollision → T12, SoundEffects → T15, MissionStateMachine → T41, PerformanceMonitor → T70). Delete the rest.",f:["F20"],files:["src/features/game/","src/server/rewards/BadgeService.ts"],dep:[],done:"Every module in src/ is imported somewhere."},
+ {id:"T03",p:"P0",pl:"platform",sz:"M",sl:1,t:"Test harness and CI",d:"Vitest for logic (grader, state machine, rubric). A Playwright smoke test that loads /game, walks forward and opens the terminal. GitHub Actions runs type-check, tests and build.",f:["F17"],files:["package.json","tests/",".github/workflows/ci.yml"],dep:[],done:"CI runs on every PR and blocks merges when it fails."},
+ {id:"T04",p:"P0",pl:"progress",sz:"S",sl:1,t:"One explicit dev-auth switch",d:"A single DEV_MOCK_AUTH flag. Production throws if it's set. Remove the catch-all fallback in the /game page.",f:["F6"],files:["src/server/game/SessionValidator.ts","src/app/game/page.tsx",".env.example"],dep:[],done:"A production build with no session gets 401s."},
+ // P1
+ {id:"T10",p:"P1",pl:"feel",sz:"M",sl:0,t:"Movement with weight",d:"Separate acceleration and braking curves, turn-in-place below a speed threshold, a short hop for kerbs, and walk/jog/sprint tiers on analog input. Grounding gets a short grace period (coyote time).",f:["F16"],files:["src/features/game/characters/PlayerCharacter.tsx","src/features/game/physics/CharacterCollider.tsx"],dep:["T02"],done:"No instant snaps; diagonal speed equals straight speed; you can climb kerbs without catching on them."},
+ {id:"T11",p:"P1",pl:"feel",sz:"L",sl:0,t:"Analyst animation set and blending",d:"Add Jump, Turn L/R, Wave, Talk, Point, Sit-type and Celebrate clips to the analyst rig. Replace the discrete Idle/Walk/Run switch with a speed-driven 1D blend so feet don't slide.",f:["F14"],files:["blender/analyst_character.blend","public/assets/characters/analyst.glb","src/features/game/characters/RiggedHumanoid.tsx"],dep:["T10"],done:"No foot sliding from 0 to sprint; a gesture plays during dialogue."},
+ {id:"T12",p:"P1",pl:"feel",sz:"M",sl:1,t:"Camera that respects walls and frames scenes",d:"Wire CameraCollision with a spherecast, zero per-frame allocations, over-the-shoulder conversation framing relative to the NPC's facing, eased mode transitions, scroll zoom and a slight FOV widen when sprinting.",f:["F9","F20"],files:["src/features/game/camera/ThirdPersonCamera.tsx","src/features/game/camera/CameraCollision.ts","src/features/game/camera/CameraModes.ts"],dep:["T02"],done:"The camera never shows the inside of a wall; conversations always frame both faces."},
+ {id:"T13",p:"P1",pl:"feel",sz:"M",sl:0,t:"Input options",d:"Optional pointer-lock mouse look, gamepad support, rebindable keys, sensitivity and invert-Y in Settings.",f:[],files:["src/features/game/input/InputManager.ts","src/features/game/input/KeyboardControls.ts","src/features/game/ui/SettingsModal.tsx"],dep:[],done:"The whole game is playable on an Xbox or PS controller."},
+ {id:"T14",p:"P1",pl:"feel",sz:"S",sl:1,t:"Interactions you can read at a glance",d:"A world-space prompt above the focused target, an outline highlight, a facing check, and hold-E with a progress ring for the workstation.",f:[],files:["src/features/game/interactions/InteractionManager.tsx","src/features/game/interactions/InteractionPrompt.tsx","src/features/game/physics/InteractionTrigger.tsx"],dep:[],done:"Playtesters never press E on the wrong thing."},
+ {id:"T15",p:"P1",pl:"sound",sz:"M",sl:1,t:"Sound foundation",d:"Unlock audio on first input. Footsteps fire on animation foot-plant events. Add UI sounds, a looping district ambience bed (traffic, birds, market chatter) and a music layer that ducks during dialogue and the terminal. Use CC0/licensed samples only, with a credits file.",f:["F7","F20"],files:["src/features/game/audio/AudioManager.ts","src/features/game/audio/SoundEffects.ts","src/features/game/engine/GameState.ts","public/assets/audio/"],dep:["T02"],done:"With eyes closed, you can tell whether you're on the street, in the café or in the terminal."},
+ {id:"T16",p:"P1",pl:"feel",sz:"S",sl:0,t:"Feedback effects",d:"Fades into and out of the terminal, light camera shake on rewards, dust puffs on landing, and a loading screen with tips and a real progress bar from useProgress.",f:[],files:["src/features/game/engine/GameCanvas.tsx","src/app/game/loading.tsx","src/app/game/GameClient.tsx"],dep:["T15"],done:"Every state change has a visual and audio cue."},
+ // P2
+ {id:"T20",p:"P2",pl:"analysis",sz:"M",sl:1,t:"Server grader that runs the SQL",d:"Use @duckdb/node-api (already installed). For each submission, create an in-memory DB, load the hidden fixture, run the learner query and the reference query with a timeout and row cap, and compare result sets: order-insensitive, column-name-agnostic, numeric tolerance.",f:["F2"],files:["src/server/assessment/SqlEvaluator.ts","src/server/assessment/SandboxRunner.ts","src/server/assessment/fixtures/"],dep:["T03"],done:"Tests: 5 equivalent correct queries pass; 5 keyword-stuffed wrong ones fail."},
+ {id:"T21",p:"P2",pl:"analysis",sz:"S",sl:1,t:"Hidden fixture set",d:"Several datasets the learner never sees: voids only, refunds only, quantity > 1, an empty day, a midnight boundary, decimals. Money stored in kobo (integers). Server-only imports.",f:["F2"],files:["src/server/assessment/fixtures/","src/features/game/missions/chapter1-cafe/CafeTestData.ts"],dep:["T20"],done:"No fixture data reaches the client bundle (checked in CI)."},
+ {id:"T22",p:"P2",pl:"analysis",sz:"M",sl:1,t:"Rubric scored from results",d:"Correctness = rows match on every fixture. Filter = passes the fixture where only voids and refunds differ. Independence = hints logged by the server, not reported by the client.",f:["F2","F18"],files:["src/server/assessment/RubricEngine.ts","src/app/api/game/attempts/[id]/submit/route.ts"],dep:["T20","T21"],done:"The score breakdown explains exactly which fixture failed, without revealing the answer."},
+ {id:"T23",p:"P2",pl:"analysis",sz:"S",sl:1,t:"Starter query, not answer",d:"Open with SELECT * FROM sales LIMIT 10 plus guiding comments. Nothing is pre-selected. The schema viewer shows sample rows and column types.",f:["F3"],files:["src/features/analysis/sql-editor/AnalyticsTerminalModal.tsx","src/features/analysis/sql-editor/SchemaViewer.tsx"],dep:[],done:"Clicking Submit without editing scores below 30."},
+ {id:"T24",p:"P2",pl:"analysis",sz:"M",sl:0,t:"Real, self-hosted DuckDB-Wasm",d:"Ship the Wasm bundles from /public instead of jsDelivr, run them in the existing worker bridge, add cancel/timeout, and delete the regex fallback. Failure shows a clear error with a Retry button.",f:["F4","F21"],files:["src/features/analysis/sql-worker/useDuckDb.ts","src/features/analysis/sql-worker/duckdb.worker.ts","src/features/analysis/sql-worker/workerBridge.ts","next.config.mjs"],dep:[],done:"The terminal works offline; no query ever shows a result DuckDB didn't produce."},
+ {id:"T25",p:"P2",pl:"analysis",sz:"S",sl:0,t:"Lock down the sandbox",d:"Allow only SELECT/WITH via the AST, set enable_external_access=false, disable extension loading, cap memory and threads.",f:["F2"],files:["src/server/assessment/SandboxRunner.ts"],dep:["T20"],done:"read_csv('http://…'), COPY, ATTACH and INSTALL are all rejected (tested)."},
+ {id:"T26",p:"P2",pl:"analysis",sz:"S",sl:0,t:"Tiered hints",d:"Three tiers (concept → column → partial SQL), each recorded through an API call and costing independence points. Mama Bisi delivers them as in-character texts.",f:[],files:["src/features/analysis/results/HintSystem.tsx","src/app/api/game/attempts/[id]/hint/route.ts"],dep:["T22"],done:"Hint usage in the score matches the server log."},
+ // P3
+ {id:"T30",p:"P3",pl:"world",sz:"M",sl:0,t:"Lighting and look",d:"A warm Lagos-afternoon key light, soft shadows, atmospheric fog for depth, and post-processing (ACES tone mapping, SMAA, subtle bloom, SSAO on High).",f:[],files:["src/features/game/world/EnvironmentLighting.tsx","src/features/game/world/Skybox.tsx","src/features/game/engine/GameCanvas.tsx","package.json"],dep:[],done:"Side-by-side before/after screenshots approved."},
+ {id:"T31",p:"P3",pl:"world",sz:"L",sl:0,t:"An enterable café",d:"A doorway with proper colliders, an interior with counter, tables and seated customers, Mama Bisi behind the counter and the laptop at a corner table.",f:["F16"],files:["src/features/game/world/Buildings/CafeBuilding.tsx","src/features/game/world/Buildings/WorkstationDesk.tsx","blender/city_assets.blend"],dep:["T10","T12"],done:"You walk in, the camera handles the tight space, and you sit at the laptop."},
+ {id:"T32",p:"P3",pl:"world",sz:"L",sl:0,t:"Dressed streets",d:"Textured asphalt, kerbs and paving; original signage in the local commercial style (POS stands, kiosks, painted shopfronts); trees, market stalls and parked minibuses. Repeated props are instanced.",f:["F16"],files:["src/features/game/world/CityBlock.tsx","src/features/game/world/WorldProps.tsx","blender/city_assets.blend","public/assets/world/"],dep:["T30"],done:"Draw calls under 300 on Balanced; no flat untextured surfaces in view."},
+ {id:"T33",p:"P3",pl:"world",sz:"M",sl:0,t:"Crowds that behave",d:"Rigged pedestrian GLBs with outfit and colour variants, a sidewalk waypoint graph, avoiding the player, idle spots (on the phone, chatting in pairs) and density scaled by quality.",f:["F8","F14"],files:["src/features/game/characters/NPCs/AmbientPedestrian.tsx","src/features/game/characters/NPCManager.tsx","public/assets/characters/"],dep:["T11"],done:"20+ pedestrians on Balanced; none walk through you or each other."},
+ {id:"T34",p:"P3",pl:"world",sz:"M",sl:0,t:"NPCs that notice you",d:"Head tracking toward the player, a greeting gesture on approach, subtitled one-liners and simple routines (Mama Bisi wipes the counter, the guard patrols).",f:["F14"],files:["src/features/game/characters/NPCs/CafeOwnerNPC.tsx","src/features/game/characters/NPCs/InteractiveGuard.tsx"],dep:["T11"],done:"Every named NPC reacts within 3 m."},
+ {id:"T35",p:"P3",pl:"world",sz:"M",sl:0,t:"Ambient motion",d:"Looping background traffic on the boulevard (not drivable), birds, flags and swaying trees. An optional slow time-of-day setting.",f:[],files:["src/features/game/world/WorldProps.tsx","src/features/game/world/EnvironmentLighting.tsx"],dep:["T32"],done:"Standing still for 30 seconds, something is always moving."},
+ {id:"T36",p:"P3",pl:"world",sz:"S",sl:0,t:"District edges that make sense",d:"Replace the teleport at ±55 m with buildings, fences and barriers that bound the district naturally.",f:["F16"],files:["src/features/game/characters/PlayerCharacter.tsx","src/features/game/world/CityBlock.tsx"],dep:["T32"],done:"No teleports; the edges read as part of the world."},
+ // P4
+ {id:"T40",p:"P4",pl:"story",sz:"M",sl:0,t:"Data-driven dialogue",d:"Nodes with conditions and effects (flags, mission events), typewriter text that can be skipped, speaker portraits and memory of earlier choices. Loaded from JSON, not hard-coded.",f:["F15"],files:["src/features/game/interactions/DialogueBox.tsx","src/features/game/interactions/DialogueTrees.ts","src/features/game/missions/chapter1-cafe/CafeDialogueTree.ts"],dep:[],done:"Chapter 1 dialogue lives in a JSON file; no code changes are needed to edit a line."},
+ {id:"T41",p:"P4",pl:"story",sz:"M",sl:0,t:"Mission runtime driven by events",d:"MissionStateMachine becomes the only path for transitions. Objectives advance on events (talked_to, evidence_found, query_ran, submitted). The tracker HUD reads from it.",f:["F12","F20"],files:["src/features/game/missions/MissionStateMachine.ts","src/features/game/missions/MissionTrackerHUD.tsx","src/features/game/engine/GameState.ts"],dep:["T40"],done:"Unit tests cover every valid and invalid transition."},
+ {id:"T42",p:"P4",pl:"story",sz:"L",sl:0,t:"Chapter 1 as a real investigation",d:"Guard tutorial → Mama Bisi → find evidence in the world (receipt book, POS error log, staff chat) → query → present your findings in dialogue by choosing evidence. The radio-button finding goes away.",f:["F18","F15"],files:["src/features/game/missions/chapter1-cafe/CafeMissionDefinition.ts","src/features/game/missions/chapter1-cafe/CafeDialogueTree.ts","src/server/assessment/RubricEngine.ts"],dep:["T22","T40","T41"],done:"A playtester explains why revenue dropped in their own words afterwards."},
+ {id:"T43",p:"P4",pl:"story",sz:"M",sl:0,t:"Consequences in the city",d:"After you solve the case, the café fills up, Mama Bisi's lines change, a billboard updates and a new NPC introduces Chapter 2.",f:[],files:["src/features/game/engine/SceneManager.tsx","src/features/game/characters/NPCManager.tsx","src/features/game/world/WorldProps.tsx"],dep:["T41"],done:"The world looks different after you solve the case."},
+ {id:"T44",p:"P4",pl:"story",sz:"M",sl:0,t:"Real minimap and objective markers",d:"Draw the minimap from district layout data, rotate it with the camera, drive markers from mission state and add a compass strip.",f:["F10"],files:["src/features/game/ui/Minimap.tsx","src/features/game/missions/WaypointMarker.tsx","src/shared/constants/zones.ts"],dep:["T41"],done:"Markers update as objectives change; nothing hard-coded."},
+ {id:"T45",p:"P4",pl:"story",sz:"M",sl:0,t:"Evidence notebook",d:"A tablet UI (Tab key) listing collected clues, notes and saved queries. It's the analyst's case file.",f:[],files:["src/features/game/ui/Notebook.tsx","src/features/game/engine/GameState.ts"],dep:["T41"],done:"Every clue found appears in the notebook and can be cited in the confrontation dialogue."},
+ // P5
+ {id:"T50",p:"P5",pl:"progress",sz:"M",sl:0,t:"Real Supabase login",d:"Session cookies via @supabase/ssr. Every route takes userId from the session, never from the request body.",f:["F6","F19"],files:["src/server/game/SessionValidator.ts","src/server/db/supabase.ts","src/app/api/game/checkpoint/route.ts","src/app/api/game/"],dep:["T04"],done:"A forged userId in a request body is ignored (tested)."},
+ {id:"T51",p:"P5",pl:"progress",sz:"M",sl:0,t:"Migrations and row-level security",d:"Tables for profiles, attempts, submissions, reward_ledger (with a unique key) and badges. Owner-only RLS. Rubrics and fixtures never readable by learners.",f:["F5"],files:["db/schema.sql","db/migrations/"],dep:[],done:"An RLS test proves user A can't read user B's attempts."},
+ {id:"T52",p:"P5",pl:"progress",sz:"L",sl:0,t:"Real repositories and atomic rewards",d:"GameRepository, CheckpointService, RewardLedgerService and BadgeService on Supabase. A single RPC writes the submission, ledger entry and badge together.",f:["F5"],files:["src/server/game/GameRepository.ts","src/server/game/CheckpointService.ts","src/server/rewards/RewardLedgerService.ts","src/server/rewards/BadgeService.ts"],dep:["T50","T51"],done:"10 concurrent submits grant XP exactly once."},
+ {id:"T53",p:"P5",pl:"progress",sz:"M",sl:0,t:"Resume where you left off",d:"Bootstrap loads profile, mission state, flags and checkpoint; the player spawns where they stopped; periodic saves are acknowledged by the server.",f:["F12"],files:["src/app/api/game/bootstrap/route.ts","src/app/game/GameWorld.tsx","src/features/game/engine/GameState.ts"],dep:["T52","T41"],done:"Closing the tab mid-mission and reopening it restores everything."},
+ {id:"T54",p:"P5",pl:"progress",sz:"S",sl:0,t:"A HUD that tells the truth",d:"Level, XP, credits and rank come from the profile, with an XP-gain animation. The profile page shows real data.",f:["F11"],files:["src/features/game/ui/GameHUD.tsx","src/app/game/profile/page.tsx"],dep:["T53"],done:"No hard-coded numbers in the HUD."},
+ {id:"T55",p:"P5",pl:"progress",sz:"S",sl:0,t:"A reward moment",d:"A short debrief scene, badge reveal and level-up fanfare.",f:[],files:["src/features/analysis/results/RubricFeedback.tsx","src/features/game/audio/SoundEffects.ts"],dep:["T52","T15"],done:"Passing the mission produces a celebration a playtester remembers."},
+ // P6
+ {id:"T60",p:"P6",pl:"story",sz:"M",sl:0,t:"Mission package format",d:"One folder per mission: mission.json, dialogue.json, dataset CSV, reference.sql, fixtures/, rubric.json. A loader plus a validator script that runs in CI.",f:["F15"],files:["content/missions/","src/features/game/missions/","scripts/validate-missions.ts"],dep:["T40","T22"],done:"The validator fails CI if reference.sql doesn't pass its own fixtures."},
+ {id:"T61",p:"P6",pl:"story",sz:"S",sl:0,t:"Port Chapter 1 to the format",d:"Move the café mission into content/missions/ch1-cafe/.",f:["F15"],files:["content/missions/ch1-cafe/","src/features/game/missions/chapter1-cafe/"],dep:["T60","T42"],done:"The chapter1-cafe code folder is deleted."},
+ {id:"T62",p:"P6",pl:"story",sz:"L",sl:0,t:"Chapter 2 at Meridian Capital Tower",d:"The banker mystery, built from the BankerMystery.yarn draft, teaching JOINs and window functions. Unlocked by T43's hook.",f:[],files:["content/missions/ch2-banker/","content/narrative/","src/features/game/world/Buildings/FinancialTower.tsx"],dep:["T61","T43"],done:"Chapter 2 needs no new engine code."},
+ {id:"T63",p:"P6",pl:"story",sz:"M",sl:0,t:"Admin mission preview",d:"Play any mission package in a sandbox and see the validator output.",f:[],files:["src/app/admin/game/page.tsx"],dep:["T60","T50"],done:"An author previews a dialogue edit without a deploy."},
+ // P7
+ {id:"T70",p:"P7",pl:"platform",sz:"M",sl:0,t:"Measured adaptive quality",d:"Wire PerformanceMonitor to AdaptiveQuality, with hysteresis, adjusting DPR, shadows, NPC count and post-processing.",f:["F13","F20"],files:["src/features/game/performance/PerformanceMonitor.ts","src/features/game/performance/AdaptiveQuality.ts","src/features/game/engine/GameCanvas.tsx"],dep:["T30","T33"],done:"Holds the target FPS without visible quality flicker."},
+ {id:"T71",p:"P7",pl:"platform",sz:"M",sl:0,t:"Asset optimisation",d:"A gltf-transform pipeline (meshopt, KTX2 textures), LODs and progressive loading by district.",f:["F14"],files:["public/assets/","scripts/optimize-assets.ts"],dep:["T32"],done:"First playable frame in under 5 s on a 4G profile."},
+ {id:"T72",p:"P7",pl:"platform",sz:"M",sl:0,t:"Accessibility",d:"Subtitles, text size, a colour-blind-safe HUD, reduced motion, a keyboard-only terminal and focus traps in modals.",f:[],files:["src/features/game/ui/SettingsModal.tsx","src/features/game/interactions/DialogueBox.tsx","src/features/analysis/sql-editor/AnalyticsTerminalModal.tsx"],dep:["T40"],done:"Passes an axe scan, and the whole mission can be completed with the keyboard only."},
+ {id:"T73",p:"P7",pl:"platform",sz:"M",sl:0,t:"Mobile pass",d:"A landscape prompt, separate joystick and camera-drag zones, and a phone layout for the terminal.",f:[],files:["src/features/game/input/MobileTouchControls.tsx","src/features/analysis/sql-editor/AnalyticsTerminalModal.tsx"],dep:["T70"],done:"Chapter 1 is completable on a mid-range Android phone."},
+ {id:"T74",p:"P7",pl:"feel",sz:"S",sl:0,t:"Title screen and onboarding",d:"Continue/New Game, settings, credits and first-time control prompts.",f:[],files:["src/app/game/page.tsx","src/features/game/ui/PauseMenu.tsx"],dep:["T53"],done:"A new player starts moving within 20 seconds of landing."},
+ {id:"T75",p:"P7",pl:"platform",sz:"M",sl:0,t:"Telemetry and playtests",d:"Mission funnel events, hint usage and quit points, plus a script for 5 playtesters.",f:[],files:["src/app/api/game/telemetry/route.ts","docs/playtest.md"],dep:["T52"],done:"The funnel shows where players drop off."},
+ {id:"T76",p:"P7",pl:"platform",sz:"S",sl:0,t:"Deploy",d:"Vercel (or similar) with Supabase in production, environment config, headers for DuckDB-Wasm and error tracking.",f:[],files:["next.config.mjs",".env.example"],dep:["T50","T24"],done:"A public URL that a playtester can open."}
+];
+
+const SZ={S:1,M:3,L:8};
+const byId=Object.fromEntries(T.map(t=>[t.id,t]));
+const fixedBy={}; T.forEach(t=>t.f.forEach(f=>(fixedBy[f]=fixedBy[f]||[]).push(t.id)));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* stats */
+(function(){
+  const days=T.reduce((a,t)=>a+SZ[t.sz],0);
+  const high=Object.values(F).filter(f=>f.s==="high").length;
+  const files=new Set(T.flatMap(t=>t.files)).size;
+  document.getElementById("stats").innerHTML=[
+    [PHASES.length,"phases, each ends playable"],[T.length,"tasks"],[Object.keys(F).length,`findings (${high} release blockers)`],[files,"files and folders cross-referenced"],["~"+Math.round(days/5),"solo dev-weeks (rough)"]
+  ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+})();
+
+/* chips */
+const chipF=id=>`<button class="chip f" data-go-f="${id}" title="${esc(F[id].t)}">${id}</button>`;
+const chipD=id=>`<button class="chip d" data-go-t="${id}" title="${esc(byId[id].t)}">${id}</button>`;
+const chipFile=p=>`<button class="chip" data-go-file="${esc(p)}">${esc(p.replace(/^src\//,""))}</button>`;
+
+function taskCard(t){
+  const unblocks=T.filter(x=>x.dep.includes(t.id)).map(x=>x.id);
+  return `<article class="task" id="${t.id}" data-pl="${t.pl}">
+    <div class="top"><span class="tid">${t.id}</span><h3>${esc(t.t)}</h3>
+      ${t.sl?'<span class="slice">first slice</span>':''}<span class="size" title="S ≈ 1 day, M ≈ 3 days, L ≈ 1–2 weeks">${t.sz}</span></div>
+    <p>${esc(t.d)}</p>
+    <div class="done"><b>Done when:</b> ${esc(t.done)}</div>
+    <div class="refs"><span class="lbl">Pillar</span><button class="chip p" data-go-pl="${t.pl}">${PILLARS[t.pl].name}</button>
+      ${t.f.length?'<span class="lbl" style="margin-left:8px">Fixes</span>'+t.f.map(chipF).join(""):""}
+      ${t.dep.length?'<span class="lbl" style="margin-left:8px">Needs</span>'+t.dep.map(chipD).join(""):""}
+      ${unblocks.length?'<span class="lbl" style="margin-left:8px">Unblocks</span>'+unblocks.map(chipD).join(""):""}</div>
+    <div class="refs"><span class="lbl">Files</span>${t.files.map(chipFile).join("")}</div>
+  </article>`;
+}
+
+/* phases view + filters */
+let activePl=null;
+function renderPhases(){
+  document.getElementById("pillarFilters").innerHTML=
+    `<button class="pill" aria-pressed="${activePl===null}" data-pl="">All pillars</button>`+
+    Object.entries(PILLARS).map(([k,v])=>`<button class="pill" aria-pressed="${activePl===k}" data-pl="${k}">${v.name}</button>`).join("");
+  document.getElementById("phaseList").innerHTML=PHASES.map(ph=>{
+    const ts=T.filter(t=>t.p===ph.id&&(!activePl||t.pl===activePl));
+    const days=T.filter(t=>t.p===ph.id).reduce((a,t)=>a+SZ[t.sz],0);
+    return `<div class="phase"><aside><span class="pnum">PHASE ${ph.id.slice(1)}</span><h2>${ph.name}</h2><p>${ph.why}</p>
+      <span class="days">≈ ${days} dev-days · ${T.filter(t=>t.p===ph.id).length} tasks</span>
+      <div class="gate"><b>Exit gate</b>${ph.gate}</div></aside>
+      <div class="tasks">${ts.length?ts.map(taskCard).join(""):'<div class="empty">No tasks in this phase for this pillar.</div>'}</div></div>`;
+  }).join("");
+}
+document.getElementById("pillarFilters").addEventListener("click",e=>{
+  const b=e.target.closest("[data-pl]"); if(!b)return; activePl=b.dataset.pl||null; renderPhases();
+});
+
+/* pillars view */
+document.getElementById("pillarList").innerHTML=Object.entries(PILLARS).map(([k,v])=>{
+  const ts=T.filter(t=>t.pl===k).map(t=>t.id);
+  return `<div class="pillar"><h3>${v.name}</h3><p>${v.desc}</p>
+   <div class="now"><b>Now:</b> ${esc(v.now)}</div><div class="then"><b>After:</b> ${esc(v.then)}</div>
+   <div class="refs" style="margin-top:6px"><span class="lbl">Tasks</span>${ts.map(chipD).join("")}</div></div>`;
+}).join("");
+
+/* findings view */
+const sevOrder={high:0,med:1,low:2};
+document.getElementById("findingRows").innerHTML=Object.entries(F).sort((a,b)=>sevOrder[a[1].s]-sevOrder[b[1].s]).map(([id,f])=>
+  `<tr id="row-${id}" class="sev-${f.s}"><td><span class="mono">${id}</span><br><span class="sev ${f.s}">${f.s==="med"?"medium":f.s}</span></td><td>${esc(f.t)}</td>
+   <td>${f.w.map(w=>`<div class="mono">${esc(w)}</div>`).join("")}</td>
+   <td><div class="refs">${(fixedBy[id]||[]).map(chipD).join("")||'<span class="sev low">none yet</span>'}</div></td></tr>`).join("");
+
+/* files view */
+const fileMap={};
+T.forEach(t=>t.files.forEach(p=>{(fileMap[p]=fileMap[p]||{t:new Set(),f:new Set()}).t.add(t.id);t.f.forEach(x=>fileMap[p].f.add(x))}));
+Object.entries(F).forEach(([id,f])=>f.w.forEach(w=>{const p=w.replace(/:\d+$/,"");if(fileMap[p])fileMap[p].f.add(id)}));
+function renderFiles(q){
+  q=(q||"").toLowerCase();
+  const rows=Object.keys(fileMap).sort().filter(p=>p.toLowerCase().includes(q));
+  document.getElementById("fileRows").innerHTML=rows.length?rows.map(p=>{
+    const m=fileMap[p];
+    return `<tr data-file="${esc(p)}"><td class="mono">${esc(p)}</td><td><div class="refs">${[...m.t].map(chipD).join("")}</div></td><td><div class="refs">${[...m.f].map(chipF).join("")}</div></td></tr>`;
+  }).join(""):`<tr><td colspan="3" class="empty">No files match “${esc(q)}”.</td></tr>`;
+}
+document.getElementById("fileSearch").addEventListener("input",e=>renderFiles(e.target.value));
+
+/* first slice */
+(function(){
+  const sl=T.filter(t=>t.sl);
+  const wk1=["T01","T02","T03","T04","T23","T20","T21"], wk2=sl.map(t=>t.id).filter(id=>!wk1.includes(id));
+  const box=(title,ids,note)=>`<div class="box"><h3>${title}</h3><p class="note">${note}</p><ul>${ids.map(id=>`<li>${chipD(id)} ${esc(byId[id].t)}</li>`).join("")}</ul></div>`;
+  document.getElementById("sliceCols").innerHTML=
+    box("Week 1 · Clean and honest",wk1,"Clean the repo and make grading real. Low risk, high impact.")+
+    box("Week 2 · Make it feel good",wk2,"Finish the rubric, then spend the rest on the camera, interactions and sound: the things players notice in the first minute.")+
+    `<div class="box"><h3>What you can show afterwards</h3><ul>
+      <li>A repo that clones fast and has CI on every PR</li>
+      <li>Chapter 1 graded by actually running SQL on hidden data</li>
+      <li>A camera that never clips through walls and frames conversations properly</li>
+      <li>Footsteps, city ambience and music: the city is no longer silent</li>
+      <li>No pre-filled answers; production refuses mock login</li></ul></div>`;
+})();
+
+/* navigation & cross-ref jumps */
+function show(view){
+  document.querySelectorAll("nav.tabs [data-view]").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===view));
+  document.querySelectorAll("section.view").forEach(s=>s.hidden=s.id!=="v-"+view);
+  if(location.hash.slice(1)!==view) history.replaceState(null,"","#"+view);
+}
+function flash(el){ if(!el)return; el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"}); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+document.addEventListener("click",e=>{
+  const tab=e.target.closest("nav.tabs [data-view]"); if(tab){show(tab.dataset.view);return;}
+  const t=e.target.closest("[data-go-t]"); if(t){activePl=null;renderPhases();show("phases");flash(document.getElementById(t.dataset.goT));return;}
+  const f=e.target.closest("[data-go-f]"); if(f){show("findings");document.querySelectorAll("#findingRows tr").forEach(r=>r.classList.toggle("hit",r.id==="row-"+f.dataset.goF));flash(document.getElementById("row-"+f.dataset.goF));return;}
+  const fl=e.target.closest("[data-go-file]"); if(fl){const p=fl.dataset.goFile;const inp=document.getElementById("fileSearch");inp.value=p;renderFiles(p);show("files");return;}
+  const pl=e.target.closest("[data-go-pl]"); if(pl){activePl=pl.dataset.goPl;renderPhases();show("phases");window.scrollTo({top:0});return;}
+});
+
+/* theme toggle */
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  const r=document.documentElement, cur=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  r.dataset.theme=cur==="dark"?"light":"dark";
+  try{localStorage.setItem("dc-theme",r.dataset.theme)}catch(_){}
+});
+try{const s=localStorage.getItem("dc-theme"); if(s) document.documentElement.dataset.theme=s;}catch(_){}
+
+renderPhases(); renderFiles("");
+const start=location.hash.slice(1);
+show(["phases","pillars","findings","files","slice"].includes(start)?start:"phases");
+window.addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(["phases","pillars","findings","files","slice"].includes(h))show(h);});
+</script>

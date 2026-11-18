@@ -4,57 +4,62 @@ import React from 'react';
 import { PhysicsWorld } from '../physics/PhysicsWorld';
 import { EnvironmentLighting } from '../world/EnvironmentLighting';
 import { Skybox } from '../world/Skybox';
-import { CityBlock } from '../world/CityBlock';
-import { WorldProps } from '../world/WorldProps';
-import { CitySkyline } from '../world/Buildings/CitySkyline';
-import { AcademyBuilding } from '../world/Buildings/AcademyBuilding';
-import { CafeBuilding } from '../world/Buildings/CafeBuilding';
-import { FinancialTower } from '../world/Buildings/FinancialTower';
-import { DataCenterBuilding } from '../world/Buildings/DataCenterBuilding';
-import { PlayerCharacter } from '../characters/PlayerCharacter';
-import { NPCManager } from '../characters/NPCManager';
+import { WorkstationDesk } from '../world/Buildings/WorkstationDesk';
+import { MarketBoulevard } from '../world/kit/district';
+import { City } from '../world/kit/City';
+import { Pedestrians, Traffic, TrafficLights } from '../world/kit/streetLife';
+import { CITY_LANES, CITY_WALKWAYS } from '../world/kit/cityPlan';
+import { PlayerCharacter, playerRuntime } from '../characters/PlayerCharacter';
+import { CafeOwnerNPC } from '../characters/NPCs/CafeOwnerNPC';
+import { InteractiveGuard } from '../characters/NPCs/InteractiveGuard';
 import { ThirdPersonCamera } from '../camera/ThirdPersonCamera';
-import { WaypointMarker } from '../missions/WaypointMarker';
+import { MissionClients } from '../world/MissionClients';
+import { CustomWaypoint } from '../world/CustomWaypoint';
+import { TailorCounter } from '../world/TailorCounter';
+import { GarageWorld } from '../world/GarageWorld';
+import { Airfield } from '../world/Airfield';
+import { loadGarage } from '../ui/garage/useGarage';
+import { CityAudio } from '../audio/CityAudio';
+import { BarkLayer } from '../world/BarkLayer';
+import { loadBarks } from '../world/barks';
+import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
 
+// The game world: the whole city from the master plan (world/kit/cityPlan.ts), the hand-dressed
+// Market Boulevard core on top, city-wide traffic and a crowd that follows the player,
+// then the story characters, the player and the camera (inside physics, for occlusion rays).
 export const SceneManager: React.FC = () => {
+  const { laptop, owner } = MARKET_LAYOUT.cafe;
+  React.useEffect(() => { loadBarks(); loadGarage(); }, []);
   return (
     <>
       <EnvironmentLighting />
       <Skybox />
 
-      {/* Distant Metropolis Skyline (outside physics bounds) */}
-      <CitySkyline />
-
       <PhysicsWorld>
-        {/* City Streets, Plaza & Sidewalks */}
-        <CityBlock />
+        {/* Ground slab under the whole city */}
+        <City physics />
+        <MarketBoulevard physics streets={false} life={false} />
+        <Traffic lanes={CITY_LANES} />
+        <TrafficLights />
+        <Pedestrians walkways={CITY_WALKWAYS} count={22} focus={playerRuntime.position} />
+        <BarkLayer />
 
-        {/* 3D Blender City Props: Streetlights, Benches, Planters, Vehicles, Billboards */}
-        <WorldProps />
+        {/* Chapter 1 story points */}
+        <WorkstationDesk position={laptop} workstationId="ws_cafe_laptop" />
+        <CafeOwnerNPC position={owner} />
+        <InteractiveGuard position={MARKET_LAYOUT.guard} />
+        {/* Clients from the mission files, plus the waypoint for the tracked job */}
+        <MissionClients />
+        <CustomWaypoint />
+        <TailorCounter />
+        <GarageWorld />
+        <Airfield />
 
-        {/* Key Architectural Buildings */}
-        {/* 1. Education Hub: Academy Building */}
-        <AcademyBuilding position={[0, 0, -25]} />
-
-        {/* 2. Commercial Boulevard: Mama Bisi's Café */}
-        <CafeBuilding position={[25, 0, 15]} />
-
-        {/* 3. Financial District: Meridian Capital Tower */}
-        <FinancialTower position={[-36, 0, 36]} />
-
-        {/* 4. Tech Infrastructure: Data Center Bunker */}
-        <DataCenterBuilding position={[-32, 0, -25]} />
-
-        {/* Dynamic Characters */}
         <PlayerCharacter />
-        <NPCManager />
-
-        {/* Chapter 1 Investigation Waypoint at Cafe Workstation */}
-        <WaypointMarker position={[28, 2.5, 23.5]} label="Mama Bisi's Workstation" />
+        <ThirdPersonCamera />
       </PhysicsWorld>
 
-      {/* Cinematic Third-Person Camera with Occlusion Detection */}
-      <ThirdPersonCamera />
+      <CityAudio />
     </>
   );
 };

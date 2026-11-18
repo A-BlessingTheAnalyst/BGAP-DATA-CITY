@@ -1,10 +1,13 @@
 'use client';
 import { useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { RiggedHumanoid } from '../RiggedHumanoid';
+import { CastMember } from '../../world/kit/CastMember';
+import { CHARACTERS } from '../../world/kit/characters';
 import { InteractionTrigger } from '../../physics/InteractionTrigger';
 import { useGameState } from '../../engine/GameState';
 import { playerRuntime } from '../PlayerCharacter';
+
+const MAMA_BISI = CHARACTERS.find((c) => c.id === 'mama_bisi')!;
 
 export function CafeOwnerNPC({ position }: { position: [number, number, number] }) {
   const speaking = useGameState((s) => s.isDialogueActive && s.activeNpcId === 'npc_mama_bisi');
@@ -27,13 +30,7 @@ export function CafeOwnerNPC({ position }: { position: [number, number, number] 
 
   return (
     <group position={position}>
-      <RiggedHumanoid
-        modelUrl="/assets/characters/mama_bisi.glb"
-        actionName={action}
-        fallbackShirt="#c58137"
-        fallbackSkin="#7c482f"
-        speaking={speaking}
-      />
+      <CastMember def={MAMA_BISI} action={action} />
       <InteractionTrigger
         target={{
           id: 'npc_mama_bisi',

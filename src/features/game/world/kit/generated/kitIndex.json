@@ -1,0 +1,8428 @@
+{
+ "packs": {
+  "kenney-roads": {
+   "name": "City Kit (Roads) 2.2",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/city-kit-roads",
+   "licence": "CC0-1.0",
+   "models": {
+    "construction-barrier": {
+     "url": "/assets/kits/kenney-roads/construction-barrier.glb",
+     "size": [
+      0.136,
+      0.13,
+      0.225
+     ],
+     "min": [
+      -0.068,
+      0,
+      -0.112
+     ],
+     "max": [
+      0.068,
+      0.13,
+      0.112
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "construction-cone": {
+     "url": "/assets/kits/kenney-roads/construction-cone.glb",
+     "size": [
+      0.075,
+      0.094,
+      0.075
+     ],
+     "min": [
+      -0.038,
+      0,
+      -0.038
+     ],
+     "max": [
+      0.038,
+      0.094,
+      0.038
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "construction-fence": {
+     "url": "/assets/kits/kenney-roads/construction-fence.glb",
+     "size": [
+      0.075,
+      0.179,
+      0.375
+     ],
+     "min": [
+      -0.037,
+      0,
+      -0.188
+     ],
+     "max": [
+      0.037,
+      0.179,
+      0.188
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "construction-light": {
+     "url": "/assets/kits/kenney-roads/construction-light.glb",
+     "size": [
+      0.075,
+      0.234,
+      0.075
+     ],
+     "min": [
+      -0.037,
+      0,
+      -0.037
+     ],
+     "max": [
+      0.037,
+      0.234,
+      0.037
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "dumpster": {
+     "url": "/assets/kits/kenney-roads/dumpster.glb",
+     "size": [
+      0.275,
+      0.209,
+      0.37
+     ],
+     "min": [
+      -0.13,
+      0,
+      -0.185
+     ],
+     "max": [
+      0.145,
+      0.209,
+      0.185
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-pole-single": {
+     "url": "/assets/kits/kenney-roads/electricity-pole-single.glb",
+     "size": [
+      0.079,
+      0.525,
+      0.214
+     ],
+     "min": [
+      -0.047,
+      0,
+      -0.107
+     ],
+     "max": [
+      0.032,
+      0.525,
+      0.107
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-pole-wide": {
+     "url": "/assets/kits/kenney-roads/electricity-pole-wide.glb",
+     "size": [
+      1.079,
+      0.525,
+      0.214
+     ],
+     "min": [
+      -0.547,
+      0,
+      -0.107
+     ],
+     "max": [
+      0.532,
+      0.525,
+      0.107
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-pole": {
+     "url": "/assets/kits/kenney-roads/electricity-pole.glb",
+     "size": [
+      0.579,
+      0.525,
+      0.214
+     ],
+     "min": [
+      -0.297,
+      0,
+      -0.107
+     ],
+     "max": [
+      0.282,
+      0.525,
+      0.107
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-side-single": {
+     "url": "/assets/kits/kenney-roads/electricity-side-single.glb",
+     "size": [
+      0.063,
+      0.525,
+      0.431
+     ],
+     "min": [
+      -0.032,
+      0,
+      -0.399
+     ],
+     "max": [
+      0.032,
+      0.525,
+      0.032
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-side-wide": {
+     "url": "/assets/kits/kenney-roads/electricity-side-wide.glb",
+     "size": [
+      1.063,
+      0.525,
+      0.431
+     ],
+     "min": [
+      -0.532,
+      0,
+      -0.139
+     ],
+     "max": [
+      0.532,
+      0.525,
+      0.292
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-side": {
+     "url": "/assets/kits/kenney-roads/electricity-side.glb",
+     "size": [
+      0.563,
+      0.525,
+      0.431
+     ],
+     "min": [
+      -0.282,
+      0,
+      -0.139
+     ],
+     "max": [
+      0.282,
+      0.525,
+      0.292
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-wires-wide": {
+     "url": "/assets/kits/kenney-roads/electricity-wires-wide.glb",
+     "size": [
+      1.007,
+      0.105,
+      0.185
+     ],
+     "min": [
+      -0.536,
+      0.398,
+      -0.092
+     ],
+     "max": [
+      0.472,
+      0.502,
+      0.093
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "electricity-wires": {
+     "url": "/assets/kits/kenney-roads/electricity-wires.glb",
+     "size": [
+      0.506,
+      0.065,
+      0.185
+     ],
+     "min": [
+      -0.285,
+      0.438,
+      -0.092
+     ],
+     "max": [
+      0.221,
+      0.503,
+      0.093
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "light-curved-cross": {
+     "url": "/assets/kits/kenney-roads/light-curved-cross.glb",
+     "size": [
+      0.4,
+      0.675,
+      0.4
+     ],
+     "min": [
+      -0.2,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.2,
+      0.675,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "light-curved-double": {
+     "url": "/assets/kits/kenney-roads/light-curved-double.glb",
+     "size": [
+      0.05,
+      0.675,
+      0.4
+     ],
+     "min": [
+      -0.025,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.025,
+      0.675,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "light-curved": {
+     "url": "/assets/kits/kenney-roads/light-curved.glb",
+     "size": [
+      0.05,
+      0.675,
+      0.225
+     ],
+     "min": [
+      -0.025,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.025,
+      0.675,
+      0.025
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "light-square-cross": {
+     "url": "/assets/kits/kenney-roads/light-square-cross.glb",
+     "size": [
+      0.425,
+      0.6,
+      0.425
+     ],
+     "min": [
+      -0.213,
+      0,
+      -0.213
+     ],
+     "max": [
+      0.213,
+      0.6,
+      0.213
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "light-square-double": {
+     "url": "/assets/kits/kenney-roads/light-square-double.glb",
+     "size": [
+      0.05,
+      0.6,
+      0.425
+     ],
+     "min": [
+      -0.025,
+      0,
+      -0.213
+     ],
+     "max": [
+      0.025,
+      0.6,
+      0.213
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "light-square": {
+     "url": "/assets/kits/kenney-roads/light-square.glb",
+     "size": [
+      0.05,
+      0.6,
+      0.237
+     ],
+     "min": [
+      -0.025,
+      0,
+      -0.212
+     ],
+     "max": [
+      0.025,
+      0.6,
+      0.025
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-bend-barrier": {
+     "url": "/assets/kits/kenney-roads/road-bend-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-bend-sidewalk": {
+     "url": "/assets/kits/kenney-roads/road-bend-sidewalk.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-bend-square-barrier": {
+     "url": "/assets/kits/kenney-roads/road-bend-square-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-bend-square": {
+     "url": "/assets/kits/kenney-roads/road-bend-square.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-bend": {
+     "url": "/assets/kits/kenney-roads/road-bend.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-bridge": {
+     "url": "/assets/kits/kenney-roads/road-bridge.glb",
+     "size": [
+      1,
+      0.52,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.52,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-crossing": {
+     "url": "/assets/kits/kenney-roads/road-crossing.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-crossroad-barrier": {
+     "url": "/assets/kits/kenney-roads/road-crossroad-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-crossroad-line": {
+     "url": "/assets/kits/kenney-roads/road-crossroad-line.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-crossroad-path": {
+     "url": "/assets/kits/kenney-roads/road-crossroad-path.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-crossroad": {
+     "url": "/assets/kits/kenney-roads/road-crossroad.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-curve-barrier": {
+     "url": "/assets/kits/kenney-roads/road-curve-barrier.glb",
+     "size": [
+      2,
+      0.08,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -1
+     ],
+     "max": [
+      1,
+      0.08,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-curve-intersection-barrier": {
+     "url": "/assets/kits/kenney-roads/road-curve-intersection-barrier.glb",
+     "size": [
+      2,
+      0.08,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -1
+     ],
+     "max": [
+      1,
+      0.08,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-curve-intersection": {
+     "url": "/assets/kits/kenney-roads/road-curve-intersection.glb",
+     "size": [
+      2,
+      0.02,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -1
+     ],
+     "max": [
+      1,
+      0.02,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-curve-pavement": {
+     "url": "/assets/kits/kenney-roads/road-curve-pavement.glb",
+     "size": [
+      2,
+      0.02,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -1
+     ],
+     "max": [
+      1,
+      0.02,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-curve": {
+     "url": "/assets/kits/kenney-roads/road-curve.glb",
+     "size": [
+      2,
+      0.02,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -1
+     ],
+     "max": [
+      1,
+      0.02,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-driveway-double-barrier": {
+     "url": "/assets/kits/kenney-roads/road-driveway-double-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-driveway-double": {
+     "url": "/assets/kits/kenney-roads/road-driveway-double.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-driveway-single-barrier": {
+     "url": "/assets/kits/kenney-roads/road-driveway-single-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-driveway-single": {
+     "url": "/assets/kits/kenney-roads/road-driveway-single.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-end-barrier": {
+     "url": "/assets/kits/kenney-roads/road-end-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-end-round-barrier": {
+     "url": "/assets/kits/kenney-roads/road-end-round-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-end-round": {
+     "url": "/assets/kits/kenney-roads/road-end-round.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-end": {
+     "url": "/assets/kits/kenney-roads/road-end.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-intersection-barrier": {
+     "url": "/assets/kits/kenney-roads/road-intersection-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-intersection-line": {
+     "url": "/assets/kits/kenney-roads/road-intersection-line.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-intersection-path": {
+     "url": "/assets/kits/kenney-roads/road-intersection-path.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-intersection": {
+     "url": "/assets/kits/kenney-roads/road-intersection.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-roundabout-barrier": {
+     "url": "/assets/kits/kenney-roads/road-roundabout-barrier.glb",
+     "size": [
+      3,
+      0.08,
+      3
+     ],
+     "min": [
+      -1.5,
+      0,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      0.08,
+      1.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-roundabout": {
+     "url": "/assets/kits/kenney-roads/road-roundabout.glb",
+     "size": [
+      3,
+      0.02,
+      3
+     ],
+     "min": [
+      -1.5,
+      0,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      0.02,
+      1.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-side-barrier": {
+     "url": "/assets/kits/kenney-roads/road-side-barrier.glb",
+     "size": [
+      1.31,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.81,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-side-entry-barrier": {
+     "url": "/assets/kits/kenney-roads/road-side-entry-barrier.glb",
+     "size": [
+      1.31,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.81,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-side-entry": {
+     "url": "/assets/kits/kenney-roads/road-side-entry.glb",
+     "size": [
+      1,
+      0.02,
+      1.31
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.81
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-side-exit-barrier": {
+     "url": "/assets/kits/kenney-roads/road-side-exit-barrier.glb",
+     "size": [
+      1.31,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.81,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-side-exit": {
+     "url": "/assets/kits/kenney-roads/road-side-exit.glb",
+     "size": [
+      1,
+      0.02,
+      1.31
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.81
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-side": {
+     "url": "/assets/kits/kenney-roads/road-side.glb",
+     "size": [
+      1,
+      0.02,
+      1.31
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.81
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-empty-hanging": {
+     "url": "/assets/kits/kenney-roads/road-sign-empty-hanging.glb",
+     "size": [
+      0.09,
+      0.475,
+      0.295
+     ],
+     "min": [
+      -0.045,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.045,
+      0.475,
+      0.045
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-empty": {
+     "url": "/assets/kits/kenney-roads/road-sign-empty.glb",
+     "size": [
+      0.05,
+      0.475,
+      0.05
+     ],
+     "min": [
+      -0.025,
+      0,
+      -0.025
+     ],
+     "max": [
+      0.025,
+      0.475,
+      0.025
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-object-stop": {
+     "url": "/assets/kits/kenney-roads/road-sign-object-stop.glb",
+     "size": [
+      0.077,
+      0.126,
+      0.126
+     ],
+     "min": [
+      -0.04,
+      -0.063,
+      -0.063
+     ],
+     "max": [
+      0.037,
+      0.063,
+      0.063
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-object-street": {
+     "url": "/assets/kits/kenney-roads/road-sign-object-street.glb",
+     "size": [
+      0.042,
+      0.06,
+      0.192
+     ],
+     "min": [
+      -0.021,
+      -0.03,
+      -0.021
+     ],
+     "max": [
+      0.021,
+      0.03,
+      0.171
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-object-warning": {
+     "url": "/assets/kits/kenney-roads/road-sign-object-warning.glb",
+     "size": [
+      0.077,
+      0.134,
+      0.134
+     ],
+     "min": [
+      -0.04,
+      -0.067,
+      -0.067
+     ],
+     "max": [
+      0.038,
+      0.067,
+      0.067
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-stop": {
+     "url": "/assets/kits/kenney-roads/road-sign-stop.glb",
+     "size": [
+      0.078,
+      0.494,
+      0.138
+     ],
+     "min": [
+      -0.051,
+      0,
+      -0.069
+     ],
+     "max": [
+      0.026,
+      0.494,
+      0.069
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-street": {
+     "url": "/assets/kits/kenney-roads/road-sign-street.glb",
+     "size": [
+      0.196,
+      0.475,
+      0.196
+     ],
+     "min": [
+      -0.171,
+      0,
+      -0.025
+     ],
+     "max": [
+      0.025,
+      0.475,
+      0.171
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-sign-warning": {
+     "url": "/assets/kits/kenney-roads/road-sign-warning.glb",
+     "size": [
+      0.077,
+      0.499,
+      0.147
+     ],
+     "min": [
+      -0.051,
+      0,
+      -0.074
+     ],
+     "max": [
+      0.026,
+      0.499,
+      0.074
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-barrier": {
+     "url": "/assets/kits/kenney-roads/road-slant-barrier.glb",
+     "size": [
+      1,
+      0.33,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.33,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-curve-barrier": {
+     "url": "/assets/kits/kenney-roads/road-slant-curve-barrier.glb",
+     "size": [
+      2,
+      0.58,
+      1
+     ],
+     "min": [
+      -1,
+      0,
+      -0.5
+     ],
+     "max": [
+      1,
+      0.58,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-curve": {
+     "url": "/assets/kits/kenney-roads/road-slant-curve.glb",
+     "size": [
+      2,
+      0.52,
+      1
+     ],
+     "min": [
+      -1,
+      0,
+      -0.5
+     ],
+     "max": [
+      1,
+      0.52,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-flat-curve": {
+     "url": "/assets/kits/kenney-roads/road-slant-flat-curve.glb",
+     "size": [
+      2,
+      0.52,
+      1
+     ],
+     "min": [
+      -1,
+      0,
+      -0.5
+     ],
+     "max": [
+      1,
+      0.52,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-flat-high": {
+     "url": "/assets/kits/kenney-roads/road-slant-flat-high.glb",
+     "size": [
+      1,
+      0.52,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.52,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-flat": {
+     "url": "/assets/kits/kenney-roads/road-slant-flat.glb",
+     "size": [
+      1,
+      0.27,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.27,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-high-barrier": {
+     "url": "/assets/kits/kenney-roads/road-slant-high-barrier.glb",
+     "size": [
+      1,
+      0.58,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.58,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant-high": {
+     "url": "/assets/kits/kenney-roads/road-slant-high.glb",
+     "size": [
+      1,
+      0.52,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.52,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-slant": {
+     "url": "/assets/kits/kenney-roads/road-slant.glb",
+     "size": [
+      1,
+      0.27,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.27,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-split-barrier": {
+     "url": "/assets/kits/kenney-roads/road-split-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      2
+     ],
+     "min": [
+      -0.5,
+      0,
+      -1
+     ],
+     "max": [
+      0.5,
+      0.08,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-split": {
+     "url": "/assets/kits/kenney-roads/road-split.glb",
+     "size": [
+      1,
+      0.02,
+      2
+     ],
+     "min": [
+      -0.5,
+      0,
+      -1
+     ],
+     "max": [
+      0.5,
+      0.02,
+      1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-square-barrier": {
+     "url": "/assets/kits/kenney-roads/road-square-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-square": {
+     "url": "/assets/kits/kenney-roads/road-square.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-straight-barrier-end": {
+     "url": "/assets/kits/kenney-roads/road-straight-barrier-end.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-straight-barrier-half": {
+     "url": "/assets/kits/kenney-roads/road-straight-barrier-half.glb",
+     "size": [
+      1,
+      0.08,
+      0.5
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-straight-barrier": {
+     "url": "/assets/kits/kenney-roads/road-straight-barrier.glb",
+     "size": [
+      1,
+      0.08,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.08,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-straight-half": {
+     "url": "/assets/kits/kenney-roads/road-straight-half.glb",
+     "size": [
+      0.5,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.25,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "road-straight": {
+     "url": "/assets/kits/kenney-roads/road-straight.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tile-high": {
+     "url": "/assets/kits/kenney-roads/tile-high.glb",
+     "size": [
+      1,
+      0.25,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.25,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tile-low": {
+     "url": "/assets/kits/kenney-roads/tile-low.glb",
+     "size": [
+      1,
+      0.02,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.02,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tile-slant": {
+     "url": "/assets/kits/kenney-roads/tile-slant.glb",
+     "size": [
+      1,
+      0.27,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.27,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tile-slantHigh": {
+     "url": "/assets/kits/kenney-roads/tile-slantHigh.glb",
+     "size": [
+      1,
+      0.52,
+      1
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.5
+     ],
+     "max": [
+      0.5,
+      0.52,
+      0.5
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "traffic-light-hanging": {
+     "url": "/assets/kits/kenney-roads/traffic-light-hanging.glb",
+     "size": [
+      0.118,
+      0.509,
+      0.295
+     ],
+     "min": [
+      -0.073,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.045,
+      0.509,
+      0.045
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "traffic-light-object-hanging": {
+     "url": "/assets/kits/kenney-roads/traffic-light-object-hanging.glb",
+     "size": [
+      0.098,
+      0.143,
+      0.061
+     ],
+     "min": [
+      -0.06,
+      -0.072,
+      -0.031
+     ],
+     "max": [
+      0.037,
+      0.072,
+      0.031
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "traffic-light-object-horizontal": {
+     "url": "/assets/kits/kenney-roads/traffic-light-object-horizontal.glb",
+     "size": [
+      0.098,
+      0.061,
+      0.143
+     ],
+     "min": [
+      -0.06,
+      -0.031,
+      -0.072
+     ],
+     "max": [
+      0.037,
+      0.031,
+      0.072
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "traffic-light-object-vertical": {
+     "url": "/assets/kits/kenney-roads/traffic-light-object-vertical.glb",
+     "size": [
+      0.098,
+      0.143,
+      0.061
+     ],
+     "min": [
+      -0.06,
+      -0.072,
+      -0.031
+     ],
+     "max": [
+      0.037,
+      0.072,
+      0.031
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "traffic-light": {
+     "url": "/assets/kits/kenney-roads/traffic-light.glb",
+     "size": [
+      0.118,
+      0.515,
+      0.09
+     ],
+     "min": [
+      -0.073,
+      0,
+      -0.045
+     ],
+     "max": [
+      0.045,
+      0.515,
+      0.045
+     ],
+     "animations": [],
+     "skinned": false
+    }
+   }
+  },
+  "kenney-commercial": {
+   "name": "City Kit (Commercial) 2.1",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/city-kit-commercial",
+   "licence": "CC0-1.0",
+   "models": {
+    "building-a": {
+     "url": "/assets/kits/kenney-commercial/building-a.glb",
+     "size": [
+      0.884,
+      1.293,
+      0.94
+     ],
+     "min": [
+      -0.442,
+      0,
+      -0.47
+     ],
+     "max": [
+      0.442,
+      1.293,
+      0.47
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-b": {
+     "url": "/assets/kits/kenney-commercial/building-b.glb",
+     "size": [
+      0.97,
+      1.293,
+      0.94
+     ],
+     "min": [
+      -0.485,
+      0,
+      -0.47
+     ],
+     "max": [
+      0.485,
+      1.293,
+      0.47
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-c": {
+     "url": "/assets/kits/kenney-commercial/building-c.glb",
+     "size": [
+      0.884,
+      0.893,
+      1.09
+     ],
+     "min": [
+      -0.442,
+      0,
+      -0.545
+     ],
+     "max": [
+      0.442,
+      0.893,
+      0.545
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-d": {
+     "url": "/assets/kits/kenney-commercial/building-d.glb",
+     "size": [
+      0.84,
+      1.293,
+      0.9
+     ],
+     "min": [
+      -0.42,
+      0,
+      -0.45
+     ],
+     "max": [
+      0.42,
+      1.293,
+      0.45
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-e": {
+     "url": "/assets/kits/kenney-commercial/building-e.glb",
+     "size": [
+      1.64,
+      0.893,
+      1.008
+     ],
+     "min": [
+      -0.82,
+      0,
+      -0.504
+     ],
+     "max": [
+      0.82,
+      0.893,
+      0.504
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-f": {
+     "url": "/assets/kits/kenney-commercial/building-f.glb",
+     "size": [
+      0.84,
+      1.693,
+      1.03
+     ],
+     "min": [
+      -0.42,
+      0,
+      -0.515
+     ],
+     "max": [
+      0.42,
+      1.693,
+      0.515
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-g": {
+     "url": "/assets/kits/kenney-commercial/building-g.glb",
+     "size": [
+      0.97,
+      1.693,
+      0.922
+     ],
+     "min": [
+      -0.485,
+      0,
+      -0.461
+     ],
+     "max": [
+      0.485,
+      1.693,
+      0.461
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-h": {
+     "url": "/assets/kits/kenney-commercial/building-h.glb",
+     "size": [
+      0.884,
+      1.293,
+      1.008
+     ],
+     "min": [
+      -0.442,
+      0,
+      -0.504
+     ],
+     "max": [
+      0.442,
+      1.293,
+      0.504
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-i": {
+     "url": "/assets/kits/kenney-commercial/building-i.glb",
+     "size": [
+      1.24,
+      1.68,
+      1.302
+     ],
+     "min": [
+      -0.62,
+      0,
+      -0.651
+     ],
+     "max": [
+      0.62,
+      1.68,
+      0.651
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-j": {
+     "url": "/assets/kits/kenney-commercial/building-j.glb",
+     "size": [
+      2.084,
+      1.693,
+      1.34
+     ],
+     "min": [
+      -1.042,
+      0,
+      -0.67
+     ],
+     "max": [
+      1.042,
+      1.693,
+      0.67
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-k": {
+     "url": "/assets/kits/kenney-commercial/building-k.glb",
+     "size": [
+      2.084,
+      1.47,
+      0.942
+     ],
+     "min": [
+      -1.042,
+      0,
+      -0.471
+     ],
+     "max": [
+      1.042,
+      1.47,
+      0.471
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-l": {
+     "url": "/assets/kits/kenney-commercial/building-l.glb",
+     "size": [
+      1.37,
+      2.27,
+      1.402
+     ],
+     "min": [
+      -0.685,
+      0,
+      -0.701
+     ],
+     "max": [
+      0.685,
+      2.27,
+      0.701
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-m": {
+     "url": "/assets/kits/kenney-commercial/building-m.glb",
+     "size": [
+      1.24,
+      3.15,
+      1.242
+     ],
+     "min": [
+      -0.62,
+      0,
+      -0.621
+     ],
+     "max": [
+      0.62,
+      3.15,
+      0.621
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-n": {
+     "url": "/assets/kits/kenney-commercial/building-n.glb",
+     "size": [
+      2.32,
+      2.48,
+      1.82
+     ],
+     "min": [
+      -1.16,
+      0,
+      -0.91
+     ],
+     "max": [
+      1.16,
+      2.48,
+      0.91
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-skyscraper-a": {
+     "url": "/assets/kits/kenney-commercial/building-skyscraper-a.glb",
+     "size": [
+      1.36,
+      2.88,
+      1.36
+     ],
+     "min": [
+      -0.68,
+      0,
+      -0.68
+     ],
+     "max": [
+      0.68,
+      2.88,
+      0.68
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-skyscraper-b": {
+     "url": "/assets/kits/kenney-commercial/building-skyscraper-b.glb",
+     "size": [
+      1.36,
+      4.48,
+      1.36
+     ],
+     "min": [
+      -0.68,
+      0,
+      -0.68
+     ],
+     "max": [
+      0.68,
+      4.48,
+      0.68
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-skyscraper-c": {
+     "url": "/assets/kits/kenney-commercial/building-skyscraper-c.glb",
+     "size": [
+      1.28,
+      4.08,
+      1.388
+     ],
+     "min": [
+      -0.64,
+      0,
+      -0.694
+     ],
+     "max": [
+      0.64,
+      4.08,
+      0.694
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-skyscraper-d": {
+     "url": "/assets/kits/kenney-commercial/building-skyscraper-d.glb",
+     "size": [
+      1.28,
+      5.47,
+      1.388
+     ],
+     "min": [
+      -0.64,
+      0,
+      -0.694
+     ],
+     "max": [
+      0.64,
+      5.47,
+      0.694
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-skyscraper-e": {
+     "url": "/assets/kits/kenney-commercial/building-skyscraper-e.glb",
+     "size": [
+      1.295,
+      4.08,
+      1.242
+     ],
+     "min": [
+      -0.648,
+      0,
+      -0.621
+     ],
+     "max": [
+      0.648,
+      4.08,
+      0.621
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "detail-awning-wide": {
+     "url": "/assets/kits/kenney-commercial/detail-awning-wide.glb",
+     "size": [
+      0.8,
+      0.4,
+      0.148
+     ],
+     "min": [
+      -0.4,
+      0,
+      0.1
+     ],
+     "max": [
+      0.4,
+      0.4,
+      0.248
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "detail-awning": {
+     "url": "/assets/kits/kenney-commercial/detail-awning.glb",
+     "size": [
+      0.4,
+      0.4,
+      0.148
+     ],
+     "min": [
+      -0.2,
+      0,
+      0.1
+     ],
+     "max": [
+      0.2,
+      0.4,
+      0.248
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "detail-overhang-wide": {
+     "url": "/assets/kits/kenney-commercial/detail-overhang-wide.glb",
+     "size": [
+      1,
+      0.4,
+      0.2
+     ],
+     "min": [
+      -0.5,
+      0,
+      0.05
+     ],
+     "max": [
+      0.5,
+      0.4,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "detail-overhang": {
+     "url": "/assets/kits/kenney-commercial/detail-overhang.glb",
+     "size": [
+      0.5,
+      0.4,
+      0.2
+     ],
+     "min": [
+      -0.25,
+      0,
+      0.05
+     ],
+     "max": [
+      0.25,
+      0.4,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "detail-parasol-a": {
+     "url": "/assets/kits/kenney-commercial/detail-parasol-a.glb",
+     "size": [
+      0.346,
+      0.45,
+      0.4
+     ],
+     "min": [
+      -0.173,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.173,
+      0.45,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "detail-parasol-b": {
+     "url": "/assets/kits/kenney-commercial/detail-parasol-b.glb",
+     "size": [
+      0.346,
+      0.45,
+      0.4
+     ],
+     "min": [
+      -0.173,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.173,
+      0.45,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-a": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-a.glb",
+     "size": [
+      0.5,
+      2,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      2,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-b": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-b.glb",
+     "size": [
+      0.5,
+      2.225,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      2.225,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-c": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-c.glb",
+     "size": [
+      0.5,
+      2.25,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      2.25,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-d": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-d.glb",
+     "size": [
+      0.5,
+      1.75,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.75,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-e": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-e.glb",
+     "size": [
+      0.5,
+      1.8,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.8,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-f": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-f.glb",
+     "size": [
+      0.5,
+      2,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      2,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-g": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-g.glb",
+     "size": [
+      0.5,
+      2,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      2,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-h": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-h.glb",
+     "size": [
+      0.5,
+      2.1,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      2.1,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-i": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-i.glb",
+     "size": [
+      0.5,
+      1.775,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.775,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-j": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-j.glb",
+     "size": [
+      0.5,
+      1.75,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.75,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-k": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-k.glb",
+     "size": [
+      0.5,
+      1.55,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.55,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-l": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-l.glb",
+     "size": [
+      0.5,
+      1.85,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.85,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-m": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-m.glb",
+     "size": [
+      0.5,
+      1.975,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      1.975,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-n": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-n.glb",
+     "size": [
+      0.5,
+      0.7,
+      0.5
+     ],
+     "min": [
+      -0.25,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.25,
+      0.7,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-wide-a": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-wide-a.glb",
+     "size": [
+      1,
+      1.1,
+      0.5
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.5,
+      1.1,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "low-detail-building-wide-b": {
+     "url": "/assets/kits/kenney-commercial/low-detail-building-wide-b.glb",
+     "size": [
+      1,
+      1.15,
+      0.5
+     ],
+     "min": [
+      -0.5,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.5,
+      1.15,
+      0.25
+     ],
+     "animations": [],
+     "skinned": false
+    }
+   }
+  },
+  "kenney-suburban": {
+   "name": "City Kit (Suburban) 2.0",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/city-kit-suburban",
+   "licence": "CC0-1.0",
+   "models": {
+    "building-type-a": {
+     "url": "/assets/kits/kenney-suburban/building-type-a.glb",
+     "size": [
+      1.3,
+      0.834,
+      1.028
+     ],
+     "min": [
+      -0.65,
+      0,
+      -0.514
+     ],
+     "max": [
+      0.65,
+      0.834,
+      0.514
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-b": {
+     "url": "/assets/kits/kenney-suburban/building-type-b.glb",
+     "size": [
+      1.828,
+      1.138,
+      1.14
+     ],
+     "min": [
+      -0.914,
+      0,
+      -0.57
+     ],
+     "max": [
+      0.914,
+      1.138,
+      0.57
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-c": {
+     "url": "/assets/kits/kenney-suburban/building-type-c.glb",
+     "size": [
+      1.286,
+      1.034,
+      1.028
+     ],
+     "min": [
+      -0.643,
+      0,
+      -0.514
+     ],
+     "max": [
+      0.643,
+      1.034,
+      0.514
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-d": {
+     "url": "/assets/kits/kenney-suburban/building-type-d.glb",
+     "size": [
+      1.756,
+      1.237,
+      1.028
+     ],
+     "min": [
+      -0.878,
+      0,
+      -0.514
+     ],
+     "max": [
+      0.878,
+      1.237,
+      0.514
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-e": {
+     "url": "/assets/kits/kenney-suburban/building-type-e.glb",
+     "size": [
+      1.3,
+      1.137,
+      1.028
+     ],
+     "min": [
+      -0.65,
+      0,
+      -0.514
+     ],
+     "max": [
+      0.65,
+      1.137,
+      0.514
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-f": {
+     "url": "/assets/kits/kenney-suburban/building-type-f.glb",
+     "size": [
+      1.428,
+      1.138,
+      1.406
+     ],
+     "min": [
+      -0.714,
+      0,
+      -0.703
+     ],
+     "max": [
+      0.714,
+      1.138,
+      0.703
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-g": {
+     "url": "/assets/kits/kenney-suburban/building-type-g.glb",
+     "size": [
+      1.45,
+      0.768,
+      1.178
+     ],
+     "min": [
+      -0.725,
+      0,
+      -0.589
+     ],
+     "max": [
+      0.725,
+      0.768,
+      0.589
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-h": {
+     "url": "/assets/kits/kenney-suburban/building-type-h.glb",
+     "size": [
+      1.3,
+      0.738,
+      0.916
+     ],
+     "min": [
+      -0.65,
+      0,
+      -0.458
+     ],
+     "max": [
+      0.65,
+      0.738,
+      0.458
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-i": {
+     "url": "/assets/kits/kenney-suburban/building-type-i.glb",
+     "size": [
+      1.286,
+      0.738,
+      1.028
+     ],
+     "min": [
+      -0.643,
+      0,
+      -0.514
+     ],
+     "max": [
+      0.643,
+      0.738,
+      0.514
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-j": {
+     "url": "/assets/kits/kenney-suburban/building-type-j.glb",
+     "size": [
+      1.37,
+      1.038,
+      0.916
+     ],
+     "min": [
+      -0.685,
+      0,
+      -0.458
+     ],
+     "max": [
+      0.685,
+      1.038,
+      0.458
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-k": {
+     "url": "/assets/kits/kenney-suburban/building-type-k.glb",
+     "size": [
+      0.921,
+      1.15,
+      1.02
+     ],
+     "min": [
+      -0.46,
+      0,
+      -0.51
+     ],
+     "max": [
+      0.46,
+      1.15,
+      0.51
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-l": {
+     "url": "/assets/kits/kenney-suburban/building-type-l.glb",
+     "size": [
+      1.034,
+      1.049,
+      1.02
+     ],
+     "min": [
+      -0.517,
+      0,
+      -0.51
+     ],
+     "max": [
+      0.517,
+      1.049,
+      0.51
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-m": {
+     "url": "/assets/kits/kenney-suburban/building-type-m.glb",
+     "size": [
+      1.428,
+      0.737,
+      1.428
+     ],
+     "min": [
+      -0.714,
+      0,
+      -0.714
+     ],
+     "max": [
+      0.714,
+      0.737,
+      0.714
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-n": {
+     "url": "/assets/kits/kenney-suburban/building-type-n.glb",
+     "size": [
+      1.784,
+      1.138,
+      1.378
+     ],
+     "min": [
+      -0.892,
+      0,
+      -0.689
+     ],
+     "max": [
+      0.892,
+      1.138,
+      0.689
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-o": {
+     "url": "/assets/kits/kenney-suburban/building-type-o.glb",
+     "size": [
+      1.27,
+      1.137,
+      1.028
+     ],
+     "min": [
+      -0.635,
+      0,
+      -0.514
+     ],
+     "max": [
+      0.635,
+      1.137,
+      0.514
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-p": {
+     "url": "/assets/kits/kenney-suburban/building-type-p.glb",
+     "size": [
+      1.24,
+      0.918,
+      0.99
+     ],
+     "min": [
+      -0.62,
+      0,
+      -0.495
+     ],
+     "max": [
+      0.62,
+      0.918,
+      0.495
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-q": {
+     "url": "/assets/kits/kenney-suburban/building-type-q.glb",
+     "size": [
+      1.24,
+      0.918,
+      0.886
+     ],
+     "min": [
+      -0.62,
+      0,
+      -0.422
+     ],
+     "max": [
+      0.62,
+      0.918,
+      0.464
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-r": {
+     "url": "/assets/kits/kenney-suburban/building-type-r.glb",
+     "size": [
+      1.028,
+      1.141,
+      1.02
+     ],
+     "min": [
+      -0.514,
+      0,
+      -0.51
+     ],
+     "max": [
+      0.514,
+      1.141,
+      0.51
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-s": {
+     "url": "/assets/kits/kenney-suburban/building-type-s.glb",
+     "size": [
+      1.406,
+      1.138,
+      1.086
+     ],
+     "min": [
+      -0.703,
+      0,
+      -0.543
+     ],
+     "max": [
+      0.703,
+      1.138,
+      0.543
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-t": {
+     "url": "/assets/kits/kenney-suburban/building-type-t.glb",
+     "size": [
+      1.314,
+      1.156,
+      1.406
+     ],
+     "min": [
+      -0.664,
+      0,
+      -0.703
+     ],
+     "max": [
+      0.65,
+      1.156,
+      0.703
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "building-type-u": {
+     "url": "/assets/kits/kenney-suburban/building-type-u.glb",
+     "size": [
+      1.428,
+      1.138,
+      1.087
+     ],
+     "min": [
+      -0.714,
+      0,
+      -0.544
+     ],
+     "max": [
+      0.714,
+      1.138,
+      0.544
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "driveway-long": {
+     "url": "/assets/kits/kenney-suburban/driveway-long.glb",
+     "size": [
+      0.36,
+      0.01,
+      0.4
+     ],
+     "min": [
+      -0.18,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.18,
+      0.01,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "driveway-short": {
+     "url": "/assets/kits/kenney-suburban/driveway-short.glb",
+     "size": [
+      0.36,
+      0.01,
+      0.2
+     ],
+     "min": [
+      -0.18,
+      0,
+      -0.1
+     ],
+     "max": [
+      0.18,
+      0.01,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-1x2": {
+     "url": "/assets/kits/kenney-suburban/fence-1x2.glb",
+     "size": [
+      0.875,
+      0.27,
+      0.438
+     ],
+     "min": [
+      -0.437,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.438,
+      0.27,
+      0.238
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-1x3": {
+     "url": "/assets/kits/kenney-suburban/fence-1x3.glb",
+     "size": [
+      1.275,
+      0.27,
+      0.438
+     ],
+     "min": [
+      -0.638,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.638,
+      0.27,
+      0.238
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-1x4": {
+     "url": "/assets/kits/kenney-suburban/fence-1x4.glb",
+     "size": [
+      1.675,
+      0.27,
+      0.437
+     ],
+     "min": [
+      -0.838,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.838,
+      0.27,
+      0.237
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-2x2": {
+     "url": "/assets/kits/kenney-suburban/fence-2x2.glb",
+     "size": [
+      0.875,
+      0.27,
+      0.838
+     ],
+     "min": [
+      -0.437,
+      0,
+      -0.4
+     ],
+     "max": [
+      0.438,
+      0.27,
+      0.438
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-2x3": {
+     "url": "/assets/kits/kenney-suburban/fence-2x3.glb",
+     "size": [
+      1.275,
+      0.27,
+      0.837
+     ],
+     "min": [
+      -0.638,
+      0,
+      -0.4
+     ],
+     "max": [
+      0.638,
+      0.27,
+      0.437
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-3x2": {
+     "url": "/assets/kits/kenney-suburban/fence-3x2.glb",
+     "size": [
+      0.875,
+      0.27,
+      1.238
+     ],
+     "min": [
+      -0.438,
+      0,
+      -0.6
+     ],
+     "max": [
+      0.438,
+      0.27,
+      0.638
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-3x3": {
+     "url": "/assets/kits/kenney-suburban/fence-3x3.glb",
+     "size": [
+      1.275,
+      0.27,
+      1.237
+     ],
+     "min": [
+      -0.638,
+      0,
+      -0.6
+     ],
+     "max": [
+      0.638,
+      0.27,
+      0.637
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence-low": {
+     "url": "/assets/kits/kenney-suburban/fence-low.glb",
+     "size": [
+      1.275,
+      0.17,
+      0.837
+     ],
+     "min": [
+      -0.638,
+      0,
+      -0.437
+     ],
+     "max": [
+      0.638,
+      0.17,
+      0.4
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "fence": {
+     "url": "/assets/kits/kenney-suburban/fence.glb",
+     "size": [
+      0.475,
+      0.27,
+      0.075
+     ],
+     "min": [
+      -0.238,
+      0,
+      -0.037
+     ],
+     "max": [
+      0.238,
+      0.27,
+      0.037
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "path-long": {
+     "url": "/assets/kits/kenney-suburban/path-long.glb",
+     "size": [
+      0.2,
+      0.01,
+      0.4
+     ],
+     "min": [
+      -0.1,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.1,
+      0.01,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "path-short": {
+     "url": "/assets/kits/kenney-suburban/path-short.glb",
+     "size": [
+      0.2,
+      0.01,
+      0.2
+     ],
+     "min": [
+      -0.1,
+      0,
+      -0.1
+     ],
+     "max": [
+      0.1,
+      0.01,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "path-stones-long": {
+     "url": "/assets/kits/kenney-suburban/path-stones-long.glb",
+     "size": [
+      0.14,
+      0.01,
+      0.4
+     ],
+     "min": [
+      -0.07,
+      0,
+      -0.2
+     ],
+     "max": [
+      0.07,
+      0.01,
+      0.2
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "path-stones-messy": {
+     "url": "/assets/kits/kenney-suburban/path-stones-messy.glb",
+     "size": [
+      0.156,
+      0.01,
+      0.361
+     ],
+     "min": [
+      -0.078,
+      0,
+      -0.181
+     ],
+     "max": [
+      0.078,
+      0.01,
+      0.181
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "path-stones-short": {
+     "url": "/assets/kits/kenney-suburban/path-stones-short.glb",
+     "size": [
+      0.14,
+      0.01,
+      0.2
+     ],
+     "min": [
+      -0.07,
+      0,
+      -0.1
+     ],
+     "max": [
+      0.07,
+      0.01,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "planter": {
+     "url": "/assets/kits/kenney-suburban/planter.glb",
+     "size": [
+      0.4,
+      0.177,
+      0.3
+     ],
+     "min": [
+      -0.2,
+      0,
+      -0.151
+     ],
+     "max": [
+      0.2,
+      0.177,
+      0.149
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree-large": {
+     "url": "/assets/kits/kenney-suburban/tree-large.glb",
+     "size": [
+      0.21,
+      0.767,
+      0.243
+     ],
+     "min": [
+      -0.105,
+      0,
+      -0.121
+     ],
+     "max": [
+      0.105,
+      0.767,
+      0.121
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree-small": {
+     "url": "/assets/kits/kenney-suburban/tree-small.glb",
+     "size": [
+      0.21,
+      0.567,
+      0.243
+     ],
+     "min": [
+      -0.105,
+      0,
+      -0.121
+     ],
+     "max": [
+      0.105,
+      0.567,
+      0.121
+     ],
+     "animations": [],
+     "skinned": false
+    }
+   }
+  },
+  "kenney-cars": {
+   "name": "Car Kit 3.1",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/car-kit",
+   "licence": "CC0-1.0",
+   "models": {
+    "ambulance": {
+     "url": "/assets/kits/kenney-cars/ambulance.glb",
+     "size": [
+      1.5,
+      1.8,
+      3.25
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.65
+     ],
+     "max": [
+      0.75,
+      1.8,
+      1.6
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "box": {
+     "url": "/assets/kits/kenney-cars/box.glb",
+     "size": [
+      0.715,
+      0.715,
+      0.715
+     ],
+     "min": [
+      -0.357,
+      0,
+      -0.357
+     ],
+     "max": [
+      0.357,
+      0.715,
+      0.357
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "cone-flat": {
+     "url": "/assets/kits/kenney-cars/cone-flat.glb",
+     "size": [
+      0.476,
+      0.281,
+      0.476
+     ],
+     "min": [
+      -0.238,
+      0,
+      -0.238
+     ],
+     "max": [
+      0.238,
+      0.281,
+      0.238
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "cone": {
+     "url": "/assets/kits/kenney-cars/cone.glb",
+     "size": [
+      0.476,
+      0.595,
+      0.476
+     ],
+     "min": [
+      -0.238,
+      0,
+      -0.238
+     ],
+     "max": [
+      0.238,
+      0.595,
+      0.238
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "delivery-flat": {
+     "url": "/assets/kits/kenney-cars/delivery-flat.glb",
+     "size": [
+      1.5,
+      1.35,
+      3.25
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.65
+     ],
+     "max": [
+      0.75,
+      1.35,
+      1.6
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "delivery": {
+     "url": "/assets/kits/kenney-cars/delivery.glb",
+     "size": [
+      1.5,
+      1.65,
+      3.25
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.65
+     ],
+     "max": [
+      0.75,
+      1.65,
+      1.6
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "firetruck": {
+     "url": "/assets/kits/kenney-cars/firetruck.glb",
+     "size": [
+      1.5,
+      1.7,
+      3.4
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.7
+     ],
+     "max": [
+      0.75,
+      1.7,
+      1.7
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "garbage-truck": {
+     "url": "/assets/kits/kenney-cars/garbage-truck.glb",
+     "size": [
+      1.6,
+      1.6,
+      3.45
+     ],
+     "min": [
+      -0.8,
+      0,
+      -1.7
+     ],
+     "max": [
+      0.8,
+      1.6,
+      1.75
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "hatchback-sports": {
+     "url": "/assets/kits/kenney-cars/hatchback-sports.glb",
+     "size": [
+      1.3,
+      1.1,
+      2.85
+     ],
+     "min": [
+      -0.65,
+      0,
+      -1.45
+     ],
+     "max": [
+      0.65,
+      1.1,
+      1.4
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "police": {
+     "url": "/assets/kits/kenney-cars/police.glb",
+     "size": [
+      1.5,
+      1.3,
+      3.1
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.55
+     ],
+     "max": [
+      0.75,
+      1.3,
+      1.55
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "sedan-sports": {
+     "url": "/assets/kits/kenney-cars/sedan-sports.glb",
+     "size": [
+      1.3,
+      1.1,
+      2.55
+     ],
+     "min": [
+      -0.65,
+      0,
+      -1.3
+     ],
+     "max": [
+      0.65,
+      1.1,
+      1.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "sedan": {
+     "url": "/assets/kits/kenney-cars/sedan.glb",
+     "size": [
+      1.5,
+      1.3,
+      2.55
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.3
+     ],
+     "max": [
+      0.75,
+      1.3,
+      1.25
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "suv-luxury": {
+     "url": "/assets/kits/kenney-cars/suv-luxury.glb",
+     "size": [
+      1.5,
+      1.3,
+      2.85
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.4
+     ],
+     "max": [
+      0.75,
+      1.3,
+      1.45
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "suv": {
+     "url": "/assets/kits/kenney-cars/suv.glb",
+     "size": [
+      1.5,
+      1.3,
+      2.7
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.35
+     ],
+     "max": [
+      0.75,
+      1.3,
+      1.35
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "taxi": {
+     "url": "/assets/kits/kenney-cars/taxi.glb",
+     "size": [
+      1.5,
+      1.5,
+      2.75
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.4
+     ],
+     "max": [
+      0.75,
+      1.5,
+      1.35
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "truck-flat": {
+     "url": "/assets/kits/kenney-cars/truck-flat.glb",
+     "size": [
+      1.5,
+      1.3,
+      2.745
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.373
+     ],
+     "max": [
+      0.75,
+      1.3,
+      1.373
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "truck": {
+     "url": "/assets/kits/kenney-cars/truck.glb",
+     "size": [
+      1.5,
+      1.3,
+      2.95
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.5
+     ],
+     "max": [
+      0.75,
+      1.3,
+      1.45
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "van": {
+     "url": "/assets/kits/kenney-cars/van.glb",
+     "size": [
+      1.5,
+      1.35,
+      2.75
+     ],
+     "min": [
+      -0.75,
+      0,
+      -1.4
+     ],
+     "max": [
+      0.75,
+      1.35,
+      1.35
+     ],
+     "animations": [],
+     "skinned": false
+    }
+   }
+  },
+  "kenney-nature": {
+   "name": "Nature Kit 1.0",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/nature-kit",
+   "licence": "CC0-1.0",
+   "models": {
+    "flower_purpleA": {
+     "url": "/assets/kits/kenney-nature/flower_purpleA.glb",
+     "size": [
+      0.159,
+      0.242,
+      0.181
+     ],
+     "min": [
+      -0.105,
+      -0.05,
+      -0.091
+     ],
+     "max": [
+      0.055,
+      0.192,
+      0.091
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_purpleB": {
+     "url": "/assets/kits/kenney-nature/flower_purpleB.glb",
+     "size": [
+      0.207,
+      0.208,
+      0.239
+     ],
+     "min": [
+      -0.129,
+      -0.05,
+      -0.12
+     ],
+     "max": [
+      0.079,
+      0.158,
+      0.12
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_purpleC": {
+     "url": "/assets/kits/kenney-nature/flower_purpleC.glb",
+     "size": [
+      0.181,
+      0.183,
+      0.181
+     ],
+     "min": [
+      -0.105,
+      -0.05,
+      -0.091
+     ],
+     "max": [
+      0.076,
+      0.133,
+      0.091
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_redA": {
+     "url": "/assets/kits/kenney-nature/flower_redA.glb",
+     "size": [
+      0.159,
+      0.292,
+      0.181
+     ],
+     "min": [
+      -0.105,
+      -0.05,
+      -0.091
+     ],
+     "max": [
+      0.055,
+      0.242,
+      0.091
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_redB": {
+     "url": "/assets/kits/kenney-nature/flower_redB.glb",
+     "size": [
+      0.207,
+      0.258,
+      0.239
+     ],
+     "min": [
+      -0.129,
+      -0.05,
+      -0.12
+     ],
+     "max": [
+      0.079,
+      0.208,
+      0.12
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_redC": {
+     "url": "/assets/kits/kenney-nature/flower_redC.glb",
+     "size": [
+      0.181,
+      0.233,
+      0.181
+     ],
+     "min": [
+      -0.105,
+      -0.05,
+      -0.091
+     ],
+     "max": [
+      0.076,
+      0.183,
+      0.091
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_yellowA": {
+     "url": "/assets/kits/kenney-nature/flower_yellowA.glb",
+     "size": [
+      0.159,
+      0.192,
+      0.181
+     ],
+     "min": [
+      -0.105,
+      -0.05,
+      -0.091
+     ],
+     "max": [
+      0.055,
+      0.142,
+      0.091
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_yellowB": {
+     "url": "/assets/kits/kenney-nature/flower_yellowB.glb",
+     "size": [
+      0.207,
+      0.158,
+      0.239
+     ],
+     "min": [
+      -0.129,
+      -0.05,
+      -0.12
+     ],
+     "max": [
+      0.079,
+      0.108,
+      0.12
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "flower_yellowC": {
+     "url": "/assets/kits/kenney-nature/flower_yellowC.glb",
+     "size": [
+      0.181,
+      0.132,
+      0.181
+     ],
+     "min": [
+      -0.105,
+      -0.05,
+      -0.091
+     ],
+     "max": [
+      0.076,
+      0.082,
+      0.091
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "grass": {
+     "url": "/assets/kits/kenney-nature/grass.glb",
+     "size": [
+      0.381,
+      0.254,
+      0.392
+     ],
+     "min": [
+      -0.199,
+      -0.05,
+      -0.239
+     ],
+     "max": [
+      0.182,
+      0.204,
+      0.153
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "grass_large": {
+     "url": "/assets/kits/kenney-nature/grass_large.glb",
+     "size": [
+      0.409,
+      0.254,
+      0.408
+     ],
+     "min": [
+      -0.199,
+      -0.05,
+      -0.212
+     ],
+     "max": [
+      0.21,
+      0.204,
+      0.196
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "grass_leafs": {
+     "url": "/assets/kits/kenney-nature/grass_leafs.glb",
+     "size": [
+      0.234,
+      0.142,
+      0.257
+     ],
+     "min": [
+      -0.123,
+      -0.05,
+      -0.133
+     ],
+     "max": [
+      0.111,
+      0.092,
+      0.124
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "grass_leafsLarge": {
+     "url": "/assets/kits/kenney-nature/grass_leafsLarge.glb",
+     "size": [
+      0.476,
+      0.142,
+      0.487
+     ],
+     "min": [
+      -0.242,
+      -0.05,
+      -0.243
+     ],
+     "max": [
+      0.234,
+      0.092,
+      0.244
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_bush": {
+     "url": "/assets/kits/kenney-nature/plant_bush.glb",
+     "size": [
+      0.396,
+      0.244,
+      0.396
+     ],
+     "min": [
+      -0.198,
+      -0.05,
+      -0.198
+     ],
+     "max": [
+      0.198,
+      0.194,
+      0.198
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_bushDetailed": {
+     "url": "/assets/kits/kenney-nature/plant_bushDetailed.glb",
+     "size": [
+      0.603,
+      0.36,
+      0.603
+     ],
+     "min": [
+      -0.301,
+      -0.05,
+      -0.301
+     ],
+     "max": [
+      0.301,
+      0.31,
+      0.301
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_bushLarge": {
+     "url": "/assets/kits/kenney-nature/plant_bushLarge.glb",
+     "size": [
+      0.374,
+      0.243,
+      0.336
+     ],
+     "min": [
+      -0.187,
+      -0.05,
+      -0.168
+     ],
+     "max": [
+      0.187,
+      0.193,
+      0.168
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_bushLargeTriangle": {
+     "url": "/assets/kits/kenney-nature/plant_bushLargeTriangle.glb",
+     "size": [
+      0.408,
+      0.169,
+      0.471
+     ],
+     "min": [
+      -0.251,
+      -0.05,
+      -0.235
+     ],
+     "max": [
+      0.157,
+      0.119,
+      0.235
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_bushSmall": {
+     "url": "/assets/kits/kenney-nature/plant_bushSmall.glb",
+     "size": [
+      0.383,
+      0.207,
+      0.336
+     ],
+     "min": [
+      -0.191,
+      -0.05,
+      -0.168
+     ],
+     "max": [
+      0.191,
+      0.157,
+      0.168
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_bushTriangle": {
+     "url": "/assets/kits/kenney-nature/plant_bushTriangle.glb",
+     "size": [
+      0.364,
+      0.296,
+      0.414
+     ],
+     "min": [
+      -0.239,
+      -0.05,
+      -0.207
+     ],
+     "max": [
+      0.126,
+      0.246,
+      0.207
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_flatShort": {
+     "url": "/assets/kits/kenney-nature/plant_flatShort.glb",
+     "size": [
+      0.278,
+      0.235,
+      0.278
+     ],
+     "min": [
+      -0.139,
+      -0.05,
+      -0.139
+     ],
+     "max": [
+      0.139,
+      0.185,
+      0.139
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "plant_flatTall": {
+     "url": "/assets/kits/kenney-nature/plant_flatTall.glb",
+     "size": [
+      0.272,
+      0.284,
+      0.272
+     ],
+     "min": [
+      -0.136,
+      -0.05,
+      -0.136
+     ],
+     "max": [
+      0.136,
+      0.234,
+      0.136
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "pot_large": {
+     "url": "/assets/kits/kenney-nature/pot_large.glb",
+     "size": [
+      0.564,
+      0.2,
+      0.488
+     ],
+     "min": [
+      -0.282,
+      -0.05,
+      -0.244
+     ],
+     "max": [
+      0.282,
+      0.15,
+      0.244
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "pot_small": {
+     "url": "/assets/kits/kenney-nature/pot_small.glb",
+     "size": [
+      0.323,
+      0.268,
+      0.28
+     ],
+     "min": [
+      -0.162,
+      -0.05,
+      -0.14
+     ],
+     "max": [
+      0.162,
+      0.218,
+      0.14
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallA": {
+     "url": "/assets/kits/kenney-nature/rock_smallA.glb",
+     "size": [
+      0.361,
+      0.191,
+      0.361
+     ],
+     "min": [
+      -0.18,
+      -0.05,
+      -0.18
+     ],
+     "max": [
+      0.18,
+      0.141,
+      0.18
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallB": {
+     "url": "/assets/kits/kenney-nature/rock_smallB.glb",
+     "size": [
+      0.361,
+      0.177,
+      0.361
+     ],
+     "min": [
+      -0.18,
+      -0.05,
+      -0.18
+     ],
+     "max": [
+      0.18,
+      0.127,
+      0.18
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallC": {
+     "url": "/assets/kits/kenney-nature/rock_smallC.glb",
+     "size": [
+      0.361,
+      0.123,
+      0.361
+     ],
+     "min": [
+      -0.18,
+      -0.05,
+      -0.18
+     ],
+     "max": [
+      0.18,
+      0.073,
+      0.18
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallD": {
+     "url": "/assets/kits/kenney-nature/rock_smallD.glb",
+     "size": [
+      0.426,
+      0.231,
+      0.369
+     ],
+     "min": [
+      -0.213,
+      -0.05,
+      -0.184
+     ],
+     "max": [
+      0.213,
+      0.181,
+      0.184
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallE": {
+     "url": "/assets/kits/kenney-nature/rock_smallE.glb",
+     "size": [
+      0.361,
+      0.256,
+      0.312
+     ],
+     "min": [
+      -0.18,
+      -0.05,
+      -0.156
+     ],
+     "max": [
+      0.18,
+      0.206,
+      0.156
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallF": {
+     "url": "/assets/kits/kenney-nature/rock_smallF.glb",
+     "size": [
+      0.354,
+      0.245,
+      0.306
+     ],
+     "min": [
+      -0.177,
+      -0.05,
+      -0.153
+     ],
+     "max": [
+      0.177,
+      0.195,
+      0.153
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallFlatA": {
+     "url": "/assets/kits/kenney-nature/rock_smallFlatA.glb",
+     "size": [
+      0.496,
+      0.065,
+      0.43
+     ],
+     "min": [
+      -0.248,
+      -0.05,
+      -0.215
+     ],
+     "max": [
+      0.248,
+      0.015,
+      0.215
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallFlatB": {
+     "url": "/assets/kits/kenney-nature/rock_smallFlatB.glb",
+     "size": [
+      0.43,
+      0.065,
+      0.402
+     ],
+     "min": [
+      -0.215,
+      -0.05,
+      -0.201
+     ],
+     "max": [
+      0.215,
+      0.015,
+      0.201
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallFlatC": {
+     "url": "/assets/kits/kenney-nature/rock_smallFlatC.glb",
+     "size": [
+      0.47,
+      0.065,
+      0.36
+     ],
+     "min": [
+      -0.235,
+      -0.05,
+      -0.18
+     ],
+     "max": [
+      0.235,
+      0.015,
+      0.18
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallG": {
+     "url": "/assets/kits/kenney-nature/rock_smallG.glb",
+     "size": [
+      0.594,
+      0.245,
+      0.686
+     ],
+     "min": [
+      -0.297,
+      -0.05,
+      -0.343
+     ],
+     "max": [
+      0.297,
+      0.195,
+      0.343
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallH": {
+     "url": "/assets/kits/kenney-nature/rock_smallH.glb",
+     "size": [
+      0.462,
+      0.407,
+      0.462
+     ],
+     "min": [
+      -0.231,
+      -0.05,
+      -0.231
+     ],
+     "max": [
+      0.231,
+      0.357,
+      0.231
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallI": {
+     "url": "/assets/kits/kenney-nature/rock_smallI.glb",
+     "size": [
+      0.358,
+      0.278,
+      0.414
+     ],
+     "min": [
+      -0.179,
+      -0.05,
+      -0.207
+     ],
+     "max": [
+      0.179,
+      0.228,
+      0.207
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallTopA": {
+     "url": "/assets/kits/kenney-nature/rock_smallTopA.glb",
+     "size": [
+      0.488,
+      0.22,
+      0.489
+     ],
+     "min": [
+      -0.244,
+      -0.05,
+      -0.245
+     ],
+     "max": [
+      0.244,
+      0.17,
+      0.245
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "rock_smallTopB": {
+     "url": "/assets/kits/kenney-nature/rock_smallTopB.glb",
+     "size": [
+      0.622,
+      0.28,
+      0.646
+     ],
+     "min": [
+      -0.311,
+      -0.05,
+      -0.323
+     ],
+     "max": [
+      0.311,
+      0.23,
+      0.323
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_default": {
+     "url": "/assets/kits/kenney-nature/tree_default.glb",
+     "size": [
+      0.755,
+      1.708,
+      0.654
+     ],
+     "min": [
+      -0.377,
+      -0.05,
+      -0.327
+     ],
+     "max": [
+      0.377,
+      1.658,
+      0.327
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_default_dark": {
+     "url": "/assets/kits/kenney-nature/tree_default_dark.glb",
+     "size": [
+      0.755,
+      1.708,
+      0.654
+     ],
+     "min": [
+      -0.377,
+      -0.05,
+      -0.327
+     ],
+     "max": [
+      0.377,
+      1.658,
+      0.327
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_default_fall": {
+     "url": "/assets/kits/kenney-nature/tree_default_fall.glb",
+     "size": [
+      0.755,
+      1.708,
+      0.654
+     ],
+     "min": [
+      -0.377,
+      -0.05,
+      -0.327
+     ],
+     "max": [
+      0.377,
+      1.658,
+      0.327
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_detailed": {
+     "url": "/assets/kits/kenney-nature/tree_detailed.glb",
+     "size": [
+      0.847,
+      1.332,
+      0.762
+     ],
+     "min": [
+      -0.433,
+      -0.05,
+      -0.372
+     ],
+     "max": [
+      0.415,
+      1.282,
+      0.389
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_fat": {
+     "url": "/assets/kits/kenney-nature/tree_fat.glb",
+     "size": [
+      0.755,
+      1.15,
+      0.654
+     ],
+     "min": [
+      -0.378,
+      -0.05,
+      -0.327
+     ],
+     "max": [
+      0.378,
+      1.1,
+      0.327
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_fat_darkh": {
+     "url": "/assets/kits/kenney-nature/tree_fat_darkh.glb",
+     "size": [
+      0.755,
+      1.15,
+      0.654
+     ],
+     "min": [
+      -0.378,
+      -0.05,
+      -0.327
+     ],
+     "max": [
+      0.378,
+      1.1,
+      0.327
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_fat_fall": {
+     "url": "/assets/kits/kenney-nature/tree_fat_fall.glb",
+     "size": [
+      0.755,
+      1.15,
+      0.654
+     ],
+     "min": [
+      -0.378,
+      -0.05,
+      -0.327
+     ],
+     "max": [
+      0.378,
+      1.1,
+      0.327
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_oak": {
+     "url": "/assets/kits/kenney-nature/tree_oak.glb",
+     "size": [
+      0.641,
+      1.226,
+      0.74
+     ],
+     "min": [
+      -0.32,
+      -0.05,
+      -0.37
+     ],
+     "max": [
+      0.32,
+      1.176,
+      0.37
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_oak_dark": {
+     "url": "/assets/kits/kenney-nature/tree_oak_dark.glb",
+     "size": [
+      0.641,
+      1.226,
+      0.74
+     ],
+     "min": [
+      -0.32,
+      -0.05,
+      -0.37
+     ],
+     "max": [
+      0.32,
+      1.176,
+      0.37
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_oak_fall": {
+     "url": "/assets/kits/kenney-nature/tree_oak_fall.glb",
+     "size": [
+      0.641,
+      1.226,
+      0.74
+     ],
+     "min": [
+      -0.32,
+      -0.05,
+      -0.37
+     ],
+     "max": [
+      0.32,
+      1.176,
+      0.37
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_palm": {
+     "url": "/assets/kits/kenney-nature/tree_palm.glb",
+     "size": [
+      0.935,
+      1.515,
+      1.013
+     ],
+     "min": [
+      -0.468,
+      -0.05,
+      -0.506
+     ],
+     "max": [
+      0.468,
+      1.465,
+      0.506
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_palmBend": {
+     "url": "/assets/kits/kenney-nature/tree_palmBend.glb",
+     "size": [
+      0.935,
+      1.38,
+      1.013
+     ],
+     "min": [
+      -0.468,
+      -0.05,
+      -0.506
+     ],
+     "max": [
+      0.468,
+      1.33,
+      0.506
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_palmDetailedShort": {
+     "url": "/assets/kits/kenney-nature/tree_palmDetailedShort.glb",
+     "size": [
+      1.034,
+      1.124,
+      1.034
+     ],
+     "min": [
+      -0.517,
+      -0.05,
+      -0.515
+     ],
+     "max": [
+      0.517,
+      1.074,
+      0.52
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_palmDetailedTall": {
+     "url": "/assets/kits/kenney-nature/tree_palmDetailedTall.glb",
+     "size": [
+      1.034,
+      1.423,
+      1.034
+     ],
+     "min": [
+      -0.517,
+      -0.05,
+      -0.515
+     ],
+     "max": [
+      0.517,
+      1.373,
+      0.52
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_palmShort": {
+     "url": "/assets/kits/kenney-nature/tree_palmShort.glb",
+     "size": [
+      1.034,
+      1.056,
+      1.034
+     ],
+     "min": [
+      -0.517,
+      -0.05,
+      -0.515
+     ],
+     "max": [
+      0.517,
+      1.006,
+      0.52
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_palmTall": {
+     "url": "/assets/kits/kenney-nature/tree_palmTall.glb",
+     "size": [
+      1.034,
+      1.356,
+      1.034
+     ],
+     "min": [
+      -0.517,
+      -0.05,
+      -0.515
+     ],
+     "max": [
+      0.517,
+      1.306,
+      0.52
+     ],
+     "animations": [],
+     "skinned": false
+    },
+    "tree_small": {
+     "url": "/assets/kits/kenney-nature/tree_small.glb",
+     "size": [
+      0.355,
+      1.11,
+      0.41
+     ],
+     "min": [
+      -0.177,
+      -0.05,
+      -0.205
+     ],
+     "max": [
+      0.177,
+      1.06,
+      0.205
+     ],
+     "animations": [],
+     "skinned": false
+    }
+   }
+  },
+  "quaternius-characters": {
+   "name": "Universal Base Characters (Standard)",
+   "author": "Quaternius",
+   "url": "https://quaternius.itch.io/universal-base-characters",
+   "licence": "CC0-1.0",
+   "models": {
+    "Superhero_Female_FullBody": {
+     "url": "/assets/kits/quaternius-characters/Superhero_Female_FullBody.glb",
+     "size": [
+      2,
+      2,
+      0.639
+     ],
+     "min": [
+      -1,
+      -1,
+      -0.32
+     ],
+     "max": [
+      1,
+      1,
+      0.32
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Superhero_Male_FullBody": {
+     "url": "/assets/kits/quaternius-characters/Superhero_Male_FullBody.glb",
+     "size": [
+      2,
+      1.958,
+      0.603
+     ],
+     "min": [
+      -1,
+      -0.979,
+      -0.302
+     ],
+     "max": [
+      1,
+      0.979,
+      0.302
+     ],
+     "animations": [],
+     "skinned": true
+    }
+   }
+  },
+  "quaternius-hair": {
+   "name": "Universal Base Characters — hairstyles (Standard)",
+   "author": "Quaternius",
+   "url": "https://quaternius.itch.io/universal-base-characters",
+   "licence": "CC0-1.0",
+   "models": {
+    "Eyebrows_Female": {
+     "url": "/assets/kits/quaternius-hair/Eyebrows_Female.glb",
+     "size": [
+      2,
+      0.597,
+      0.639
+     ],
+     "min": [
+      -1,
+      -0.299,
+      -0.32
+     ],
+     "max": [
+      1,
+      0.299,
+      0.32
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Eyebrows_Regular": {
+     "url": "/assets/kits/quaternius-hair/Eyebrows_Regular.glb",
+     "size": [
+      2,
+      0.491,
+      0.602
+     ],
+     "min": [
+      -1,
+      -0.245,
+      -0.301
+     ],
+     "max": [
+      1,
+      0.245,
+      0.301
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Hair_Beard": {
+     "url": "/assets/kits/quaternius-hair/Hair_Beard.glb",
+     "size": [
+      2,
+      1.731,
+      1.299
+     ],
+     "min": [
+      -1,
+      -0.866,
+      -0.65
+     ],
+     "max": [
+      1,
+      0.866,
+      0.65
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Hair_Buns": {
+     "url": "/assets/kits/quaternius-hair/Hair_Buns.glb",
+     "size": [
+      2,
+      1.652,
+      1.571
+     ],
+     "min": [
+      -1,
+      -0.826,
+      -0.785
+     ],
+     "max": [
+      1,
+      0.826,
+      0.785
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Hair_Buzzed": {
+     "url": "/assets/kits/quaternius-hair/Hair_Buzzed.glb",
+     "size": [
+      1.619,
+      1.774,
+      2
+     ],
+     "min": [
+      -0.81,
+      -0.887,
+      -1
+     ],
+     "max": [
+      0.81,
+      0.887,
+      1
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Hair_BuzzedFemale": {
+     "url": "/assets/kits/quaternius-hair/Hair_BuzzedFemale.glb",
+     "size": [
+      1.606,
+      1.722,
+      2
+     ],
+     "min": [
+      -0.803,
+      -0.861,
+      -1
+     ],
+     "max": [
+      0.803,
+      0.861,
+      1
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Hair_Long": {
+     "url": "/assets/kits/quaternius-hair/Hair_Long.glb",
+     "size": [
+      1.771,
+      2,
+      1.957
+     ],
+     "min": [
+      -0.885,
+      -1,
+      -0.979
+     ],
+     "max": [
+      0.885,
+      1,
+      0.979
+     ],
+     "animations": [],
+     "skinned": true
+    },
+    "Hair_SimpleParted": {
+     "url": "/assets/kits/quaternius-hair/Hair_SimpleParted.glb",
+     "size": [
+      1.877,
+      1.917,
+      2
+     ],
+     "min": [
+      -0.938,
+      -0.958,
+      -1
+     ],
+     "max": [
+      0.938,
+      0.958,
+      1
+     ],
+     "animations": [],
+     "skinned": true
+    }
+   }
+  },
+  "quaternius-anim": {
+   "name": "Universal Animation Library (Standard)",
+   "author": "Quaternius",
+   "url": "https://quaternius.itch.io/universal-animation-library",
+   "licence": "CC0-1.0",
+   "models": {
+    "UAL1_Standard": {
+     "url": "/assets/kits/quaternius-anim/UAL1_Standard.glb",
+     "size": [
+      null,
+      null,
+      null
+     ],
+     "min": [
+      null,
+      null,
+      null
+     ],
+     "max": [
+      null,
+      null,
+      null
+     ],
+     "animations": [
+      "Crouch_Idle_Loop",
+      "Dance_Loop",
+      "Driving_Loop",
+      "Fixing_Kneeling",
+      "Idle_Loop",
+      "Idle_Talking_Loop",
+      "Interact",
+      "Jog_Fwd_Loop",
+      "Jump_Land",
+      "Jump_Loop",
+      "Jump_Start",
+      "PickUp_Table",
+      "Push_Loop",
+      "Sitting_Enter",
+      "Sitting_Exit",
+      "Sitting_Idle_Loop",
+      "Sitting_Talking_Loop",
+      "Sprint_Loop",
+      "Walk_Formal_Loop",
+      "Walk_Loop"
+     ],
+     "skinned": false
+    }
+   }
+  },
+  "quaternius-downtown": {
+   "name": "Downtown City MegaKit (Standard)",
+   "author": "Quaternius",
+   "url": "https://quaternius.itch.io/downtown-city-megakit",
+   "licence": "CC0-1.0",
+   "models": {
+    "Brick_90Angle_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.706,
+      3,
+      0.7
+     ],
+     "min": [
+      -1,
+      0,
+      -0.7
+     ],
+     "max": [
+      -0.294,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_90Angle_L"
+    },
+    "Brick_90Angle_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.706,
+      3,
+      0.7
+     ],
+     "min": [
+      0.294,
+      0,
+      -0.7
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_90Angle_R"
+    },
+    "Brick_BottomTrim": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.229
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0.029
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_BottomTrim"
+    },
+    "Brick_Column_RedBricks": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.526,
+      3.002,
+      0.72
+     ],
+     "min": [
+      -0.141,
+      -0.002,
+      -0.608
+     ],
+     "max": [
+      0.385,
+      3,
+      0.113
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Column_RedBricks"
+    },
+    "Brick_Column_Small": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.25,
+      3,
+      0.35
+     ],
+     "min": [
+      -0.125,
+      0,
+      -0.25
+     ],
+     "max": [
+      0.125,
+      3,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Column_Small"
+    },
+    "Brick_Column_TrimBricks": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.651,
+      3.001,
+      0.636
+     ],
+     "min": [
+      -0.151,
+      -0.002,
+      -0.521
+     ],
+     "max": [
+      0.5,
+      2.999,
+      0.115
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Column_TrimBricks"
+    },
+    "Brick_CornerColumn_Bottom": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.26,
+      3,
+      1.26
+     ],
+     "min": [
+      -1.03,
+      0,
+      -1.03
+     ],
+     "max": [
+      0.23,
+      3,
+      0.23
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_CornerColumn_Bottom"
+    },
+    "Brick_CornerColumn_Cap": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.26,
+      1.012,
+      1.26
+     ],
+     "min": [
+      -1.03,
+      2,
+      -1.03
+     ],
+     "max": [
+      0.23,
+      3.012,
+      0.23
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_CornerColumn_Cap"
+    },
+    "Brick_CornerColumn_CapShort": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.26,
+      0.241,
+      1.26
+     ],
+     "min": [
+      -1.03,
+      2.8,
+      -1.03
+     ],
+     "max": [
+      0.23,
+      3.041,
+      0.23
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_CornerColumn_CapShort"
+    },
+    "Brick_CornerColumn_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.14,
+      3,
+      1.14
+     ],
+     "min": [
+      -0.97,
+      0,
+      -0.97
+     ],
+     "max": [
+      0.17,
+      3,
+      0.17
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_CornerColumn_Center"
+    },
+    "Brick_CornerColumn_Center_Half": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.14,
+      1.999,
+      1.14
+     ],
+     "min": [
+      -0.17,
+      0,
+      -0.97
+     ],
+     "max": [
+      0.97,
+      1.999,
+      0.17
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_CornerColumn_Center_Half"
+    },
+    "Brick_CornerColumn_Top": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.26,
+      3,
+      1.26
+     ],
+     "min": [
+      -1.03,
+      0,
+      -1.03
+     ],
+     "max": [
+      0.23,
+      3,
+      0.23
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_CornerColumn_Top"
+    },
+    "Brick_Corner_Plain": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Corner_Plain"
+    },
+    "Brick_HalfColumn_Bottom": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.109,
+      3,
+      0.276
+     ],
+     "min": [
+      -0.554,
+      0,
+      -0.041
+     ],
+     "max": [
+      0.554,
+      3,
+      0.236
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_HalfColumn_Bottom"
+    },
+    "Brick_HalfColumn_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.932,
+      3,
+      0.213
+     ],
+     "min": [
+      -0.466,
+      0,
+      -0.041
+     ],
+     "max": [
+      0.466,
+      3,
+      0.173
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_HalfColumn_Center"
+    },
+    "Brick_HalfColumn_Top": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.109,
+      3,
+      0.276
+     ],
+     "min": [
+      -0.554,
+      0,
+      -0.041
+     ],
+     "max": [
+      0.554,
+      3,
+      0.236
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_HalfColumn_Top"
+    },
+    "Brick_HalfTrim": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.225
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0.025
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_HalfTrim"
+    },
+    "Brick_Inset": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3,
+      0.2
+     ],
+     "min": [
+      -2,
+      0,
+      -0.2
+     ],
+     "max": [
+      2,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Inset"
+    },
+    "Brick_Inset_Window": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3,
+      0.374
+     ],
+     "min": [
+      -2,
+      0,
+      -0.245
+     ],
+     "max": [
+      2,
+      3,
+      0.129
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Inset_Window"
+    },
+    "Brick_Inset_Window_Curved": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3,
+      0.374
+     ],
+     "min": [
+      -2,
+      0,
+      -0.242
+     ],
+     "max": [
+      2,
+      3,
+      0.132
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Inset_Window_Curved"
+    },
+    "Brick_Inset_Window_Curved_Small": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3,
+      0.343
+     ],
+     "min": [
+      -2,
+      0,
+      -0.244
+     ],
+     "max": [
+      2,
+      3,
+      0.099
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Inset_Window_Curved_Small"
+    },
+    "Brick_InteriorWall_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      1,
+      -0.2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_InteriorWall_1"
+    },
+    "Brick_InteriorWall_3": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      -0.2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_InteriorWall_3"
+    },
+    "Brick_InteriorWall_4": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      4,
+      0
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      4,
+      -0.2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_InteriorWall_4"
+    },
+    "Brick_Ornament_Horizontal": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.314,
+      0.051
+     ],
+     "min": [
+      -1,
+      -0.168,
+      0.001
+     ],
+     "max": [
+      1,
+      0.146,
+      0.053
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Ornament_Horizontal"
+    },
+    "Brick_Plain_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Plain_1"
+    },
+    "Brick_Plain_3": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Plain_3"
+    },
+    "Brick_Plain_3_noWear": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Plain_3_noWear"
+    },
+    "Brick_Plain_4": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      4,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      4,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Plain_4"
+    },
+    "Brick_RedWhite_DoubleWindow": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3,
+      0.277
+     ],
+     "min": [
+      -2,
+      0,
+      -0.242
+     ],
+     "max": [
+      2,
+      3,
+      0.036
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_RedWhite_DoubleWindow"
+    },
+    "Brick_TopTrim": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_TopTrim"
+    },
+    "Brick_TopTrim_90Angle_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.706,
+      3,
+      0.7
+     ],
+     "min": [
+      -1,
+      0,
+      -0.7
+     ],
+     "max": [
+      -0.294,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_TopTrim_90Angle_L"
+    },
+    "Brick_TopTrim_90Angle_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.706,
+      3,
+      0.7
+     ],
+     "min": [
+      0.294,
+      0,
+      -0.7
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_TopTrim_90Angle_R"
+    },
+    "Brick_TopTrim_Corner": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_TopTrim_Corner"
+    },
+    "Brick_Window_CurvedDouble": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3,
+      0.261
+     ],
+     "min": [
+      -2,
+      0,
+      -0.261
+     ],
+     "max": [
+      2,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Window_CurvedDouble"
+    },
+    "Brick_Window_Square_Single": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.271
+     ],
+     "min": [
+      -1,
+      0,
+      -0.235
+     ],
+     "max": [
+      1,
+      3,
+      0.036
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Window_Square_Single"
+    },
+    "Brick_Window_Trim": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.304
+     ],
+     "min": [
+      -1,
+      0,
+      -0.257
+     ],
+     "max": [
+      1,
+      3,
+      0.047
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Window_Trim"
+    },
+    "Brick_Window_Trim_Single": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.277
+     ],
+     "min": [
+      -1,
+      0,
+      -0.232
+     ],
+     "max": [
+      1,
+      3,
+      0.044
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Brick_Window_Trim_Single"
+    },
+    "Building_Large_2": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      20.644,
+      28,
+      16.645
+     ],
+     "min": [
+      -9.322,
+      0,
+      -16.322
+     ],
+     "max": [
+      11.322,
+      28,
+      0.322
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Building_Large_2"
+    },
+    "Building_Medium_2_001": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      15.056,
+      25.009,
+      13.056
+     ],
+     "min": [
+      -7.528,
+      -0.01,
+      -12.488
+     ],
+     "max": [
+      7.528,
+      24.998,
+      0.568
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Building_Medium_2_001"
+    },
+    "Building_Small_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      12.46,
+      17.026,
+      14.536
+     ],
+     "min": [
+      -7.23,
+      -0.012,
+      -12.23
+     ],
+     "max": [
+      5.23,
+      17.014,
+      2.306
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Building_Small_1"
+    },
+    "Cornice_Brick_90Angle_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.9
+     ],
+     "min": [
+      -1,
+      0,
+      -0.9
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Brick_90Angle_L"
+    },
+    "Cornice_Brick_90Angle_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.9
+     ],
+     "min": [
+      -1,
+      0,
+      -0.9
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Brick_90Angle_R"
+    },
+    "Cornice_Brick_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.4
+     ],
+     "min": [
+      -1,
+      0,
+      -0.4
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Brick_Center"
+    },
+    "Cornice_Brick_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.4
+     ],
+     "min": [
+      -1,
+      0,
+      -0.4
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Brick_L"
+    },
+    "Cornice_Brick_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.4
+     ],
+     "min": [
+      -1,
+      0,
+      -0.4
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Brick_R"
+    },
+    "Cornice_Metal_90Angle_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.7
+     ],
+     "min": [
+      -1,
+      0,
+      -0.6
+     ],
+     "max": [
+      1,
+      1,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Metal_90Angle_L"
+    },
+    "Cornice_Metal_90Angle_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.7
+     ],
+     "min": [
+      -1,
+      0,
+      -0.6
+     ],
+     "max": [
+      1,
+      1,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Metal_90Angle_R"
+    },
+    "Cornice_Metal_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.1
+     ],
+     "max": [
+      1,
+      1,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Metal_Center"
+    },
+    "Cornice_Metal_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.1,
+      1,
+      0.2
+     ],
+     "min": [
+      -1.1,
+      0,
+      -0.1
+     ],
+     "max": [
+      1,
+      1,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Metal_L"
+    },
+    "Cornice_Metal_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.1,
+      1,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.1
+     ],
+     "max": [
+      1.1,
+      1,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Metal_R"
+    },
+    "Cornice_Trim_90Angle_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.998,
+      1.128
+     ],
+     "min": [
+      -1,
+      0,
+      -0.6
+     ],
+     "max": [
+      1,
+      0.998,
+      0.528
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Trim_90Angle_L"
+    },
+    "Cornice_Trim_90Angle_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.998,
+      1.128
+     ],
+     "min": [
+      -1,
+      0,
+      -0.6
+     ],
+     "max": [
+      1,
+      0.998,
+      0.528
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Trim_90Angle_R"
+    },
+    "Cornice_Trim_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.998,
+      0.628
+     ],
+     "min": [
+      -1,
+      0,
+      -0.1
+     ],
+     "max": [
+      1,
+      0.998,
+      0.528
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Trim_Center"
+    },
+    "Cornice_Trim_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.528,
+      0.998,
+      0.628
+     ],
+     "min": [
+      -1.528,
+      0,
+      -0.1
+     ],
+     "max": [
+      1,
+      0.998,
+      0.528
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Trim_L"
+    },
+    "Cornice_Trim_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.528,
+      0.998,
+      0.628
+     ],
+     "min": [
+      -1,
+      0,
+      -0.1
+     ],
+     "max": [
+      1.528,
+      0.998,
+      0.528
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Cornice_Trim_R"
+    },
+    "Decal_ArrowForwardLeft": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.776,
+      0,
+      2.675
+     ],
+     "min": [
+      -1.358,
+      -0.13,
+      -1.374
+     ],
+     "max": [
+      0.418,
+      -0.13,
+      1.301
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_ArrowForwardLeft"
+    },
+    "Decal_ArrowForwardRight": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.776,
+      0,
+      2.675
+     ],
+     "min": [
+      -0.418,
+      -0.13,
+      -1.374
+     ],
+     "max": [
+      1.358,
+      -0.13,
+      1.301
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_ArrowForwardRight"
+    },
+    "Decal_ArrowStraight": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.943,
+      0,
+      2.37
+     ],
+     "min": [
+      -0.471,
+      -0.13,
+      -1.185
+     ],
+     "max": [
+      0.471,
+      -0.13,
+      1.185
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_ArrowStraight"
+    },
+    "Decal_ArrowTurnLeft": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.988,
+      0,
+      2.503
+     ],
+     "min": [
+      -1.146,
+      -0.13,
+      -1.235
+     ],
+     "max": [
+      0.842,
+      -0.13,
+      1.268
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_ArrowTurnLeft"
+    },
+    "Decal_ArrowTurnRight": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.988,
+      0,
+      2.503
+     ],
+     "min": [
+      -0.842,
+      -0.13,
+      -1.235
+     ],
+     "max": [
+      1.146,
+      -0.13,
+      1.268
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_ArrowTurnRight"
+    },
+    "Decal_Bikelane": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.965,
+      0,
+      2.816
+     ],
+     "min": [
+      -1.461,
+      -0.13,
+      -1.754
+     ],
+     "max": [
+      1.504,
+      -0.13,
+      1.063
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Bikelane"
+    },
+    "Decal_BrokenLine_Straight": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0,
+      0.2
+     ],
+     "min": [
+      -3,
+      -0.13,
+      -0.1
+     ],
+     "max": [
+      3,
+      -0.13,
+      0.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_BrokenLine_Straight"
+    },
+    "Decal_Crosswalk": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4.538,
+      0,
+      5.426
+     ],
+     "min": [
+      -2.269,
+      -0.148,
+      -2.713
+     ],
+     "max": [
+      2.269,
+      -0.148,
+      2.713
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Crosswalk"
+    },
+    "Decal_Crosswalk_Wide": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4.666,
+      0,
+      11.416
+     ],
+     "min": [
+      -2.333,
+      -0.148,
+      -5.708
+     ],
+     "max": [
+      2.333,
+      -0.148,
+      5.708
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Crosswalk_Wide"
+    },
+    "Decal_Curve_2Lane_Stripe": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      8.8,
+      0,
+      8.8
+     ],
+     "min": [
+      0,
+      -0.148,
+      0
+     ],
+     "max": [
+      8.8,
+      -0.148,
+      8.8
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Curve_2Lane_Stripe"
+    },
+    "Decal_Curve_4LaneShort": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      9.1,
+      0,
+      9.1
+     ],
+     "min": [
+      0,
+      -0.148,
+      0
+     ],
+     "max": [
+      9.1,
+      -0.148,
+      9.1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Curve_4LaneShort"
+    },
+    "Decal_Curve_4LaneShort_DoubleYellow": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      9.197,
+      0,
+      9.197
+     ],
+     "min": [
+      0,
+      -0.148,
+      0
+     ],
+     "max": [
+      9.197,
+      -0.148,
+      9.197
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Curve_4LaneShort_DoubleYellow"
+    },
+    "Decal_Curve_4LaneShort_Stripe": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      14.8,
+      0,
+      14.8
+     ],
+     "min": [
+      0,
+      -0.148,
+      0
+     ],
+     "max": [
+      14.8,
+      -0.148,
+      14.8
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Curve_4LaneShort_Stripe"
+    },
+    "Decal_DoubleYellow_Straight": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0,
+      0.394
+     ],
+     "min": [
+      -3,
+      -0.11,
+      -0.197
+     ],
+     "max": [
+      3,
+      -0.11,
+      0.197
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_DoubleYellow_Straight"
+    },
+    "Decal_Only": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.9,
+      0,
+      1.382
+     ],
+     "min": [
+      -1.45,
+      -0.13,
+      -0.691
+     ],
+     "max": [
+      1.45,
+      -0.13,
+      0.691
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Only"
+    },
+    "Decal_Slow": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.939,
+      0,
+      1.405
+     ],
+     "min": [
+      -1.469,
+      -0.13,
+      -0.703
+     ],
+     "max": [
+      1.469,
+      -0.13,
+      0.703
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Slow"
+    },
+    "Decal_Stop": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.959,
+      0,
+      1.522
+     ],
+     "min": [
+      -1.48,
+      -0.13,
+      -0.761
+     ],
+     "max": [
+      1.48,
+      -0.13,
+      0.761
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Decal_Stop"
+    },
+    "DoorFrame_Metal_Single": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__DoorFrame_Metal_Single"
+    },
+    "DoorFrame_Trim": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.226
+     ],
+     "min": [
+      -1,
+      0,
+      -0.226
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__DoorFrame_Trim"
+    },
+    "DoorFrame_Wooden": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.304,
+      3,
+      0.478
+     ],
+     "min": [
+      -1.152,
+      0,
+      -0.255
+     ],
+     "max": [
+      1.152,
+      3,
+      0.223
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__DoorFrame_Wooden"
+    },
+    "Door_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1,
+      2.2,
+      0.26
+     ],
+     "min": [
+      -1,
+      0,
+      -0.129
+     ],
+     "max": [
+      0,
+      2.2,
+      0.13
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Door_1"
+    },
+    "Door_2": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1,
+      2.2,
+      0.21
+     ],
+     "min": [
+      -1,
+      0,
+      -0.103
+     ],
+     "max": [
+      0,
+      2.2,
+      0.107
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Door_2"
+    },
+    "Door_3": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1,
+      2.2,
+      0.188
+     ],
+     "min": [
+      -1,
+      0,
+      -0.095
+     ],
+     "max": [
+      0,
+      2.2,
+      0.094
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Door_3"
+    },
+    "Entrance_Concrete_2x1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1.007,
+      1.003
+     ],
+     "min": [
+      -1,
+      0,
+      -0.002
+     ],
+     "max": [
+      1,
+      1.007,
+      1.002
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Entrance_Concrete_2x1"
+    },
+    "Entrance_Concrete_2x2": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1.007,
+      2.003
+     ],
+     "min": [
+      -1,
+      0,
+      -1.002
+     ],
+     "max": [
+      1,
+      1.007,
+      1.002
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Entrance_Concrete_2x2"
+    },
+    "Floor_2x2": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.1,
+      2
+     ],
+     "min": [
+      -1,
+      -0.1,
+      -1
+     ],
+     "max": [
+      1,
+      0,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Floor_2x2"
+    },
+    "Floor_4x4": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      0.1,
+      4
+     ],
+     "min": [
+      -2,
+      -0.1,
+      -2
+     ],
+     "max": [
+      2,
+      0,
+      2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Floor_4x4"
+    },
+    "Floor_Inset": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.1,
+      1.333
+     ],
+     "min": [
+      -1,
+      -0.1,
+      -1
+     ],
+     "max": [
+      1,
+      0,
+      0.333
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Floor_Inset"
+    },
+    "Metal_Column_Bottom": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.569,
+      3,
+      0.569
+     ],
+     "min": [
+      -0.285,
+      0,
+      -0.285
+     ],
+     "max": [
+      0.285,
+      3,
+      0.285
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Column_Bottom"
+    },
+    "Metal_Column_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.498,
+      3,
+      0.498
+     ],
+     "min": [
+      -0.249,
+      0,
+      -0.249
+     ],
+     "max": [
+      0.249,
+      3,
+      0.249
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Column_Center"
+    },
+    "Metal_Column_Small_Bottom": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.285,
+      3,
+      0.285
+     ],
+     "min": [
+      -0.142,
+      0,
+      -0.142
+     ],
+     "max": [
+      0.142,
+      3,
+      0.142
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Column_Small_Bottom"
+    },
+    "Metal_Column_Small_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.249,
+      3,
+      0.249
+     ],
+     "min": [
+      -0.124,
+      0,
+      -0.125
+     ],
+     "max": [
+      0.124,
+      3,
+      0.125
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Column_Small_Center"
+    },
+    "Metal_Column_Small_Top": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.322,
+      2.996,
+      0.322
+     ],
+     "min": [
+      -0.161,
+      0,
+      -0.161
+     ],
+     "max": [
+      0.161,
+      2.996,
+      0.161
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Column_Small_Top"
+    },
+    "Metal_Column_Top": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.644,
+      2.996,
+      0.645
+     ],
+     "min": [
+      -0.322,
+      0,
+      -0.322
+     ],
+     "max": [
+      0.322,
+      2.996,
+      0.322
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Column_Top"
+    },
+    "Metal_FirstFloor_Wall": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.242
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0.042
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_FirstFloor_Wall"
+    },
+    "Metal_FirstFloor_Wall_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.242
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      1,
+      0.042
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_FirstFloor_Wall_1"
+    },
+    "Metal_FirstFloor_Window": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.259
+     ],
+     "min": [
+      -1,
+      0,
+      -0.217
+     ],
+     "max": [
+      1,
+      3,
+      0.042
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_FirstFloor_Window"
+    },
+    "Metal_FullWindow": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.231
+     ],
+     "min": [
+      -1,
+      0,
+      -0.216
+     ],
+     "max": [
+      1,
+      3,
+      0.015
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_FullWindow"
+    },
+    "Metal_Plain_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      1,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Plain_1"
+    },
+    "Metal_Plain_3": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Plain_3"
+    },
+    "Metal_Window": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      3.001,
+      0.224
+     ],
+     "min": [
+      -2,
+      -0.001,
+      -0.224
+     ],
+     "max": [
+      2,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Window"
+    },
+    "Metal_Window_Half": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.229
+     ],
+     "min": [
+      -1,
+      0,
+      -0.213
+     ],
+     "max": [
+      1,
+      3,
+      0.015
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Metal_Window_Half"
+    },
+    "Prop_ACUnit": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.893,
+      0.6,
+      0.347
+     ],
+     "min": [
+      -0.411,
+      0,
+      -0.019
+     ],
+     "max": [
+      0.483,
+      0.6,
+      0.329
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Prop_ACUnit"
+    },
+    "Prop_Bollard": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.216,
+      0.892,
+      0.227
+     ],
+     "min": [
+      -0.108,
+      0,
+      -0.114
+     ],
+     "max": [
+      0.108,
+      0.892,
+      0.114
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Prop_Bollard"
+    },
+    "Prop_Drain": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.585,
+      0.04,
+      0.585
+     ],
+     "min": [
+      -0.293,
+      0,
+      -0.293
+     ],
+     "max": [
+      0.293,
+      0.04,
+      0.293
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Prop_Drain"
+    },
+    "Prop_ManholeCover": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.925,
+      0.033,
+      0.925
+     ],
+     "min": [
+      -0.463,
+      -0.014,
+      -0.463
+     ],
+     "max": [
+      0.463,
+      0.019,
+      0.463
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Prop_ManholeCover"
+    },
+    "Prop_Planter_Single": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.6,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -1
+     ],
+     "max": [
+      1,
+      0.6,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Prop_Planter_Single"
+    },
+    "Roof_2x2": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0,
+      2
+     ],
+     "min": [
+      -1,
+      -0.2,
+      -1
+     ],
+     "max": [
+      1,
+      -0.2,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_2x2"
+    },
+    "Roof_2x2_90Angle_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0,
+      1.6
+     ],
+     "min": [
+      -1,
+      -0.2,
+      -1
+     ],
+     "max": [
+      1,
+      -0.2,
+      0.6
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_2x2_90Angle_Center"
+    },
+    "Roof_2x2_90Angle_L": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0,
+      2
+     ],
+     "min": [
+      -1,
+      -0.2,
+      -1
+     ],
+     "max": [
+      1,
+      -0.2,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_2x2_90Angle_L"
+    },
+    "Roof_2x2_90Angle_R": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0,
+      2
+     ],
+     "min": [
+      -1,
+      -0.2,
+      -1
+     ],
+     "max": [
+      1,
+      -0.2,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_2x2_90Angle_R"
+    },
+    "Roof_4x4": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      4,
+      0,
+      4
+     ],
+     "min": [
+      -2,
+      -0.2,
+      -2
+     ],
+     "max": [
+      2,
+      -0.2,
+      2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_4x4"
+    },
+    "Roof_SlateCornice_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3.2,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3.2,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_SlateCornice_Center"
+    },
+    "Roof_SlateCornice_Corner": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.023,
+      3.214,
+      2.035
+     ],
+     "min": [
+      -1.023,
+      -0.014,
+      -2
+     ],
+     "max": [
+      1,
+      3.2,
+      0.035
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_SlateCornice_Corner"
+    },
+    "Roof_SlateCornice_InnerCorner": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3.2,
+      2
+     ],
+     "min": [
+      -2,
+      0,
+      0
+     ],
+     "max": [
+      0,
+      3.2,
+      2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_SlateCornice_InnerCorner"
+    },
+    "Roof_SlateCornice_Window_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3.2,
+      2.119
+     ],
+     "min": [
+      -1,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3.2,
+      0.119
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_SlateCornice_Window_1"
+    },
+    "Roof_Slate_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      2
+     ],
+     "min": [
+      -1,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_Slate_Center"
+    },
+    "Roof_Slate_Corner": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.023,
+      3.028,
+      2.035
+     ],
+     "min": [
+      -1.023,
+      -0.014,
+      -2
+     ],
+     "max": [
+      1,
+      3.014,
+      0.035
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_Slate_Corner"
+    },
+    "Roof_Slate_InnerCorner": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      2
+     ],
+     "min": [
+      -2,
+      0,
+      0
+     ],
+     "max": [
+      0,
+      3,
+      2
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_Slate_InnerCorner"
+    },
+    "Roof_Slate_Window_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      2.119
+     ],
+     "min": [
+      -1,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3,
+      0.119
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Roof_Slate_Window_1"
+    },
+    "Sidewalk_Corner_Flat_3m": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3.01,
+      0.15,
+      3.01
+     ],
+     "min": [
+      -1.51,
+      -0.15,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      0,
+      1.51
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Corner_Flat_3m"
+    },
+    "Sidewalk_Corner_Flat_3m_Stripe": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3.4,
+      0,
+      3.4
+     ],
+     "min": [
+      -1.9,
+      -0.148,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      -0.148,
+      1.9
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Corner_Flat_3m_Stripe"
+    },
+    "Sidewalk_Corner_Round_3m": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3.01,
+      0.15,
+      3.01
+     ],
+     "min": [
+      -1.51,
+      -0.15,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      0,
+      1.51
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Corner_Round_3m"
+    },
+    "Sidewalk_Corner_Round_3m_Stripe": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3.4,
+      0,
+      3.4
+     ],
+     "min": [
+      -1.9,
+      -0.146,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      -0.146,
+      1.9
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Corner_Round_3m_Stripe"
+    },
+    "Sidewalk_NoCurb_3m": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3,
+      0.15,
+      3
+     ],
+     "min": [
+      -1.5,
+      -0.15,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      0,
+      1.5
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_NoCurb_3m"
+    },
+    "Sidewalk_Planter": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.973,
+      0.506,
+      1.765
+     ],
+     "min": [
+      -0.987,
+      0,
+      -0.883
+     ],
+     "max": [
+      0.987,
+      0.506,
+      0.883
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Planter"
+    },
+    "Sidewalk_Straight_3m": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3,
+      0.15,
+      3.01
+     ],
+     "min": [
+      -1.5,
+      -0.15,
+      -1.5
+     ],
+     "max": [
+      1.5,
+      0,
+      1.51
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Straight_3m"
+    },
+    "Sidewalk_Straight_3m_Stripe": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      3,
+      0,
+      0.2
+     ],
+     "min": [
+      -1.5,
+      -0.148,
+      1.7
+     ],
+     "max": [
+      1.5,
+      -0.148,
+      1.9
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Sidewalk_Straight_3m_Stripe"
+    },
+    "Stairs_Entrance_Concrete": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      1.007,
+      1.991
+     ],
+     "min": [
+      -1,
+      0,
+      0
+     ],
+     "max": [
+      1,
+      1.007,
+      1.991
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Stairs_Entrance_Concrete"
+    },
+    "Stairs_Rails_Metal": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.964,
+      1.981,
+      2.306
+     ],
+     "min": [
+      -0.982,
+      -0.012,
+      0
+     ],
+     "max": [
+      0.982,
+      1.969,
+      2.306
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Stairs_Rails_Metal"
+    },
+    "Stairs_Rails_Metal_Straight_1": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.939,
+      0.998,
+      1
+     ],
+     "min": [
+      -0.969,
+      0.971,
+      0
+     ],
+     "max": [
+      0.969,
+      1.969,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Stairs_Rails_Metal_Straight_1"
+    },
+    "Stairs_Rails_Metal_Straight_2": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      1.939,
+      0.998,
+      2
+     ],
+     "min": [
+      -0.969,
+      0.971,
+      -1
+     ],
+     "max": [
+      0.969,
+      1.969,
+      1
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Stairs_Rails_Metal_Straight_2"
+    },
+    "Street_2Lane": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0.15,
+      12
+     ],
+     "min": [
+      -3,
+      -0.15,
+      -6
+     ],
+     "max": [
+      3,
+      0,
+      6
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_2Lane"
+    },
+    "Street_2Lane_noSidewalk": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0.002,
+      6
+     ],
+     "min": [
+      -3,
+      -0.15,
+      -3
+     ],
+     "max": [
+      3,
+      -0.148,
+      3
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_2Lane_noSidewalk"
+    },
+    "Street_4Lane": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0.15,
+      18
+     ],
+     "min": [
+      -3,
+      -0.15,
+      -9
+     ],
+     "max": [
+      3,
+      0,
+      9
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_4Lane"
+    },
+    "Street_4Lane_noSidewalk": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0.002,
+      12
+     ],
+     "min": [
+      -3,
+      -0.15,
+      -6
+     ],
+     "max": [
+      3,
+      -0.148,
+      6
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_4Lane_noSidewalk"
+    },
+    "Street_4WayIntersection": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      24.666,
+      0.15,
+      24.666
+     ],
+     "min": [
+      -12.333,
+      -0.15,
+      -12.333
+     ],
+     "max": [
+      12.333,
+      0,
+      12.333
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_4WayIntersection"
+    },
+    "Street_Asphalt_6x6": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      6,
+      0,
+      6
+     ],
+     "min": [
+      -3,
+      -0.15,
+      -3
+     ],
+     "max": [
+      3,
+      -0.15,
+      3
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Asphalt_6x6"
+    },
+    "Street_Asphalt_9x9": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      9,
+      0,
+      9
+     ],
+     "min": [
+      -9,
+      -0.15,
+      -9
+     ],
+     "max": [
+      0,
+      -0.15,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Asphalt_9x9"
+    },
+    "Street_Asphalt_Curve_2Lane": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      10,
+      0,
+      10
+     ],
+     "min": [
+      0,
+      -0.15,
+      0
+     ],
+     "max": [
+      10,
+      -0.15,
+      10
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Asphalt_Curve_2Lane"
+    },
+    "Street_Asphalt_Curve_4Lane_Short": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      16,
+      0,
+      16
+     ],
+     "min": [
+      0,
+      -0.15,
+      0
+     ],
+     "max": [
+      16,
+      -0.15,
+      16
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Asphalt_Curve_4Lane_Short"
+    },
+    "Street_Curve_2Lane": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      12,
+      0.15,
+      12
+     ],
+     "min": [
+      0,
+      -0.15,
+      0
+     ],
+     "max": [
+      12,
+      0,
+      12
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Curve_2Lane"
+    },
+    "Street_Curve_2Lane_Curb": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      12,
+      0.15,
+      12
+     ],
+     "min": [
+      0,
+      -0.15,
+      0
+     ],
+     "max": [
+      12,
+      0,
+      12
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Curve_2Lane_Curb"
+    },
+    "Street_Curve_4LaneShort": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      18,
+      0.15,
+      18
+     ],
+     "min": [
+      0,
+      -0.15,
+      0
+     ],
+     "max": [
+      18,
+      0,
+      18
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Curve_4LaneShort"
+    },
+    "Street_Curve_4Lane_Short_Curb": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      18,
+      0.15,
+      18
+     ],
+     "min": [
+      0,
+      -0.15,
+      0
+     ],
+     "max": [
+      18,
+      0,
+      18
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_Curve_4Lane_Short_Curb"
+    },
+    "Street_TIntersection": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      24.666,
+      0.15,
+      21.333
+     ],
+     "min": [
+      -12.333,
+      -0.15,
+      -12.333
+     ],
+     "max": [
+      12.333,
+      0,
+      9
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Street_TIntersection"
+    },
+    "Trim_90Angle_TopCover": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.02,
+      0.7
+     ],
+     "min": [
+      -1,
+      -0.02,
+      -0.7
+     ],
+     "max": [
+      1,
+      0,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_90Angle_TopCover"
+    },
+    "Trim_Column_Bottom": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.724,
+      3,
+      0.724
+     ],
+     "min": [
+      -0.362,
+      0,
+      -0.362
+     ],
+     "max": [
+      0.362,
+      3,
+      0.362
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Column_Bottom"
+    },
+    "Trim_Column_Center": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.672,
+      3,
+      0.672
+     ],
+     "min": [
+      -0.336,
+      0,
+      -0.336
+     ],
+     "max": [
+      0.336,
+      3,
+      0.336
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Column_Center"
+    },
+    "Trim_Column_Top": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      0.724,
+      3,
+      0.724
+     ],
+     "min": [
+      -0.362,
+      0,
+      -0.362
+     ],
+     "max": [
+      0.362,
+      3,
+      0.362
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Column_Top"
+    },
+    "Trim_Corner": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.048,
+      3,
+      2.048
+     ],
+     "min": [
+      -1.048,
+      0,
+      -2
+     ],
+     "max": [
+      1,
+      3,
+      0.048
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Corner"
+    },
+    "Trim_FirstFloor_Wall": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.248
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0.048
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_FirstFloor_Wall"
+    },
+    "Trim_FirstFloor_Window_001": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3.01,
+      0.215
+     ],
+     "min": [
+      -1,
+      -0.01,
+      -0.215
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_FirstFloor_Window_001"
+    },
+    "Trim_FirstFloor_Window_Columns": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2.147,
+      2.337,
+      0.092
+     ],
+     "min": [
+      -1.073,
+      0.59,
+      -0.122
+     ],
+     "max": [
+      1.073,
+      2.927,
+      -0.029
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_FirstFloor_Window_Columns"
+    },
+    "Trim_Plain_3": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.2
+     ],
+     "min": [
+      -1,
+      0,
+      -0.2
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Plain_3"
+    },
+    "Trim_Wall_Guard": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      0.644,
+      0.118
+     ],
+     "min": [
+      -1,
+      0,
+      0
+     ],
+     "max": [
+      1,
+      0.644,
+      0.118
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Wall_Guard"
+    },
+    "Trim_Window": {
+     "url": "/assets/kits/quaternius-downtown/downtown.glb",
+     "size": [
+      2,
+      3,
+      0.24
+     ],
+     "min": [
+      -1,
+      0,
+      -0.24
+     ],
+     "max": [
+      1,
+      3,
+      0
+     ],
+     "animations": [],
+     "skinned": false,
+     "node": "KIT__Trim_Window"
+    }
+   }
+  }
+ },
+ "files": {
+  "kenney-impact-sounds": {
+   "name": "Impact Sounds 1.0",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/impact-sounds",
+   "licence": "CC0-1.0",
+   "files": [
+    "/assets/audio/sfx/footstep_concrete_000.ogg",
+    "/assets/audio/sfx/footstep_concrete_001.ogg",
+    "/assets/audio/sfx/footstep_concrete_002.ogg",
+    "/assets/audio/sfx/footstep_concrete_003.ogg",
+    "/assets/audio/sfx/footstep_concrete_004.ogg"
+   ]
+  },
+  "kenney-interface-sounds": {
+   "name": "Interface Sounds 1.0",
+   "author": "Kenney",
+   "url": "https://kenney.nl/assets/interface-sounds",
+   "licence": "CC0-1.0",
+   "files": [
+    "/assets/audio/ui/click_002.ogg",
+    "/assets/audio/ui/close_001.ogg",
+    "/assets/audio/ui/confirmation_002.ogg",
+    "/assets/audio/ui/error_004.ogg",
+    "/assets/audio/ui/open_001.ogg",
+    "/assets/audio/ui/select_001.ogg"
+   ]
+  },
+  "polyhaven-hdri": {
+   "name": "Kloofendal 48d Partly Cloudy (Pure Sky) HDRI, 1k",
+   "author": "Poly Haven (Greg Zaal, Jarod Guest)",
+   "url": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+   "licence": "CC0-1.0",
+   "files": [
+    "/assets/hdri/partly_cloudy_1k.hdr"
+   ]
+  }
+ }
+}

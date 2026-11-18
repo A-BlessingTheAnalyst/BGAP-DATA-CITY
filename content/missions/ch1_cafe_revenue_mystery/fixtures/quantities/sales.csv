@@ -1,0 +1,6 @@
+id,transaction_code,sale_at,item_name,quantity,unit_price,payment_status,payment_method
+1,TX-3001,2026-11-05 07:30:00,Akara & Pap,4,1250.5,completed,cash
+2,TX-3002,2026-11-05 08:45:00,Coffee,7,1800,completed,pos_card
+3,TX-3003,2026-11-05 11:00:00,Fried Rice,3,3200,completed,transfer
+4,TX-3004,2026-11-06 09:15:00,Coffee,12,1800,completed,pos_card
+5,TX-3005,2026-11-06 13:20:00,Fried Rice,1,3200,voided,pos_card

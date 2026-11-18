@@ -73,4 +73,10 @@ export interface MissionEvaluationResult {
   xpEarned: number;
   creditsEarned: number;
   badgeAwarded?: string;
+  /** Set by the submit route: this mission was paid before, so nothing new was credited. */
+  alreadyPaid?: boolean;
+  /** Hints counted by the server on this attempt. */
+  hintsUsed?: number;
+  /** Finished inside the target time (+10% pay). */
+  fast?: boolean;
 }

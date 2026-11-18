@@ -7,12 +7,14 @@ export const InteractionPrompt: React.FC = () => {
   const activeTarget = useGameState((s) => s.activeTarget);
   const isDialogueActive = useGameState((s) => s.isDialogueActive);
   const isWorkstationActive = useGameState((s) => s.isWorkstationActive);
+  const reading = useGameState((s) => s.openEvidence !== null);
+  const reducedMotion = useGameState((s) => s.reducedMotion);
 
-  if (!activeTarget || isDialogueActive || isWorkstationActive) return null;
+  if (!activeTarget || isDialogueActive || isWorkstationActive || reading) return null;
 
   return (
     <div className="absolute bottom-28 inset-x-0 flex justify-center pointer-events-none select-none z-20">
-      <div className="bg-bgap-surface/90 border border-bgap-cyan/60 backdrop-blur-md px-5 py-2.5 rounded-full shadow-neon-cyan flex items-center gap-3 animate-bounce">
+      <div className={`bg-bgap-surface/90 border border-bgap-cyan/60 backdrop-blur-md px-5 py-2.5 rounded-full shadow-neon-cyan flex items-center gap-3 ${reducedMotion ? '' : 'animate-bounce'}`}>
         <span className="w-6 h-6 rounded-md bg-bgap-cyan text-bgap-dark font-bold font-mono text-sm flex items-center justify-center">
           E
         </span>

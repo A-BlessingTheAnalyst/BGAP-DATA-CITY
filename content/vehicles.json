@@ -1,0 +1,60 @@
+{
+  "_comment": "Phase D: the vehicle dealership catalog. Prices from docs/game-design.md §4 (used car 1.5M, keke 2.5M, SUV 12M).",
+  "vehicles": [
+    {
+      "id": "hatch_used",
+      "name": "Used hatchback",
+      "body": "hatchback",
+      "color": "#8FAE5A",
+      "price": 1500000,
+      "maxSpeed": 16,
+      "description": "A reliable second-hand runabout. Gets you where you're going."
+    },
+    {
+      "id": "keke_napep",
+      "name": "Keke Napep",
+      "body": "keke",
+      "color": "#F2C21B",
+      "price": 2500000,
+      "maxSpeed": 11,
+      "description": "Your own tricycle taxi. Slow, but it never gets stuck in tight streets."
+    },
+    {
+      "id": "sedan_standard",
+      "name": "Standard sedan",
+      "body": "sedan",
+      "color": "#3A6EA5",
+      "price": 3800000,
+      "maxSpeed": 20,
+      "description": "Comfortable, reliable, respectable. The analyst's first real car."
+    },
+    {
+      "id": "pickup_market",
+      "name": "Market pickup",
+      "body": "pickup",
+      "color": "#B0532A",
+      "price": 5200000,
+      "maxSpeed": 18,
+      "description": "A workhorse truck with room for cargo."
+    },
+    {
+      "id": "suv_executive",
+      "name": "Executive SUV",
+      "body": "suv",
+      "color": "#2B2F36",
+      "price": 12000000,
+      "maxSpeed": 22,
+      "description": "Finance Row's favourite. Turns heads outside the bank."
+    },
+    {
+      "id": "chopper_light",
+      "name": "Light helicopter",
+      "body": "chopper",
+      "color": "#E8E0D0",
+      "price": 500000000,
+      "maxSpeed": 30,
+      "licence": "flight",
+      "description": "A light utility helicopter. Lands anywhere there is room, no roads needed."
+    }
+  ]
+}

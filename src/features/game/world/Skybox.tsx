@@ -1,26 +1,19 @@
 "use client";
 
 import React from 'react';
-import { Sky } from '@react-three/drei';
+import { Environment, Sky } from '@react-three/drei';
+
+// Warm, hazy Lagos afternoon. The sky dome is drawn by drei <Sky>; image-based
+// lighting comes from a 1k CC0 Poly Haven HDRI (lighting only, not the backdrop).
+export const SUN_POSITION: [number, number, number] = [60, 28, 40];
 
 export const Skybox: React.FC = () => {
   return (
     <>
-      {/* Cinematic Deep Navy/Slate Cyber Dusk Background & Fog */}
-      <color attach="background" args={['#0B1120']} />
-      <fog attach="fog" args={['#0B1120', 25, 260]} />
-
-      {/* Atmospheric Sky Dome within camera frustum */}
-      <Sky
-        distance={240}
-        sunPosition={[45, 55, 35]}
-        inclination={0.45}
-        azimuth={0.25}
-        mieCoefficient={0.005}
-        mieDirectionalG={0.8}
-        rayleigh={0.8}
-        turbidity={6}
-      />
+      <color attach="background" args={['#E9D7B8']} />
+      <fog attach="fog" args={['#E6D3B3', 110, 520]} />
+      <Sky sunPosition={SUN_POSITION} turbidity={7} rayleigh={1.6} mieCoefficient={0.008} mieDirectionalG={0.85} distance={4000} />
+      <Environment files="/assets/hdri/partly_cloudy_1k.hdr" environmentIntensity={0.55} />
     </>
   );
 };

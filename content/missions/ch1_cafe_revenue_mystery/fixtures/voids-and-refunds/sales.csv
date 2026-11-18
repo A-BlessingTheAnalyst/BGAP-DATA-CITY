@@ -1,0 +1,9 @@
+id,transaction_code,sale_at,item_name,quantity,unit_price,payment_status,payment_method
+1,TX-2001,2026-11-02 08:10:00,Jollof Rice & Chicken,2,3500,completed,pos_card
+2,TX-2002,2026-11-02 09:00:00,Office Party Platter,1,180000,voided,pos_card
+3,TX-2003,2026-11-02 12:40:00,Office Party Platter,1,180000,completed,transfer
+4,TX-2004,2026-11-02 13:15:00,Small Chops Box,6,4500,refunded,transfer
+5,TX-2005,2026-11-03 10:00:00,Zobo (1L),10,1200,voided,cash
+6,TX-2006,2026-11-03 10:02:00,Zobo (1L),10,1200,completed,cash
+7,TX-2007,2026-11-03 15:30:00,Catering Deposit,1,250000,refunded,transfer
+8,TX-2008,2026-11-03 16:45:00,Meat Pie,3,800,completed,cash

@@ -1,10 +1,13 @@
 'use client';
 import { useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { RiggedHumanoid } from '../RiggedHumanoid';
+import { CastMember } from '../../world/kit/CastMember';
+import { CHARACTERS } from '../../world/kit/characters';
 import { InteractionTrigger } from '../../physics/InteractionTrigger';
 import { useGameState } from '../../engine/GameState';
 import { playerRuntime } from '../PlayerCharacter';
+
+const TUNDE = CHARACTERS.find((c) => c.id === 'officer_tunde')!;
 
 export function InteractiveGuard({ position }: { position: [number, number, number] }) {
   const speaking = useGameState((s) => s.isDialogueActive && s.activeNpcId === 'npc_guard_academy');
@@ -27,12 +30,7 @@ export function InteractiveGuard({ position }: { position: [number, number, numb
 
   return (
     <group position={position}>
-      <RiggedHumanoid
-        modelUrl="/assets/characters/guard.glb"
-        actionName={action}
-        fallbackShirt="#344565"
-        speaking={speaking}
-      />
+      <CastMember def={TUNDE} action={action} />
       <InteractionTrigger
         target={{
           id: 'npc_guard_academy',

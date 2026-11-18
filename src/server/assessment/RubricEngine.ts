@@ -1,53 +1,82 @@
 import { MissionEvaluationResult } from '@/shared/types/mission';
-import { SqlEvaluator } from './SqlEvaluator';
+import { getMission } from '@/server/content/missions';
+import { gradeSql } from './SqlGrader';
+
+// Turns a graded query into a score, feedback and pay.
+//   Correctness  50 — share of hidden fixtures the query gets right
+//   Edge cases   20 — the fixture built for this case's trap
+//   Findings     20 — share of claims backed by the right evidence
+//   Independence 10 — minus 3 per hint
+// A pass needs the pass mark AND every fixture right. Pay follows docs/game-design.md:
+// below 60 is a call-out fee; otherwise base × (0.5–1.0), +10% fast, −8% per hint.
+
+export function payout(basePay: number, score: number, hintsUsed: number, fast: boolean): number {
+  if (score < 60) return Math.round((basePay * 0.1) / 100) * 100;
+  const mult = 0.5 + ((score - 60) / 40) * 0.5;
+  const raw = basePay * mult * (fast ? 1.1 : 1) * Math.max(0, 1 - 0.08 * hintsUsed);
+  return Math.round(raw / 100) * 100;
+}
+
+export type EvaluationResult = MissionEvaluationResult & {
+  missionId: string;
+  fixtures: { id: string; passed: boolean }[];
+  findings: { id: string; correct: boolean }[];
+  queryError: string | null;
+};
 
 export class RubricEngine {
-  static gradeSubmission(params: {
+  static async gradeSubmission(params: {
+    missionId: string;
     query: string;
+    /** Chosen option per finding claim: { [claimId]: optionId }. */
+    findings?: Record<string, string>;
+    /** Legacy single explanation (Chapter 1 before the findings step); maps to the first claim. */
     explanationId?: string;
     hintsUsed: number;
-  }): MissionEvaluationResult {
-    const { calculationPassed, filterPassed, hiddenFixturePassed } = SqlEvaluator.evaluateQuery(params.query);
+    fast?: boolean;
+  }): Promise<EvaluationResult> {
+    const pkg = getMission(params.missionId);
+    if (!pkg) throw new Error(`Unknown mission ${params.missionId}`);
+    const def = pkg.def;
+    const hints = Math.max(0, Math.floor(params.hintsUsed || 0));
+    const graded = await gradeSql(def.id, params.query, pkg.grading);
 
-    // 1. Numerical Aggregation & Grouping (50%)
-    let calcScore = calculationPassed ? 50 : 0;
+    const answers: Record<string, string> = { ...(params.findings ?? {}) };
+    if (params.explanationId && def.findings[0] && !answers[def.findings[0].id]) answers[def.findings[0].id] = params.explanationId;
+    const findingResults = def.findings.map((f) => ({ id: f.id, correct: f.options.some((o) => o.correct && o.id === answers[f.id]) }));
+    const findingShare = def.findings.length ? findingResults.filter((f) => f.correct).length / def.findings.length : 1;
 
-    // 2. Filter logic: Exclude voided & refunded orders (20%)
-    let filterScore = filterPassed && hiddenFixturePassed ? 20 : 0;
+    const calculation = Math.round(50 * graded.passRate);
+    const filter = graded.trapPassed ? 20 : 0;
+    const explanation = Math.round(20 * findingShare);
+    const independence = Math.max(0, 10 - hints * 3);
+    const totalScore = calculation + filter + explanation + independence;
+    const isPassed = totalScore >= def.passMark && graded.passRate === 1;
 
-    // 3. Business Findings Explanation (20%)
-    let explScore = params.explanationId === 'expl_refunds_and_voids' ? 20 : 0;
-
-    // 4. Independence: Deduct 3 points per hint consulted, minimum 0 (10%)
-    let indepScore = Math.max(0, 10 - (params.hintsUsed || 0) * 3);
-
-    const totalScore = calcScore + filterScore + explScore + indepScore;
-    const isPassed = totalScore >= 75;
-
-    let feedback = '';
-    if (isPassed) {
-      feedback = 'Outstanding work! By excluding voided duplicate orders and customer refund liabilities, your query accurately isolated recognized revenue (₦115,500 on Oct 1, ₦126,000 on Oct 2, and ₦91,350 on Oct 3). Customer footfall remains robust!';
+    let feedback: string;
+    if (graded.queryError) {
+      feedback = `Your query didn't run: ${graded.queryError}`;
+    } else if (isPassed) {
+      feedback = def.successFeedback;
     } else {
-      const issues: string[] = [];
-      if (!calcScore) issues.push('Ensure you SUM(quantity * unit_price) and GROUP BY the calendar date.');
-      if (!filterScore) issues.push('Ensure you filter specifically for payment_status = \'completed\'.');
-      if (!explScore) issues.push('Select the business hypothesis supported by your data findings.');
-      feedback = issues.join(' ') || 'The calculation did not match the expected financial ledger.';
+      const issues = [...new Set(graded.fixtures.filter((f) => !f.passed && f.hint).map((f) => f.hint as string))].slice(0, 2);
+      const wrongClaims = def.findings.filter((f, i) => !findingResults[i].correct).map((f) => f.claim);
+      if (wrongClaims.length) issues.push(`Check your answer to: “${wrongClaims[0]}”`);
+      feedback = issues.join(' ') || 'Close, but not quite.';
     }
 
     return {
+      missionId: def.id,
       isPassed,
       totalScore,
-      scoreBreakdown: {
-        calculation: calcScore,
-        filter: filterScore,
-        explanation: explScore,
-        independence: indepScore,
-      },
+      scoreBreakdown: { calculation, filter, explanation, independence },
       feedback,
-      xpEarned: isPassed ? 150 : 25,
-      creditsEarned: isPassed ? 500 : 50,
-      badgeAwarded: isPassed ? 'badge_cafe_sleuth' : undefined,
+      xpEarned: isPassed ? def.xp : Math.round(def.xp / 6),
+      creditsEarned: payout(def.pay, totalScore, hints, !!params.fast),
+      badgeAwarded: isPassed ? def.badgeId : undefined,
+      fixtures: graded.fixtures.map(({ id, passed }) => ({ id, passed })),
+      findings: findingResults,
+      queryError: graded.queryError,
     };
   }
 }

@@ -1,0 +1,184 @@
+{
+  "id": "ch1_cafe_revenue_mystery",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "The Café Revenue Mystery",
+  "summary": "Mama Bisi's café is packed every day, yet her printout says revenue fell 40%. Find what she really earned.",
+  "pay": 15000,
+  "xp": 150,
+  "badgeId": "badge_cafe_sleuth",
+  "passMark": 75,
+  "client": {
+    "name": "Mama Bisi",
+    "business": "Mama Bisi's Café",
+    "character": "mama_bisi",
+    "brief": [
+      "Every table is full, yet my weekly printout says revenue crashed by 40%!",
+      "The laptop on the patio has the POS ledger. Check what we really earned each day."
+    ],
+    "thanks": "You've saved me a sleepless week. Here's your fee, my dear."
+  },
+  "location": {
+    "district": "market",
+    "remote": false,
+    "npc": [
+      12.6,
+      0,
+      53.5
+    ],
+    "workstation": [
+      11.4,
+      0,
+      60
+    ]
+  },
+  "starterSql": "-- BGAP Analytics Workstation — Chapter 01: The Café Revenue Mystery\n-- Mama Bisi wants to know what the café really earned each day.\n-- Start by looking at the raw ledger, then build your answer.\n\nSELECT *\nFROM sales\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "sales",
+      "description": "Café point-of-sale ledger, 1–3 October 2026",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "desc": "Transaction number",
+          "pk": true
+        },
+        {
+          "name": "transaction_code",
+          "type": "VARCHAR",
+          "desc": "POS audit code (e.g. TX-1001)"
+        },
+        {
+          "name": "sale_at",
+          "type": "TIMESTAMP",
+          "desc": "Date and time the order was placed"
+        },
+        {
+          "name": "item_name",
+          "type": "VARCHAR",
+          "desc": "Product or combo"
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "desc": "Units ordered"
+        },
+        {
+          "name": "unit_price",
+          "type": "DOUBLE",
+          "desc": "Price per unit in naira (₦)"
+        },
+        {
+          "name": "payment_status",
+          "type": "VARCHAR",
+          "desc": "completed, refunded or voided"
+        },
+        {
+          "name": "payment_method",
+          "type": "VARCHAR",
+          "desc": "pos_card, transfer or cash"
+        }
+      ]
+    }
+  ],
+  "hints": [
+    {
+      "title": "Hint 1: Not every row is money",
+      "desc": "Some rows are voided tickets (mistakes cancelled straight away) or refunds. They never became revenue."
+    },
+    {
+      "title": "Hint 2: Keep only completed sales",
+      "desc": "Filter the rows to completed transactions before adding anything up.",
+      "snippet": "WHERE payment_status = 'completed'"
+    },
+    {
+      "title": "Hint 3: Shape of the answer",
+      "desc": "One row per day: turn sale_at into a date, and add up quantity × unit_price for each day."
+    }
+  ],
+  "findings": [
+    {
+      "id": "cause",
+      "claim": "Why does the printout show revenue falling while the café is full?",
+      "options": [
+        {
+          "id": "expl_footfall_drop",
+          "text": "Customer numbers fell sharply in the afternoons."
+        },
+        {
+          "id": "expl_refunds_and_voids",
+          "text": "Customers are as many as ever; voided duplicate tickets and refunds were distorting the gross figures.",
+          "correct": true
+        },
+        {
+          "id": "expl_catering_discount",
+          "text": "Heavy catering discounts wiped out the margins."
+        }
+      ],
+      "evidence": "receipt_book"
+    },
+    {
+      "id": "best_day",
+      "claim": "Which day earned the most recognised revenue?",
+      "options": [
+        {
+          "id": "2026-10-01",
+          "text": "Thursday 1 October"
+        },
+        {
+          "id": "2026-10-02",
+          "text": "Friday 2 October",
+          "correct": true
+        },
+        {
+          "id": "2026-10-03",
+          "text": "Saturday 3 October"
+        }
+      ]
+    }
+  ],
+  "successFeedback": "Footfall is fine. Voided duplicates and refunds were inflating the gross figure; completed sales show the café is doing well (₦115,500, ₦126,000 and ₦91,350 a day).",
+  "trapFixture": "voids-and-refunds",
+  "fixtures": [
+    {
+      "id": "sample",
+      "purpose": "The ledger you can see in the terminal",
+      "failHint": "Your daily totals don’t match Mama Bisi’s ledger."
+    },
+    {
+      "id": "voids-and-refunds",
+      "purpose": "Big voided and refunded orders",
+      "failHint": "Some orders that never earned money are still in your totals. Check payment_status."
+    },
+    {
+      "id": "quantities",
+      "purpose": "Orders with several items and non-round prices",
+      "failHint": "Revenue should account for how many of each item were sold."
+    },
+    {
+      "id": "midnight",
+      "purpose": "Sales either side of midnight",
+      "failHint": "Sales near midnight are landing on the wrong day."
+    },
+    {
+      "id": "dead-day",
+      "purpose": "A day with no completed sales",
+      "failHint": "Refunded or voided sales are adding revenue to a day that had none."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "receipt_book",
+      "prop": "book",
+      "title": "Mama Bisi's receipt book",
+      "position": [
+        10.4,
+        0.8,
+        57.6
+      ],
+      "text": "Mama Bisi's handwritten book of the week's tickets. Beside TX-1006 (1 Oct, 'Accidental Duplicate Order', 5 × ₦6,000): \"VOID: rang it twice.\" TX-1005 (1 Oct, avocado toast & tea): \"Refunded, tea was cold.\" TX-1010 (2 Oct): \"VOID.\" TX-1014 (3 Oct, catering test order, ₦50,000): \"Refunded by transfer.\" The printout adds every one of these to the takings."
+    }
+  ]
+}

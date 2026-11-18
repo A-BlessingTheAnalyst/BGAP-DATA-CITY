@@ -1,0 +1,352 @@
+<title>Data City Game Design</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: same control-room language as the roadmap; a sticky chapter bar, then one chapter per view. Interactive bits: tier filter on cases, a "seconds blocked" scrubber for driver behaviour, a pay calculator. */
+:root{
+  --bg:#F2F5F7; --panel:#FFFFFF; --panel-2:#E8EDF2; --line:#CFD8E3;
+  --ink:#0E1626; --muted:#566279;
+  --accent:#0391A8; --accent-ink:#FFFFFF; --gold:#A86400; --emerald:#08865C; --ruby:#C8323A;
+  --gold-bg:#FDF1DC; --em-bg:#DDF4EA; --ruby-bg:#FBE3E4; --acc-bg:#DCF2F6;
+  --t1:#08865C; --t2:#0391A8; --t3:#5B5BD6; --t4:#A86400; --t5:#C8323A;
+  --f-display:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#080C14; --panel:#0F1626; --panel-2:#162035; --line:#22304E; --ink:#F1F5FA; --muted:#94A3B8;
+  --accent:#00D9E6; --accent-ink:#04121A; --gold:#F5A524; --emerald:#2FCB94; --ruby:#F2676D;
+  --gold-bg:#2A1F0A; --em-bg:#0B2A20; --ruby-bg:#2D1216; --acc-bg:#06262E;
+  --t1:#2FCB94; --t2:#00D9E6; --t3:#8C8CFF; --t4:#F5A524; --t5:#F2676D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#080C14; --panel:#0F1626; --panel-2:#162035; --line:#22304E; --ink:#F1F5FA; --muted:#94A3B8;
+  --accent:#00D9E6; --accent-ink:#04121A; --gold:#F5A524; --emerald:#2FCB94; --ruby:#F2676D;
+  --gold-bg:#2A1F0A; --em-bg:#0B2A20; --ruby-bg:#2D1216; --acc-bg:#06262E;
+  --t1:#2FCB94; --t2:#00D9E6; --t3:#8C8CFF; --t4:#F5A524; --t5:#F2676D; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:.01em}
+p{margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-size:.85em}
+
+header.hero{padding-block:40px 22px;display:grid;gap:16px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:clamp(30px,5vw,50px);line-height:1.05;font-weight:700;max-width:22ch}
+.hero .lede{max-width:66ch;color:var(--muted);font-size:16.5px}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.pillar{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:4px}
+.pillar b{font-family:var(--f-display);font-size:15px}
+.pillar span{font-size:13.5px;color:var(--muted)}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:4px;flex-wrap:wrap;padding-block:10px;border-bottom:1px solid var(--line)}
+nav.tabs button{background:none;border:1px solid transparent;padding:7px 12px;border-radius:4px;cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:14px;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--line);background:var(--panel)}
+nav.tabs .spacer{flex:1}
+
+section.view{padding-block:22px;display:grid;gap:22px}
+.view h2{font-size:24px}
+.intro{color:var(--muted);max-width:70ch}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:8px;align-content:start;min-width:0}
+.card h3{font-size:16px}
+.card ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.loop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--f-display);font-weight:600;font-size:14px}
+.loop .s{padding:6px 10px;border:1px solid var(--line);background:var(--panel);border-radius:4px}
+.loop .s.hot{border-color:var(--accent);color:var(--accent)}
+.loop .a{color:var(--muted)}
+
+.flow{display:grid;gap:8px;counter-reset:f}
+.flow .step{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.flow .step::before{counter-increment:f;content:counter(f);font-family:var(--f-mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:50%;width:26px;height:26px;display:grid;place-items:center}
+.flow .step b{font-family:var(--f-display)}
+.flow .step span{display:block;color:var(--muted);font-size:13.5px}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-display);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--panel-2)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+.tier{display:inline-block;font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.tier.t1{color:var(--t1)} .tier.t2{color:var(--t2)} .tier.t3{color:var(--t3)} .tier.t4{color:var(--t4)} .tier.t5{color:var(--t5)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--panel);padding:4px 10px;border-radius:999px;font-size:12.5px;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.rung{border:1px solid var(--line);border-top:4px solid var(--c);background:var(--panel);border-radius:6px;padding:12px;display:grid;gap:6px;min-width:0}
+.rung b{font-family:var(--f-display)}
+.rung small{color:var(--muted);font-size:12.5px}
+.rung .pay{font-family:var(--f-mono);font-size:12.5px;color:var(--c)}
+@media (max-width:820px){.ladder{grid-template-columns:1fr 1fr}}
+
+/* Driver behaviour scrubber */
+.scrub{display:grid;gap:14px}
+.scrub input[type=range]{width:100%;accent-color:var(--accent)}
+.lane{position:relative;height:120px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.lane .road{position:absolute;inset:40px 0;background:repeating-linear-gradient(90deg,transparent 0 30px,var(--line) 30px 50px) center/100% 2px no-repeat}
+.lane .car{position:absolute;top:44px;width:64px;height:30px;border-radius:6px;background:#F2C21B;transition:left .3s ease}
+.lane .car::after{content:"";position:absolute;inset:6px 10px 6px 34px;background:#2A3B4C;border-radius:3px}
+.lane .car.q{background:var(--muted);opacity:.7}
+.lane .you{position:absolute;top:30px;left:62%;width:20px;height:56px;border-radius:10px;background:var(--accent);transition:left .4s ease}
+.lane .driver{position:absolute;top:30px;width:18px;height:52px;border-radius:9px;background:#C26A75;transition:left .6s ease, opacity .3s}
+.bubble{position:absolute;top:6px;font-family:var(--f-display);font-weight:600;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 8px;white-space:nowrap;transition:opacity .2s}
+.states{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.state{border:1px solid var(--line);border-radius:4px;padding:8px;font-size:12.5px;background:var(--panel)}
+.state b{display:block;font-family:var(--f-display);font-size:13px}
+.state.on{border-color:var(--accent);background:var(--acc-bg)}
+@media (max-width:640px){.states{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){.lane *{transition:none!important}}
+
+/* Pay calculator */
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end}
+.calc label{display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
+.calc select,.calc input[type=number]{padding:7px 9px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink)}
+.calc input[type=range]{accent-color:var(--accent)}
+.payout{font-family:var(--f-display);font-size:30px;font-variant-numeric:tabular-nums}
+.payout small{display:block;font-family:var(--f-body);font-size:12.5px;color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line)}
+.guard{border-left:3px solid var(--ruby);background:var(--ruby-bg);padding:10px 14px;border-radius:0 6px 6px 0;font-size:14px}
+.guard b{color:var(--ruby);font-family:var(--f-display)}
+.phase{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.phase:first-child{border-top:0}
+.phase .tag{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.phase.now .tag::after{content:" · next";color:var(--gold)}
+.phase b{font-family:var(--f-display)}
+.phase span{display:block;color:var(--muted);font-size:13.5px}
+.bark{display:grid;gap:4px}
+.bark q{font-family:var(--f-display);font-weight:600;quotes:"“" "”"}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Data City · game design · v1</div>
+  <h1>Every naira you spend, you earned with data.</h1>
+  <p class="lede">Get hired, find the story in the numbers, and climb from a buka's receipt book to a boardroom. The city is Lagos-flavoured and fictional; the analysis is real SQL, graded on hidden data. Money buys attire, cars and eventually aircraft, and the streets talk back.</p>
+  <div class="pillars">
+    <div class="pillar"><b>Analysis is the engine</b><span>Money, reputation, access and story all come from solving data problems.</span></div>
+    <div class="pillar"><b>The city answers back</b><span>Businesses change after you help; drivers honk, shout and push.</span></div>
+    <div class="pillar"><b>Your hustle, your style</b><span>Pick your look, ride, employers and path.</span></div>
+    <div class="pillar"><b>Readable and fair</b><span>Real SQL on hidden fixtures, with feedback that explains why.</span></div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Chapters">
+  <button role="tab" data-view="loop" aria-selected="true">Loop & flow</button>
+  <button role="tab" data-view="analysis" aria-selected="false">Analysis</button>
+  <button role="tab" data-view="economy" aria-selected="false">Money & career</button>
+  <button role="tab" data-view="people" aria-selected="false">Characters</button>
+  <button role="tab" data-view="street" aria-selected="false">Street & vehicles</button>
+  <button role="tab" data-view="build" aria-selected="false">Build order</button>
+  <span class="spacer"></span>
+  <button id="themeBtn" aria-label="Toggle theme" title="Toggle theme">◐</button>
+</nav>
+
+<!-- LOOP & FLOW -->
+<section class="view" id="v-loop">
+  <div class="card">
+    <h3>Core loop · 5–20 minutes</h3>
+    <div class="loop">
+      <span class="s">Job board</span><span class="a">→</span><span class="s">Travel</span><span class="a">→</span><span class="s">Meet client</span><span class="a">→</span><span class="s">Find evidence</span><span class="a">→</span><span class="s hot">Analyse</span><span class="a">→</span><span class="s hot">Present findings</span><span class="a">→</span><span class="s">Paid + reputation</span><span class="a">→</span><span class="s">Spend</span><span class="a">↺</span>
+    </div>
+    <p class="intro">Meta loop over hours: reputation unlocks bigger employers, harder data and bigger pay, then attire, cars and offices, new districts, driving and flight licences, and story chapters.</p>
+  </div>
+  <h2>First session</h2>
+  <div class="flow">
+    <div class="step"><div><b>Character creator</b><span>Quick-pick one of six cadets, or set body, skin tone, hair and outfit.</span></div></div>
+    <div class="step"><div><b>Arrival</b><span>A danfo drops you at Academy Quarter. The conductor shouts the route.</span></div></div>
+    <div class="step"><div><b>Tutorial with Officer Tunde</b><span>Move, talk, open the DataPhone. Dr. Ifeoma sends your first assignment.</span></div></div>
+    <div class="step"><div><b>Chapter 1: Mama Bisi's café</b><span>Find out why a packed café "lost" 40% of its revenue. Your first SQL and your first evidence-backed argument.</span></div></div>
+    <div class="step"><div><b>First pay</b><span>₦15,000 lands in the Wallet. The tailor and keke rides unlock.</span></div></div>
+    <div class="step"><div><b>Open city</b><span>The job board fills with Tier 1 gigs. Story chapters open the next tiers and districts.</span></div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>DataPhone</h3><div class="chips"><span class="chip">Jobs</span><span class="chip">Wallet</span><span class="chip">Map</span><span class="chip">Contacts</span><span class="chip">Wardrobe</span><span class="chip">Garage</span><span class="chip">Skills</span><span class="chip">Messages</span></div><p class="intro">Opens with Tab. Fast travel by danfo or BRT costs a fare.</p></div>
+    <div class="card"><h3>Time of day</h3><p class="intro">One in-game day takes about 24 real minutes. Offices are open 9–5, bukas peak at lunch, night markets open in the evening. Some gigs appear only in their window.</p></div>
+  </div>
+</section>
+
+<!-- ANALYSIS -->
+<section class="view" id="v-analysis" hidden>
+  <p class="intro">Every job has five beats: <b>brief</b>, <b>field evidence</b>, <b>workstation</b>, <b>present findings</b>, <b>consequence</b>. The server runs your query on hidden fixtures and compares results, so any correct query passes and keyword tricks fail.</p>
+  <div class="ladder" id="ladder"></div>
+  <div class="card">
+    <h3>Skill tracks</h3>
+    <div class="table-wrap"><table><thead><tr><th>Track</th><th>From</th><th>Tool</th><th>You learn</th></tr></thead><tbody>
+      <tr><td>SQL</td><td><span class="tier t1">Tier 1</span></td><td>SQL terminal</td><td>SELECT, WHERE, GROUP BY, JOIN, CASE, window functions, CTEs</td></tr>
+      <tr><td>Spreadsheets</td><td><span class="tier t2">Tier 2</span></td><td>In-game grid</td><td>SUM, IF, lookups, pivots, conditional formatting</td></tr>
+      <tr><td>Charts & dashboards</td><td><span class="tier t3">Tier 3</span></td><td>Chart builder</td><td>Picking the right chart, axes, filters, KPI tiles</td></tr>
+      <tr><td>Statistics & A/B</td><td><span class="tier t4">Tier 4</span></td><td>Guided stats panel</td><td>Distributions, significance, confidence, forecasting</td></tr>
+      <tr><td>Python</td><td><span class="tier t5">Tier 5</span></td><td>Pyodide notebook</td><td>pandas groupby and merge, cleaning, plots</td></tr>
+    </tbody></table></div>
+  </div>
+  <div style="display:grid;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>The first twelve cases</h2><div class="filters" id="tierFilter"></div></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>Client</th><th>Brief</th><th>Data</th><th>Trap / lesson</th><th>Pay</th></tr></thead><tbody id="cases"></tbody></table></div>
+  </div>
+  <div class="card">
+    <h3>How a score becomes pay</h3>
+    <div class="calc">
+      <label for="cTier">Tier<select id="cTier"></select></label>
+      <label for="cScore">Score: <span id="cScoreV">85</span>%<input type="range" id="cScore" min="0" max="100" value="85"></label>
+      <label for="cHints">Hints used<input type="number" id="cHints" min="0" max="3" value="1"></label>
+      <label for="cFast"><span><input type="checkbox" id="cFast" checked> Finished under target time</span></label>
+      <div class="payout" id="payout" aria-live="polite"></div>
+    </div>
+    <p class="intro">Weights: correctness 50%, trap fixture 20%, findings 20%, independence 10%. Below 60% is a fail: you get a small call-out fee and can retry. The server grants pay once per attempt.</p>
+  </div>
+</section>
+
+<!-- ECONOMY -->
+<section class="view" id="v-economy" hidden>
+  <p class="intro">In-game naira is fictional and only graded analysis pays meaningfully. Reputation is tracked per employer and per district. Ranks run Cadet → Junior Analyst → Analyst → Senior → Lead → Principal → Partner.</p>
+  <div class="table-wrap"><table><thead><tr><th>Category</th><th>Item</th><th>Price (₦)</th><th>Effect</th></tr></thead><tbody id="prices"></tbody></table></div>
+  <div class="grid2">
+    <div class="card"><h3>Four ways to get a car</h3><ul><li><b>Hail</b> a taxi or danfo and pay the fare to skip ahead.</li><li><b>Borrow</b> from a contact with trust ≥ 60 for a day. Damage or a late return costs trust and money.</li><li><b>Rent</b> by the hour.</li><li><b>Buy</b> at the dealership; it lives in your garage.</li></ul></div>
+    <div class="card"><h3>Attire opens doors</h3><ul><li>Tier 4 front desks expect corporate attire.</li><li>Traditional attire earns bonuses with family firms and at events.</li><li>Well-dressed players get compliments on the street.</li></ul></div>
+  </div>
+</section>
+
+<!-- PEOPLE -->
+<section class="view" id="v-people" hidden>
+  <div class="grid2">
+    <div class="card"><h3>You</h3><ul><li>Quick-pick from six preset cadets, or customise body, skin tone, hair and outfit.</li><li>Built on the shared-skeleton characters already in the game, so every animation fits every look.</li><li>Wardrobe slots: top, bottom, dress, shoes, headwear, accessory, colour, pattern.</li><li>Fabric patterns now (ankara, aso-oke, pinstripe); authored outfit meshes such as wide-sleeved agbada come later.</li></ul></div>
+    <div class="card"><h3>Movement</h3><ul><li>Walk, jog, sprint; turn in place; jump; a hop up kerbs.</li><li>Clip speed matches movement speed, so feet don't slide.</li><li>Sit and type at workstations; gestures while talking; drive.</li><li>NPCs turn their heads to look at you and vary their idles.</li></ul></div>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Character</th><th>Role</th><th>Where</th></tr></thead><tbody id="cast"></tbody></table></div>
+</section>
+
+<!-- STREET -->
+<section class="view" id="v-street" hidden>
+  <div class="card scrub">
+    <h3>Stand in the road: what a driver does</h3>
+    <label for="blocked" class="intro">Seconds you've blocked the car: <b id="blockedV" class="mono">0.0 s</b></label>
+    <input type="range" id="blocked" min="0" max="12" step="0.1" value="0">
+    <div class="lane" aria-hidden="true">
+      <div class="road"></div>
+      <div class="car q" style="left:6%"></div>
+      <div class="car q" style="left:22%"></div>
+      <div class="car" id="car" style="left:40%"></div>
+      <div class="driver" id="driver" style="left:46%;opacity:0"></div>
+      <div class="you" id="you"></div>
+      <div class="bubble" id="bubble" style="left:38%;opacity:0"></div>
+      <div class="bubble" id="qbubble" style="left:8%;opacity:0">Peeeep!</div>
+    </div>
+    <div class="states" id="states">
+      <div class="state" data-s="0"><b>0 s · Brake</b>Stops behind you</div>
+      <div class="state" data-s="1"><b>1.5 s · Horn</b>Horn and emote</div>
+      <div class="state" data-s="2"><b>4 s · Shout</b>Subtitled bark</div>
+      <div class="state" data-s="3"><b>9 s · Push</b>Gets out, walks over, nudges you aside</div>
+      <div class="state" data-s="4"><b>Cleared</b>"Thank you o", drives on</div>
+    </div>
+    <p class="intro">Cars queued behind also honk, staggered and quieter. After a long jam a danfo may mount the kerb and go round. There are no injuries; bumping people or cars costs reputation and a small "settle it" fine.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Pedestrians</h3><ul><li>Bumped: a short shout.</li><li>Sprint through a crowd: people sidestep and comment.</li><li>A loud argument nearby: onlookers gather, then disperse.</li><li>High district reputation: greetings by name.</li></ul></div>
+    <div class="card bark"><h3>Barks (sample)</h3><q>Oya comot for road!</q><q>You no get eye?</q><q>Abeg shift, I dey late!</q><q>Fine tomato! Buy two, I go dash you one!</q><q>Academy–Market! Enter with your change!</q><q>See as you fine! Na corporate be this?</q></div>
+    <div class="card"><h3>Driving</h3><ul><li>Rapier ray-cast vehicle physics with arcade tuning and a chase camera.</li><li>Traffic follows a lane graph with junctions and traffic lights; cars look ahead for you and each other.</li><li>Danfos stop at bus stops while conductors call the route.</li></ul></div>
+    <div class="card"><h3>Flying (late game)</h3><ul><li>Airfield district; earn the licence at flight school.</li><li>Chopper (hover model) and light plane (lift and drag).</li><li>Helipads on the bank roof and in Tech Park; aerial survey gigs give Tier 5 cases new data.</li></ul></div>
+  </div>
+  <div class="guard"><b>Guardrails.</b> No weapons or violence, no gambling or real-money purchases. Every company, brand and character is fictional. Money and inventory are decided by the server, never the client.</div>
+</section>
+
+<!-- BUILD -->
+<section class="view" id="v-build" hidden>
+  <p class="intro">Each phase ends playable. Engineering tasks live in the roadmap; this is the order in which the game takes shape.</p>
+  <div class="card" id="phases"></div>
+</section>
+</div>
+
+<script>
+const TIERS={1:{n:'Street',c:'var(--t1)',who:'Buka, kiosk, tailor, POS stand',skill:'SELECT, WHERE, SUM, GROUP BY',data:'1 table, under 100 rows',pay:[5e3,2e4]},
+2:{n:'SME',c:'var(--t2)',who:'Pharmacy, school, keke fleet',skill:'JOINs, dates, CASE, cleaning',data:'2–3 tables, ~1k rows',pay:[3e4,1.2e5]},
+3:{n:'Mid company',c:'var(--t3)',who:'Okeke Foods, Kora Logistics',skill:'Window functions, cohorts, dashboards',data:'4–6 tables, ~50k rows',pay:[2e5,8e5]},
+4:{n:'Corporate',c:'var(--t4)',who:'Meridian Capital, Vantage, Lumen',skill:'Fraud, churn, forecasting, A/B',data:'Many sources, messy',pay:[1.5e6,6e6]},
+5:{n:'Board & state',c:'var(--t5)',who:'Conglomerate, BRT authority',skill:'Strategy, board dashboard, memo',data:'Large, conflicting',pay:[1e7,2.5e7]}};
+const CASES=[
+[1,"Mama Bisi's café","Packed every day, yet revenue “fell” 40%","sales","Voids and refunds inflate gross; count only completed sales",15e3],
+[1,"Baba Sola's POS kiosk","Cash box short against the POS log","pos_log, cash_book","Reconcile two lists; find missing and duplicate rows",12e3],
+[1,"Zee Fabrics","What to restock before the festive season","sales","Rank by revenue and by units; they disagree",18e3],
+[2,"Sunrise Primary","The bursar can't tell who owes fees","students, payments","LEFT JOIN for non-payers; partial payments",6e4],
+[2,"Keke fleet owner","Fuel spend keeps rising","trips, fuel","Cost per km per driver; one outlier; null odometers",8e4],
+[2,"Grace Pharmacy","Too much stock expires on the shelf","stock, sales","Date logic, FIFO, value of waste; a pivot",9.5e4],
+[3,"Kora Logistics","Customers complain about late deliveries","orders, routes, drivers","Window functions; SLA by route and hour; dashboard",4.5e5],
+[3,"Okeke Foods","Supplier prices creep up quietly","invoices, suppliers, items","Price index over time; chart by supplier",6e5],
+[4,"Lumen Telecom","Subscribers are leaving","customers, usage, tickets","Cohort retention, churn drivers, an A/B offer",2.5e6],
+[4,"Meridian Capital","Defaults up; the manager says it's fine","loans, branches, repayments","Simpson's paradox hides a collapsing segment",4e6],
+[4,"Vantage Insurance","Some claims smell wrong","claims, policies, garages","Anomaly rules; repeat claimant–garage network",5e6],
+[5,"BRT authority","Where should the next buses go?","taps, stops, routes, survey","Ridership by stop and hour, plus a memo",1.2e7]];
+const PRICES=[["Transport","Keke ride",300,"Short fast travel"],["Transport","Danfo fare",500,"District fast travel"],["Transport","BRT weekly pass",2000,"Unlimited BRT travel"],
+["Attire · casual","T-shirt, jeans, sneakers","5k–30k","Style"],["Attire · corporate","Shirt and tie",5e4,"Required at Tier 4 front desks"],["Attire · corporate","Suit or office dress","250k–600k","Better first impressions; more pay at T4–5"],
+["Attire · traditional","Buba & sokoto, iro & buba","40k–120k","Bonus with traditional businesses"],["Attire · traditional","Agbada, aso-oke and gele","300k–900k","Events; big bonus with elders and family firms"],
+["Licences","Driving school",2e5,"Drive owned or borrowed cars"],["Licences","Flight school",1.5e7,"Chopper and light plane"],
+["Vehicles","Used hatchback",1.5e6,"Your own car"],["Vehicles","Keke (business)",2.5e6,"Earns fares while idle"],["Vehicles","SUV",1.2e7,"Prestige with corporate clients"],["Vehicles","Luxury sedan",4e7,"Prestige"],
+["Aircraft","Light plane",1.2e8,"District flights"],["Aircraft","Chopper",5e8,"Rooftop helipads"],
+["Workspace","Laptop upgrade",1e5,"Bigger result preview, +1 free hint"],["Workspace","Co-working desk",1e6,"A workstation in every district"],["Workspace","Own office",2e7,"Start your consultancy"]];
+const CAST=[["Mama Bisi","Café owner, Chapter 1 client","Market Boulevard"],["Officer Tunde","Academy guard, tutorial guide","Academy Quarter"],["Dr. Ifeoma Nwosu","Lead lecturer, sends assignments","Academy Quarter"],["Kemi Bello","Fellow cadet, rival and friend","Everywhere"],["Baba Sola","Kiosk owner, rumour source","Market Boulevard"],["Chef Amaka","Café cook; knows the real plate count","Market Boulevard"],["Mr. Kunle Adeyemi","Meridian Capital branch manager","Finance Row"],["Chidi Okafor","Datacore systems engineer","Tech Park"]];
+const PHASES=[["0","Design document","This page and docs/game-design.md",0],["A","Analysis loop and money","Real grading on hidden data, job board, wallet and pay, evidence-based findings, Chapter 1 ported, two more Tier 1 cases, generated Tier 1 gigs",1],["B","Character and style","Character creator, wardrobe, tailor shop",0],["C","Reactive street","Traffic lights, horns, shouting, pushing, crowd reactions, barks",0],["D","Vehicles","Enter and drive, hail, borrow, rent, buy, garage, mechanic",0],["E","Career content","Tiers 2–4, Ilé Gardens and Finance Row, spreadsheet and chart tools, salaried contracts",0],["F","Aviation","Airfield, licence, chopper, plane, helipads",0],["G","Polish and launch","Performance, mobile, accessibility, telemetry",0]];
+
+const naira=v=>typeof v==='number'?'₦'+v.toLocaleString('en-NG'):'₦'+v;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+document.getElementById('ladder').innerHTML=Object.entries(TIERS).map(([k,t])=>`<div class="rung" style="--c:${t.c}"><span class="tier t${k}">Tier ${k}</span><b>${t.n}</b><small>${t.who}</small><small>${t.skill}</small><small>${t.data}</small><span class="pay">${naira(t.pay[0])}–${naira(t.pay[1])}</span></div>`).join('');
+
+let tierSel=0;
+function renderCases(){
+  document.getElementById('tierFilter').innerHTML=[0,1,2,3,4,5].map(t=>`<button class="pill" aria-pressed="${tierSel===t}" data-t="${t}">${t?'Tier '+t:'All'}</button>`).join('');
+  document.getElementById('cases').innerHTML=CASES.map((c,i)=>[i+1,...c]).filter(c=>!tierSel||c[1]===tierSel).map(([n,t,cl,b,d,trap,pay])=>`<tr><td class="num">${n}</td><td><b>${esc(cl)}</b><br><span class="tier t${t}">Tier ${t}</span></td><td>${esc(b)}</td><td class="mono">${esc(d)}</td><td>${esc(trap)}</td><td class="num">${naira(pay)}</td></tr>`).join('');
+}
+document.getElementById('tierFilter').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;tierSel=+b.dataset.t;renderCases();});
+renderCases();
+
+const cTier=document.getElementById('cTier');
+cTier.innerHTML=Object.entries(TIERS).map(([k,t])=>`<option value="${k}">Tier ${k} · ${t.n}</option>`).join('');
+function calc(){
+  const t=TIERS[cTier.value],score=+document.getElementById('cScore').value,hints=Math.max(0,Math.min(3,+document.getElementById('cHints').value||0)),fast=document.getElementById('cFast').checked;
+  document.getElementById('cScoreV').textContent=score;
+  const base=(t.pay[0]+t.pay[1])/2;
+  let out,why;
+  if(score<60){out=Math.round(base*0.1);why='Below 60%: call-out fee only. Retry allowed.';}
+  else{const mult=0.5+(score-60)/40*0.5;out=Math.round(base*mult*(fast?1.1:1)*(1-0.08*hints));why=`Base ${naira(Math.round(base))} × ${mult.toFixed(2)} for score${fast?' × 1.10 speed bonus':''}${hints?` − ${hints*8}% for hints`:''}`;}
+  document.getElementById('payout').innerHTML=`${naira(Math.round(out/100)*100)}<small>${why}</small>`;
+}
+['cTier','cScore','cHints','cFast'].forEach(id=>document.getElementById(id).addEventListener('input',calc));calc();
+
+document.getElementById('prices').innerHTML=PRICES.map(([c,i,p,e])=>`<tr><td>${esc(c)}</td><td><b>${esc(i)}</b></td><td class="num">${naira(p)}</td><td>${esc(e)}</td></tr>`).join('');
+document.getElementById('cast').innerHTML=CAST.map(([n,r,w])=>`<tr><td><b>${esc(n)}</b></td><td>${esc(r)}</td><td>${esc(w)}</td></tr>`).join('');
+document.getElementById('phases').innerHTML=PHASES.map(([k,n,d,now])=>`<div class="phase${now?' now':''}"><span class="tag">Phase ${k}</span><div><b>${esc(n)}</b><span>${esc(d)}</span></div></div>`).join('');
+
+/* Driver scrubber */
+const blocked=document.getElementById('blocked'),car=document.getElementById('car'),driver=document.getElementById('driver'),you=document.getElementById('you'),bubble=document.getElementById('bubble'),qb=document.getElementById('qbubble');
+function scrub(){
+  const t=+blocked.value; document.getElementById('blockedV').textContent=t.toFixed(1)+' s';
+  let s=0,line='',cleared=t>=11.5;
+  if(cleared){s=4;line='Thank you o.';}else if(t>=9){s=3;line='Commot jor!';}else if(t>=4){s=2;line='Oya comot for road!';}else if(t>=1.5){s=1;line='Peeeep!';}
+  document.querySelectorAll('#states .state').forEach(el=>el.classList.toggle('on',+el.dataset.s===s));
+  bubble.textContent=line;bubble.style.opacity=line?1:0;
+  qb.style.opacity=t>=2.5&&!cleared?1:0;
+  driver.style.opacity=(t>=9&&!cleared)?1:0;
+  driver.style.left=t>=9.8&&!cleared?'57%':'46%';
+  you.style.left=t>=10.6?'86%':'62%';
+  car.style.left=cleared?'70%':'40%';
+  bubble.style.left=cleared?'68%':(t>=9?'52%':'38%');
+}
+blocked.addEventListener('input',scrub);scrub();
+
+/* Tabs and theme */
+const VIEWS=['loop','analysis','economy','people','street','build'];
+function show(v){document.querySelectorAll('nav.tabs [data-view]').forEach(b=>b.setAttribute('aria-selected',b.dataset.view===v));VIEWS.forEach(x=>document.getElementById('v-'+x).hidden=x!==v);if(location.hash.slice(1)!==v)history.replaceState(null,'','#'+v);}
+document.querySelector('nav.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b)show(b.dataset.view);});
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(VIEWS.includes(h))show(h);});
+show(VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'loop');
+document.getElementById('themeBtn').addEventListener('click',()=>{const r=document.documentElement,cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark';try{localStorage.setItem('dcgd-theme',r.dataset.theme)}catch(_){}});
+try{const s=localStorage.getItem('dcgd-theme');if(s)document.documentElement.dataset.theme=s;}catch(_){}
+</script>

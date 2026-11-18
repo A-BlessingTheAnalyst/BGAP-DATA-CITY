@@ -1,0 +1,186 @@
+{
+  "id": "tier1_pos_reconciliation",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "The Short Cash Box",
+  "summary": "Baba Sola's POS kiosk keeps coming up short. Find every cash payout that never got paid for on the POS.",
+  "pay": 12000,
+  "xp": 120,
+  "badgeId": "badge_reconciler",
+  "passMark": 75,
+  "client": {
+    "name": "Baba Sola",
+    "business": "Baba Sola's POS kiosk",
+    "character": "baba_sola",
+    "brief": [
+      "My son, this POS business wan kill me. People pay with card, I hand them cash, but every evening my cash is short.",
+      "I write every payout in my cash book. The POS keeps its own log. Can you find the payouts the POS never paid me for?"
+    ],
+    "thanks": "So it's the network failures! From today, no cash until the POS says 'success'. God bless you."
+  },
+  "location": {
+    "district": "market",
+    "remote": false,
+    "npc": [
+      18,
+      0,
+      -6
+    ],
+    "workstation": [
+      15.4,
+      0,
+      -6.4
+    ]
+  },
+  "starterSql": "-- Baba Sola's POS kiosk: which cash payouts were never paid for?\n-- cash_book: every cash payout he wrote down.  pos_log: what the POS terminal recorded.\n\nSELECT *\nFROM cash_book\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "cash_book",
+      "description": "Baba Sola's handwritten cash book, typed up: every cash payout he made.",
+      "columns": [
+        {
+          "name": "ref",
+          "type": "VARCHAR",
+          "desc": "POS reference he wrote down for the payout",
+          "pk": true
+        },
+        {
+          "name": "paid_at",
+          "type": "TIMESTAMP",
+          "desc": "When he handed over the cash"
+        },
+        {
+          "name": "customer",
+          "type": "VARCHAR",
+          "desc": "Customer's first name"
+        },
+        {
+          "name": "amount",
+          "type": "INTEGER",
+          "desc": "Cash handed over, in naira (₦)"
+        }
+      ]
+    },
+    {
+      "name": "pos_log",
+      "description": "Export from the POS terminal. Also includes airtime sales, which aren't cash-outs.",
+      "columns": [
+        {
+          "name": "txn_id",
+          "type": "VARCHAR",
+          "desc": "Transaction reference",
+          "pk": true
+        },
+        {
+          "name": "logged_at",
+          "type": "TIMESTAMP",
+          "desc": "When the POS processed it"
+        },
+        {
+          "name": "amount",
+          "type": "INTEGER",
+          "desc": "Amount charged, in naira (₦)"
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "desc": "success or failed (failed means no money arrived)"
+        }
+      ]
+    }
+  ],
+  "hints": [
+    {
+      "title": "Hint 1: What you're looking for",
+      "desc": "A payout is only paid for if the POS log has the same reference with status 'success'. Anything else is cash he lost."
+    },
+    {
+      "title": "Hint 2: Compare the two lists",
+      "desc": "Find cash_book rows whose ref is not among the successful POS transactions.",
+      "snippet": "WHERE ref NOT IN (SELECT txn_id FROM pos_log WHERE status = 'success')"
+    },
+    {
+      "title": "Hint 3: Shape of the answer",
+      "desc": "Return one row per lost payout: its ref and amount."
+    }
+  ],
+  "findings": [
+    {
+      "id": "total_lost",
+      "claim": "How much cash did Baba Sola hand out without being paid?",
+      "options": [
+        {
+          "id": "lost_12000",
+          "text": "₦12,000: only the payouts missing from the POS log"
+        },
+        {
+          "id": "lost_31700",
+          "text": "₦31,700: the cash book total minus the POS total"
+        },
+        {
+          "id": "lost_32500",
+          "text": "₦32,500: missing payouts plus ones the POS marked failed",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "id": "cause",
+      "claim": "What is the main cause?",
+      "options": [
+        {
+          "id": "cause_network",
+          "text": "He pays out even when the POS fails or doesn't go through, so money never arrives.",
+          "correct": true
+        },
+        {
+          "id": "cause_theft",
+          "text": "Someone is taking money from the cash box at night."
+        },
+        {
+          "id": "cause_fees",
+          "text": "The bank's POS charges are too high."
+        }
+      ],
+      "evidence": "pos_slip"
+    }
+  ],
+  "successFeedback": "Every lost payout either failed on the POS or was never processed. Baba Sola was handing out cash on trust. No thief, just the network.",
+  "trapFixture": "network-day",
+  "fixtures": [
+    {
+      "id": "sample",
+      "purpose": "The two days you can see",
+      "failHint": "Your list of unpaid payouts doesn’t match the records."
+    },
+    {
+      "id": "network-day",
+      "purpose": "A day with many failed POS transactions",
+      "failHint": "A payout whose POS transaction failed was never paid for. Check status."
+    },
+    {
+      "id": "never-logged",
+      "purpose": "Payouts the POS never recorded",
+      "failHint": "Some payouts don’t appear in the POS log at all; they still count as unpaid."
+    },
+    {
+      "id": "clean-day",
+      "purpose": "A day where every payout was paid",
+      "failHint": "On a clean day your query should return no payouts."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "pos_slip",
+      "prop": "slip",
+      "title": "A crumpled POS slip",
+      "position": [
+        20.3,
+        1,
+        -5.7
+      ],
+      "text": "Found by the kiosk counter. POS-5766 · ₦17,500 · 12/11 16:32 · TRANSACTION DECLINED: NETWORK TIMEOUT. On the back, in Baba Sola's handwriting: \"Ibrahim. Paid cash, will settle later.\" A second slip underneath: POS-5778 · ₦3,000 · 13/11 · DECLINED."
+    }
+  ]
+}

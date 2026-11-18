@@ -1,0 +1,215 @@
+{
+  "$comment": "Every third-party asset pack used by Data City. scripts/assets/optimize.mjs reads this, optimizes the listed models from assets-src/ into public/assets/kits/, and regenerates CREDITS.md. Only CC0 and CC-BY licences are accepted.",
+  "allowedLicences": [
+    "CC0-1.0",
+    "CC-BY-4.0"
+  ],
+  "packs": [
+    {
+      "id": "kenney-roads",
+      "name": "City Kit (Roads) 2.2",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/city-kit-roads",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/city-kit-roads/Models/GLB format",
+      "include": [
+        "road-*",
+        "light-*",
+        "traffic-light*",
+        "construction-*",
+        "dumpster",
+        "electricity-*",
+        "road-sign-*",
+        "tile-*"
+      ]
+    },
+    {
+      "id": "kenney-commercial",
+      "name": "City Kit (Commercial) 2.1",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/city-kit-commercial",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/city-kit-commercial/Models/GLB format",
+      "include": [
+        "building-*",
+        "detail-*",
+        "low-detail-*"
+      ]
+    },
+    {
+      "id": "kenney-suburban",
+      "name": "City Kit (Suburban) 2.0",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/city-kit-suburban",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/city-kit-suburban/Models/GLB format",
+      "include": [
+        "*"
+      ]
+    },
+    {
+      "id": "kenney-cars",
+      "name": "Car Kit 3.1",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/car-kit",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/car-kit/Models/GLB format",
+      "include": [
+        "ambulance",
+        "delivery*",
+        "firetruck",
+        "garbage-truck",
+        "hatchback-sports",
+        "police",
+        "sedan*",
+        "suv*",
+        "taxi",
+        "truck*",
+        "van",
+        "box",
+        "cone*"
+      ]
+    },
+    {
+      "id": "kenney-nature",
+      "name": "Nature Kit 1.0",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/nature-kit",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/nature-kit/Models/GLTF format",
+      "include": [
+        "tree_palm*",
+        "tree_default*",
+        "tree_oak*",
+        "tree_fat*",
+        "tree_detailed",
+        "tree_small",
+        "plant_*",
+        "flower_*",
+        "grass*",
+        "rock_small*",
+        "pot_*"
+      ]
+    },
+    {
+      "id": "quaternius-characters",
+      "name": "Universal Base Characters (Standard)",
+      "author": "Quaternius",
+      "url": "https://quaternius.itch.io/universal-base-characters",
+      "licence": "CC0-1.0",
+      "source": "assets-src/quaternius/universal-base-characters/Universal Base Characters[Standard]/Base Characters/Godot - UE",
+      "include": [
+        "Superhero_*_FullBody"
+      ],
+      "textureSize": 1024,
+      "optional": true
+    },
+    {
+      "id": "quaternius-hair",
+      "name": "Universal Base Characters — hairstyles (Standard)",
+      "author": "Quaternius",
+      "url": "https://quaternius.itch.io/universal-base-characters",
+      "licence": "CC0-1.0",
+      "source": "assets-src/quaternius/universal-base-characters/Universal Base Characters[Standard]/Hairstyles/Rigged to Head Bone",
+      "include": [
+        "Hair_*",
+        "Eyebrows_*"
+      ],
+      "textureSize": 512,
+      "optional": true
+    },
+    {
+      "id": "quaternius-anim",
+      "name": "Universal Animation Library (Standard)",
+      "author": "Quaternius",
+      "url": "https://quaternius.itch.io/universal-animation-library",
+      "licence": "CC0-1.0",
+      "source": "assets-src/quaternius/universal-animation-library/Universal Animation Library[Standard]/Unreal-Godot",
+      "include": [
+        "UAL1_Standard"
+      ],
+      "animationsOnly": true,
+      "keepClips": [
+        "Idle_Loop",
+        "Idle_Talking_Loop",
+        "Walk_Loop",
+        "Walk_Formal_Loop",
+        "Jog_Fwd_Loop",
+        "Sprint_Loop",
+        "Sitting_Enter",
+        "Sitting_Idle_Loop",
+        "Sitting_Talking_Loop",
+        "Sitting_Exit",
+        "Interact",
+        "PickUp_Table",
+        "Jump_Start",
+        "Jump_Loop",
+        "Jump_Land",
+        "Dance_Loop",
+        "Crouch_Idle_Loop",
+        "Driving_Loop",
+        "Fixing_Kneeling",
+        "Push_Loop"
+      ],
+      "optional": true
+    },
+    {
+      "id": "quaternius-downtown",
+      "name": "Downtown City MegaKit (Standard)",
+      "author": "Quaternius",
+      "url": "https://quaternius.itch.io/downtown-city-megakit",
+      "licence": "CC0-1.0",
+      "source": "assets-src/quaternius/downtown-city-megakit/Exports/glTF (Godot)",
+      "include": [
+        "*"
+      ],
+      "bundle": "downtown",
+      "textureSize": 512,
+      "optional": true
+    },
+    {
+      "id": "kenney-impact-sounds",
+      "type": "files",
+      "name": "Impact Sounds 1.0",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/impact-sounds",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/impact-sounds/Audio",
+      "include": [
+        "footstep_concrete_00*.ogg"
+      ],
+      "dest": "public/assets/audio/sfx"
+    },
+    {
+      "id": "kenney-interface-sounds",
+      "type": "files",
+      "name": "Interface Sounds 1.0",
+      "author": "Kenney",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "licence": "CC0-1.0",
+      "source": "assets-src/kenney/interface-sounds/Audio",
+      "include": [
+        "click_002.ogg",
+        "confirmation_002.ogg",
+        "open_001.ogg",
+        "close_001.ogg",
+        "error_004.ogg",
+        "select_001.ogg"
+      ],
+      "dest": "public/assets/audio/ui"
+    },
+    {
+      "id": "polyhaven-hdri",
+      "type": "files",
+      "name": "Kloofendal 48d Partly Cloudy (Pure Sky) HDRI, 1k",
+      "author": "Poly Haven (Greg Zaal, Jarod Guest)",
+      "url": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+      "licence": "CC0-1.0",
+      "source": "public/assets/hdri",
+      "include": [
+        "partly_cloudy_1k.hdr"
+      ],
+      "dest": "public/assets/hdri"
+    }
+  ]
+}

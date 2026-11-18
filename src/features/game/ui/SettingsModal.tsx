@@ -3,10 +3,29 @@
 import React from 'react';
 import { useGameState } from '../engine/GameState';
 import { GraphicsQuality } from '@/shared/types/game';
-import { X, Monitor, Volume2 } from 'lucide-react';
+import { X, Monitor, Volume2, Eye, Type, Wind } from 'lucide-react';
 
 interface Props {
   onClose: () => void;
+}
+
+function Toggle({ icon: Icon, label, hint, on, onClick, colorOn = 'text-bgap-emerald bg-bgap-emerald/20' }: {
+  icon: typeof Eye; label: string; hint: string; on: boolean; onClick: () => void; colorOn?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between p-3.5 rounded-xl bg-bgap-card border border-bgap-border mb-3">
+      <div className="flex items-center gap-2 min-w-0">
+        <Icon className="w-4 h-4 text-bgap-cyan shrink-0" />
+        <div className="min-w-0">
+          <div className="text-sm font-medium text-bgap-text">{label}</div>
+          <div className="text-[11px] text-bgap-muted">{hint}</div>
+        </div>
+      </div>
+      <button onClick={onClick} aria-pressed={on} className={`shrink-0 px-3 py-1 rounded-lg text-xs font-bold ${on ? colorOn : 'bg-bgap-border/40 text-bgap-muted'}`}>
+        {on ? 'ON' : 'OFF'}
+      </button>
+    </div>
+  );
 }
 
 export const SettingsModal: React.FC<Props> = ({ onClose }) => {
@@ -14,10 +33,13 @@ export const SettingsModal: React.FC<Props> = ({ onClose }) => {
   const setQuality = useGameState((s) => s.setGraphicsQuality);
   const isMuted = useGameState((s) => s.isMuted);
   const toggleMute = useGameState((s) => s.toggleMute);
+  const { reducedMotion, largeText, colorblindSafe, setAccessibility } = useGameState((s) => ({
+    reducedMotion: s.reducedMotion, largeText: s.largeText, colorblindSafe: s.colorblindSafe, setAccessibility: s.setAccessibility,
+  }));
 
   return (
-    <div className="fixed inset-0 bg-bgap-dark/80 backdrop-blur-md flex items-center justify-center z-50 pointer-events-auto">
-      <div className="w-full max-w-md bg-bgap-surface border border-bgap-border rounded-2xl p-6 shadow-hud-glass">
+    <div className="fixed inset-0 bg-bgap-dark/80 backdrop-blur-md flex items-center justify-center z-50 pointer-events-auto overflow-y-auto py-8">
+      <div className="w-full max-w-md bg-bgap-surface border border-bgap-border rounded-2xl p-6 shadow-hud-glass my-auto">
         <div className="flex items-center justify-between pb-4 border-b border-bgap-border mb-6">
           <h2 className="text-lg font-bold text-bgap-text flex items-center gap-2">
             <Monitor className="w-5 h-5 text-bgap-cyan" />
@@ -51,24 +73,17 @@ export const SettingsModal: React.FC<Props> = ({ onClose }) => {
         </div>
 
         {/* Audio Toggle */}
-        <div className="flex items-center justify-between p-3.5 rounded-xl bg-bgap-card border border-bgap-border mb-6">
-          <div className="flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-bgap-emerald" />
-            <span className="text-sm font-medium text-bgap-text">Sound & Audio FX</span>
-          </div>
-          <button
-            onClick={toggleMute}
-            className={`px-3 py-1 rounded-lg text-xs font-bold ${
-              isMuted ? 'bg-red-500/20 text-red-400' : 'bg-bgap-emerald/20 text-bgap-emerald'
-            }`}
-          >
-            {isMuted ? 'MUTED' : 'ENABLED'}
-          </button>
-        </div>
+        <Toggle icon={Volume2} label="Sound & Audio FX" hint="Footsteps, UI sounds, the city's ambient soundscape" on={!isMuted} onClick={toggleMute} />
+
+        {/* Accessibility */}
+        <label className="text-xs font-mono text-bgap-cyan uppercase font-bold tracking-wider block mb-2 mt-5">Accessibility</label>
+        <Toggle icon={Type} label="Large text" hint="Scales every menu and HUD label up" on={largeText} onClick={() => setAccessibility({ largeText: !largeText })} />
+        <Toggle icon={Wind} label="Reduced motion" hint="Turns off camera auto-spin and pulsing animations" on={reducedMotion} onClick={() => setAccessibility({ reducedMotion: !reducedMotion })} />
+        <Toggle icon={Eye} label="Colour-blind-safe traffic lights" hint="Blue for go, orange for stop, instead of green/red" on={colorblindSafe} onClick={() => setAccessibility({ colorblindSafe: !colorblindSafe })} />
 
         <button
           onClick={onClose}
-          className="w-full py-3 rounded-xl bg-bgap-card border border-bgap-border hover:bg-bgap-border/60 text-bgap-text font-bold transition"
+          className="w-full mt-3 py-3 rounded-xl bg-bgap-card border border-bgap-border hover:bg-bgap-border/60 text-bgap-text font-bold transition"
         >
           Save & Return
         </button>

@@ -1,0 +1,19 @@
+{
+  "_comment": "Phase C: short lines the city's drivers and pedestrians say in reaction to the player. English and Pidgin; shown as a floating subtitle above the speaker for a few seconds.",
+  "barks": [
+    { "id": "horn_1", "situation": "horn", "speaker": "driver", "text_en": "Move, please!", "text_pcm": "Abeg move!" },
+    { "id": "horn_2", "situation": "horn", "speaker": "driver", "text_en": "Come on!", "text_pcm": "Oya now!" },
+    { "id": "shout_1", "situation": "shout", "speaker": "driver", "text_en": "Get out of the road!", "text_pcm": "Commot for road!" },
+    { "id": "shout_2", "situation": "shout", "speaker": "driver", "text_en": "I have somewhere to be!", "text_pcm": "I get where I dey go o!" },
+    { "id": "shout_3", "situation": "shout", "speaker": "driver", "text_en": "Are you blind?!", "text_pcm": "You no dey see?!" },
+    { "id": "push_1", "situation": "push", "speaker": "driver", "text_en": "Move it, now!", "text_pcm": "Abeg comot for road jare!" },
+    { "id": "push_2", "situation": "push", "speaker": "driver", "text_en": "This one too much o!", "text_pcm": "This one too much o!" },
+    { "id": "thanks_1", "situation": "thanks", "speaker": "driver", "text_en": "Thank you o.", "text_pcm": "Thank you o." },
+    { "id": "thanks_2", "situation": "thanks", "speaker": "driver", "text_en": "God bless.", "text_pcm": "God go bless you." },
+    { "id": "bumped_1", "situation": "bumped", "speaker": "pedestrian", "text_en": "Watch it!", "text_pcm": "Oya watch road na!" },
+    { "id": "bumped_2", "situation": "bumped", "speaker": "pedestrian", "text_en": "Sorry, eh!", "text_pcm": "Sorry o!" },
+    { "id": "bumped_3", "situation": "bumped", "speaker": "pedestrian", "text_en": "Slow down!", "text_pcm": "Slow down abeg!" },
+    { "id": "greet_1", "situation": "greeting", "speaker": "pedestrian", "text_en": "Well done, cadet!", "text_pcm": "Well done, cadet!" },
+    { "id": "greet_2", "situation": "greeting", "speaker": "pedestrian", "text_en": "Good afternoon o.", "text_pcm": "Good afternoon o." }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "_comment": "Data City outfit catalog (Phase B). Prices follow docs/game-design.md §4: casual 5k–30k, corporate 50k–600k, traditional 40k–900k. Starter items are free and owned by every cadet. All designs are original; no real brands.",
+  "items": [
+    { "id": "starter_polo_teal", "name": "Cadet polo, teal", "slot": "top", "style": "shirt", "color": "#13837A", "price": 0, "tags": ["starter"], "description": "The Academy polo every cadet gets on day one." },
+    { "id": "starter_polo_white", "name": "Cadet polo, white", "slot": "top", "style": "shirt", "color": "#F3F1EC", "price": 0, "tags": ["starter"], "description": "Crisp white, for cadets who never spill tea." },
+    { "id": "starter_polo_maroon", "name": "Cadet polo, maroon", "slot": "top", "style": "shirt", "color": "#7A1F2B", "price": 0, "tags": ["starter"], "description": "Deep maroon with the Academy crest." },
+    { "id": "starter_polo_mustard", "name": "Cadet polo, mustard", "slot": "top", "style": "shirt", "color": "#D9A21B", "price": 0, "tags": ["starter"], "description": "Bright enough to find in a crowd." },
+    { "id": "starter_polo_indigo", "name": "Cadet polo, indigo", "slot": "top", "style": "shirt", "color": "#2D3A6B", "price": 0, "tags": ["starter"], "description": "Indigo-dyed cotton." },
+    { "id": "starter_trousers_navy", "name": "Navy trousers", "slot": "bottom", "style": "trousers", "color": "#1D2B45", "price": 0, "tags": ["starter"], "description": "Plain navy trousers." },
+    { "id": "starter_chinos_khaki", "name": "Khaki chinos", "slot": "bottom", "style": "trousers", "color": "#B9A57C", "price": 0, "tags": ["starter"], "description": "Light chinos for hot afternoons." },
+    { "id": "starter_jeans_black", "name": "Black jeans", "slot": "bottom", "style": "trousers", "color": "#1B1C20", "price": 0, "tags": ["starter"], "description": "Goes with everything." },
+    { "id": "starter_sneakers_black", "name": "Black sneakers", "slot": "shoes", "style": "sneakers", "color": "#1B1C20", "price": 0, "tags": ["starter"], "description": "Made for walking the boulevard." },
+    { "id": "starter_sneakers_white", "name": "White sneakers", "slot": "shoes", "style": "sneakers", "color": "#ECEAE4", "price": 0, "tags": ["starter"], "description": "Keep them clean if you can." },
+
+    { "id": "ankara_shirt_red", "name": "Ankara shirt, red", "slot": "top", "style": "shirt", "color": "#C4302B", "accent": "#F2B134", "price": 12000, "tags": ["casual"], "description": "Short-sleeved ankara print, made at Zee Fabrics." },
+    { "id": "ankara_shirt_blue", "name": "Ankara shirt, blue", "slot": "top", "style": "shirt", "color": "#1F5FA8", "accent": "#F2B134", "price": 12000, "tags": ["casual"], "description": "Blue ankara with a yellow wax pattern." },
+    { "id": "linen_shirt_sand", "name": "Linen shirt", "slot": "top", "style": "shirt", "color": "#E8D9B8", "price": 8000, "tags": ["casual"], "description": "Breathes in the heat." },
+    { "id": "cargo_trousers_olive", "name": "Cargo trousers", "slot": "bottom", "style": "trousers", "color": "#5B6B3A", "price": 9000, "tags": ["casual"], "description": "Pockets for a phone, a power bank and a pen." },
+    { "id": "canvas_sneakers_red", "name": "Canvas sneakers, red", "slot": "shoes", "style": "sneakers", "color": "#B3261E", "price": 15000, "tags": ["casual"], "description": "Hand-stitched canvas." },
+    { "id": "sandals_brown", "name": "Leather sandals", "slot": "shoes", "style": "sandals", "color": "#6B4226", "price": 5000, "tags": ["casual"], "description": "From the cobbler by the market stop." },
+    { "id": "cap_teal", "name": "BGAP cap", "slot": "head", "style": "cap", "color": "#13837A", "price": 6000, "tags": ["casual"], "description": "Keeps the sun out of your eyes." },
+
+    { "id": "suit_charcoal", "name": "Charcoal suit jacket", "slot": "top", "style": "suit", "color": "#33373D", "accent": "#7A1F2B", "price": 120000, "tags": ["corporate"], "description": "A sharp two-button jacket with a maroon tie." },
+    { "id": "suit_navy", "name": "Navy suit jacket", "slot": "top", "style": "suit", "color": "#1D2B45", "accent": "#D4A017", "price": 150000, "tags": ["corporate"], "description": "Finance Row navy, gold tie." },
+    { "id": "suit_trousers_charcoal", "name": "Charcoal suit trousers", "slot": "bottom", "style": "trousers", "color": "#2B2F36", "price": 60000, "tags": ["corporate"], "description": "Pressed, with a sharp crease." },
+    { "id": "oxfords_black", "name": "Leather oxfords", "slot": "shoes", "style": "oxfords", "color": "#141414", "price": 55000, "tags": ["corporate"], "description": "Polished until you can see the spreadsheet in them." },
+
+    { "id": "kaftan_white", "name": "White kaftan", "slot": "dress", "style": "kaftan", "color": "#F3F1EC", "accent": "#D4A017", "price": 45000, "tags": ["traditional"], "description": "Ankle-length kaftan with gold embroidery." },
+    { "id": "kaftan_indigo", "name": "Indigo kaftan", "slot": "dress", "style": "kaftan", "color": "#2D3A6B", "accent": "#F3F1EC", "price": 65000, "tags": ["traditional"], "description": "Adire indigo, tailored at Zee Fabrics." },
+    { "id": "boubou_ankara", "name": "Ankara boubou", "slot": "dress", "style": "boubou", "color": "#C4302B", "accent": "#F2B134", "price": 60000, "tags": ["traditional"], "description": "A flowing ankara boubou for owambe Saturdays." },
+    { "id": "asooke_set_gold", "name": "Aso-oke ceremonial set", "slot": "dress", "style": "kaftan", "color": "#C9A13B", "accent": "#7A1F2B", "price": 900000, "tags": ["traditional"], "description": "Hand-woven aso-oke. For boardrooms and weddings alike." },
+    { "id": "gele_yellow", "name": "Gele headwrap", "slot": "head", "style": "gele", "color": "#F2B134", "price": 40000, "tags": ["traditional"], "description": "Stiff, tall and tied by an expert." },
+    { "id": "kufi_white", "name": "Kufi cap", "slot": "head", "style": "kufi", "color": "#F3F1EC", "price": 15000, "tags": ["traditional"], "description": "Embroidered cap." }
+  ]
+}

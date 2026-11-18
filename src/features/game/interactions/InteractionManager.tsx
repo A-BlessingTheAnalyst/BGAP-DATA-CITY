@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { InteractionPrompt } from './InteractionPrompt';
 import { DialogueBox } from './DialogueBox';
+import { EvidenceCard } from './EvidenceCard';
 import { AnalyticsTerminalModal } from '../../analysis/sql-editor/AnalyticsTerminalModal';
 import { useGameState } from '../engine/GameState';
 import { interactionTargets } from '../physics/InteractionTrigger';
@@ -50,6 +51,7 @@ export const InteractionManager: React.FC = () => {
   return (
     <>
       <InteractionPrompt />
+      <EvidenceCard />
       {isDialogueActive && <DialogueBox />}
       {isWorkstationActive && <AnalyticsTerminalModal />}
     </>

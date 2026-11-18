@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import Editor from '@monaco-editor/react';
+import React, { useRef } from 'react';
+import Editor, { type OnMount } from '@monaco-editor/react';
 
 interface Props {
   value: string;
@@ -10,6 +10,12 @@ interface Props {
 }
 
 export const MonacoSqlEditor: React.FC<Props> = ({ value, onChange, onRun }) => {
+  // The command is registered once; the ref always calls the latest onRun (current query).
+  const run = useRef(onRun);
+  run.current = onRun;
+  const onMount: OnMount = (editor, monaco) => {
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => run.current());
+  };
   return (
     <Editor
       height="100%"
@@ -17,6 +23,7 @@ export const MonacoSqlEditor: React.FC<Props> = ({ value, onChange, onRun }) => 
       theme="vs-dark"
       value={value}
       onChange={(v) => onChange(v || '')}
+      onMount={onMount}
       options={{
         minimap: { enabled: false },
         fontSize: 14,
@@ -25,6 +32,7 @@ export const MonacoSqlEditor: React.FC<Props> = ({ value, onChange, onRun }) => 
         scrollBeyondLastLine: false,
         padding: { top: 12 },
         lineNumbersMinChars: 3,
+        wordWrap: 'on',
       }}
     />
   );
