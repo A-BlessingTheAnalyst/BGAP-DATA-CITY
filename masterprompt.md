@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 18 November 2026 (Phase C complete: traffic lights, driver reactions, vehicle colliders, barks) · branch `feat/world-kit` · nothing committed since `a1b8294`.*
+> *Last updated: 18 November 2026 (Phase D core: dealership, driving licence, kinematic driving, garage, hail-a-ride fast travel) · branch `feat/world-kit` · nothing committed since `0feed8a`.*
 
 ---
 
@@ -510,18 +510,17 @@ All eight tasks landed: browser play-through (and its bug fixes), server-side at
 
 **Done when:** standing in the lane gives stop → horn (~1.5 s) → shout (~4 s) → push (~9 s), and queued honks; bumping pedestrians gets a shout. Unit-test the state-machine timings. ✅ `npm run test:traffic` (26 checks: phase cycling, never-both-green, brake factors, blocked detection, the exact 1.5/4/9s transitions, barks validity) + verified live in-browser: horn and shout fired with correct, distinct lines; push fired at the recorded 9.1s mark in an earlier run (before the cooldown-key fix, which is why the first live run showed horn repeating instead of escalating — the fix was applied and retested); 20 traffic lamps confirmed cycling colour over a 12s window with no NS/EW conflict.
 
-### Phase D: vehicles and driving
-- **Rapier ray-cast vehicle controller** (`world.createVehicleController`): arcade tuning, chase camera, enter/exit with E (`Driving_Loop`).
-- **Getting a ride:**
-  - **Hail** a taxi or danfo (fare from the ledger → fast travel cutscene).
-  - **Borrow** from Contacts (trust ≥ 60, time limit; damage or a late return costs trust and money).
-  - **Rent** by the hour.
-  - **Buy** at a dealership → garage → call the car.
-- **Mechanic** repairs damage; "settle it" fines for bumps (no injuries).
-- **DataPhone apps:** Contacts, Garage, Map (fast travel).
-- **Driving licence** (driving school mini-lesson, ₦200k) gates driving owned or borrowed cars.
+### Phase D: vehicles and driving ✅ core done (18 Nov 2026)
+- **Vehicle dealership**: `content/vehicles.json` (5 cars: used hatchback 1.5M, keke 2.5M, sedan 3.8M, pickup 5.2M, SUV 12M), `server/content/vehicles.ts` (validated catalog), `GET /api/game/garage` (owned + catalog + licence), `POST /api/game/garage/buy` (price from the catalog only, atomic debit — same `wallet.debit()` safety as outfits: buying twice or unaffordably is refused, never double-charged).
+- **Driving licence** (`driving_licence`, ₦200k, bought the same way as a car) gates entry: the world prompt shows "pass your driving test first" and `interact()` refuses to start driving without it (checked both in the UI and structurally alongside the purchase system — there is no server-side drive *action* to gate, since driving itself has no server call, only owning the car and the licence do).
+- **Driving** (`world/DrivableCar.tsx`): **not** Rapier's full ray-cast wheel/suspension controller — a kinematic arcade controller using the same `world.createCharacterController()` shape-cast pattern as the player (proven, collision-aware, and far more reliable to get right without the extensive interactive suspension-tuning that a dynamic vehicle needs). Accelerate/brake/reverse, speed-scaled steering, Shift for a speed boost, a forward+side raycast-style collision response that sheds speed on impact. E enters (near a parked, owned, licensed car) and E always exits first regardless of what's nearby. While driving, the player's own body is hidden and its collider disabled; the camera, minimap and GPS keep following "the player" unchanged because the car mirrors its position onto the same `playerRuntime` the rest of the game already reads.
+- **Garage**: cars park at `MARKET_LAYOUT.garage` (east sidewalk near the kiosk) by default; the DataPhone **Garage** tab lets you call every owned car to a ring of spots around you, buy more cars or the licence, and see what you own. `db/migrations/0004_garage.sql` adds the Supabase table for parked positions, **but `server/game/garage.ts`'s loader is file-store only for now** — it doesn't switch to Supabase the way `wallet.ts`/`attempts.ts` do, since this project has no Supabase instance configured to test against; the migration is ready for when T50 (real auth) lands.
+- **Hailing a ride**: `POST /api/game/garage/hail` prices a `fareFor(distance)` road-distance fare (server/economy/fares.ts), debits it (never idempotent — every real ride costs money, protected only by the same atomic balance check), then the client fast-travels the player straight to the tracked job or map pin via a new `requestTeleport()` one-shot (consumed by `PlayerCharacter`, same mechanism the dev `teleport()` handle already used). **Not built:** a travel cutscene/animation — the jump is instant, same as the existing map-pin/dev teleport.
+- **Not built (follow-ups, scoped out this pass):** Borrow from Contacts and Rent by the hour (both need a trust/relationship system that doesn't exist yet); a Contacts DataPhone app; a mechanic and vehicle damage/repair ("settle it" fines for bumps); a walking driver NPC getting out to push (Phase C already covers the push *reaction*, just not from a car YOU hit); a danfo conductor bark at the bus stop.
 
-**Done when:** you hail a danfo to the café (fare deducted); borrow and return a car; buy a car, find it in the garage and drive it with collisions.
+**Done when:** you hail a danfo to the café (fare deducted); borrow and return a car; buy a car, find it in the garage and drive it with collisions. **Partially met**: hail-with-fare-and-teleport ✅ verified live; buy → find in garage → drive with collisions ✅ verified live (licence gate, enter/exit, forward motion, steering all confirmed in the browser — a real bug was found and fixed in this pass: hailing paid the fare but never actually moved the player, now fixed via `requestTeleport`). Borrow/rent are not built (see above), so that half of "Done when" does not apply yet.
+
+**Verification note:** as in Phase C, this environment's browser pane suspends `requestAnimationFrame` almost entirely once backgrounded (confirmed at 0 ticks over 13s in one check), which froze camera/physics-driven behaviour (but not click-driven UI) until a click re-woke it — not a code regression. A `location.reload()` also left a stale reference to the `PlayerCharacter` module's teleport singleton via Fast Refresh, making the very first hail test look broken; a full `navigate()` reload resolved it and the retest passed cleanly. Both are noted here so a future session doesn't chase the same false leads.
 
 ### Phase E: career content, new districts and new skill tools
 - **Districts:** the layout for all six now exists in `cityPlan.ts` (blocks, landmarks, generated buildings). Remaining: dress Ilé Gardens and Finance Row for play (compound walls, gates, interiors for client buildings, signage), put case NPCs on their streets, and stream districts by zone if performance needs it.

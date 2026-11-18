@@ -65,6 +65,11 @@ interface GameStateStore {
   isShopOpen: boolean;
   setShopOpen: (open: boolean) => void;
 
+  // Phase D: driving
+  isDriving: boolean;
+  drivingVehicleId: string | null;
+  setDriving: (vehicleId: string | null) => void;
+
   // Mission State
   missionState: MissionState;
   activeMissionId: string;
@@ -165,6 +170,10 @@ export const useGameState = create<GameStateStore>((set) => ({
   setCreatorOpen: (open) => set({ isCreatorOpen: open, isPhoneOpen: false }),
   isShopOpen: false,
   setShopOpen: (open) => set({ isShopOpen: open, isPhoneOpen: false }),
+
+  isDriving: false,
+  drivingVehicleId: null,
+  setDriving: (vehicleId) => set({ isDriving: vehicleId !== null, drivingVehicleId: vehicleId, isPhoneOpen: false }),
 
   missionState: 'available',
   activeMissionId: 'ch1_cafe_revenue_mystery',

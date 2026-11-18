@@ -16,6 +16,8 @@ import { ThirdPersonCamera } from '../camera/ThirdPersonCamera';
 import { MissionClients } from '../world/MissionClients';
 import { CustomWaypoint } from '../world/CustomWaypoint';
 import { TailorCounter } from '../world/TailorCounter';
+import { GarageWorld } from '../world/GarageWorld';
+import { loadGarage } from '../ui/garage/useGarage';
 import { CityAudio } from '../audio/CityAudio';
 import { BarkLayer } from '../world/BarkLayer';
 import { loadBarks } from '../world/barks';
@@ -26,7 +28,7 @@ import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
 // then the story characters, the player and the camera (inside physics, for occlusion rays).
 export const SceneManager: React.FC = () => {
   const { laptop, owner } = MARKET_LAYOUT.cafe;
-  React.useEffect(() => { loadBarks(); }, []);
+  React.useEffect(() => { loadBarks(); loadGarage(); }, []);
   return (
     <>
       <EnvironmentLighting />
@@ -49,6 +51,7 @@ export const SceneManager: React.FC = () => {
         <MissionClients />
         <CustomWaypoint />
         <TailorCounter />
+        <GarageWorld />
 
         <PlayerCharacter />
         <ThirdPersonCamera />

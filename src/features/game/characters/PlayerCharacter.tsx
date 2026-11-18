@@ -19,8 +19,18 @@ export const playerRuntime = { position: new Vector3(SX, SY, SZ), rotation: 0, s
  * out of the lane. Set by the caller, consumed and cleared on the next physics frame. */
 export const playerNudge = new Vector3();
 
+/** While driving, the active DrivableCar writes its position/yaw here each frame; the player
+ * mirrors it (so the camera, minimap and GPS all keep following "the player" with no extra code). */
+export const driveRuntime = { position: new Vector3(), rotationY: 0 };
+
+/** A one-shot fast-travel request (e.g. a paid danfo ride): the player picks it up and clears it
+ * on its next free frame (never mid-drive, mid-dialogue or at the terminal). */
+export const teleportRequest: { pos: [number, number] | null } = { pos: null };
+export const requestTeleport = (x: number, z: number) => { teleportRequest.pos = [x, z]; };
+
 export function PlayerCharacter() {
   const body = useRef<RapierRigidBody>(null), visual = useRef<Group>(null);
+  const isDriving = useGameState((s) => s.isDriving);
   const { world } = useRapier();
   const controller = useRef<ReturnType<typeof world.createCharacterController>>();
   const input = useInput(), velocity = useRef(new Vector3()), elapsed = useRef(0), stepClock = useRef(0);
@@ -50,9 +60,37 @@ export function PlayerCharacter() {
     };
   }, [world]);
 
+  const wasDriving = useRef(false);
+
   useFrame((_, dt) => {
     if (!body.current || !controller.current) return;
     const delta = Math.min(dt, 0.04), s = useGameState.getState();
+
+    // While driving, a DrivableCar owns movement; the player just rides along invisibly so the
+    // camera/minimap/GPS (which all follow playerRuntime.position) keep working unchanged.
+    if (s.isDriving) {
+      if (!wasDriving.current) { body.current.collider(0)?.setEnabled(false); wasDriving.current = true; }
+      playerRuntime.position.copy(driveRuntime.position);
+      playerRuntime.rotation = driveRuntime.rotationY;
+      playerRuntime.speed = 0;
+      body.current.setNextKinematicTranslation({ x: driveRuntime.position.x, y: driveRuntime.position.y, z: driveRuntime.position.z });
+      return;
+    }
+    if (wasDriving.current) {
+      body.current.collider(0)?.setEnabled(true);
+      wasDriving.current = false;
+      velocity.current.set(0, 0, 0);
+    }
+
+    // A paid fast-travel ride (hailed danfo): jump straight there, same as the dev teleport handle.
+    if (teleportRequest.pos && !s.isDialogueActive && !s.isWorkstationActive) {
+      const [tx, tz] = teleportRequest.pos;
+      teleportRequest.pos = null;
+      body.current.setNextKinematicTranslation({ x: tx, y: SY, z: tz });
+      playerRuntime.position.set(tx, SY, tz);
+      return;
+    }
+
     // Frozen while any full-screen UI is up, including the character creator before first spawn.
     const w = useWardrobe.getState();
     const blocked = s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isMapOpen || s.isCreatorOpen || s.isShopOpen || (w.loaded && !w.profile);
@@ -131,8 +169,8 @@ export function PlayerCharacter() {
   return (
     <RigidBody ref={body} type="kinematicPosition" colliders={false} position={MARKET_LAYOUT.spawn} enabledRotations={[false, false, false]}>
       <CapsuleCollider args={[0.55, 0.32]} />
-      <group ref={visual} position={[0, -0.87, 0]}>
-        <CastMember def={player} action={animAction} />
+      <group ref={visual} position={[0, -0.87, 0]} visible={!isDriving}>
+        {!isDriving && <CastMember def={player} action={animAction} />}
       </group>
     </RigidBody>
   );

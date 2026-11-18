@@ -3,10 +3,19 @@ import { runtimeInput, resetInput } from './InputManager';
 import { bindKeyboardListeners } from './KeyboardControls';
 import { useGameState } from '../engine/GameState';
 import { AudioManager } from '../audio/AudioManager';
+import { useGarage } from '../ui/garage/useGarage';
 export function interact() {
  const s = useGameState.getState();
+ // E always gets out of the car first, regardless of what's nearby.
+ if (s.isDriving) { s.setDriving(null); AudioManager.playUi('close'); resetInput(); return; }
  if (!s.activeTarget || s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isShopOpen || s.isCreatorOpen) return;
  AudioManager.playUi('open');
+ if (s.activeTarget.type === 'vehicle') {
+  if (!useGarage.getState().hasLicence) { AudioManager.playUi('error'); resetInput(); return; }
+  s.setDriving(s.activeTarget.id.slice('vehicle:'.length));
+  resetInput();
+  return;
+ }
  if (s.activeTarget.type === 'shop') {
   s.setShopOpen(true);
   resetInput();

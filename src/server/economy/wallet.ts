@@ -138,6 +138,17 @@ export async function purchaseItem(p: { userId: string; itemId: string; price: n
   return store().debit({ userId: p.userId, amount: -p.price, kind: 'purchase', reason: `Bought ${p.name}`, missionId: null, xp: 0, idempotencyKey: `buy:${p.itemId}` });
 }
 
+/**
+ * Pays a repeatable fare (a taxi/danfo ride, not a one-time purchase): debits the balance
+ * atomically, refuses if it can't be afforded, and is never idempotent-deduplicated like a
+ * catalog purchase — every call that succeeds genuinely spends money once.
+ */
+export async function payFare(p: { userId: string; amount: number; reason: string }) {
+  if (!Number.isInteger(p.amount) || p.amount <= 0) throw new Error('Bad fare.');
+  await getWallet(p.userId);
+  return store().debit({ userId: p.userId, amount: -p.amount, kind: 'purchase', reason: p.reason, missionId: null, xp: 0, idempotencyKey: `fare:${randomUUID()}` });
+}
+
 /** Item ids the player has bought (starter items are owned by everyone and not listed here). */
 export async function purchasedItems(userId: string): Promise<string[]> {
   return (await store().list(userId)).filter((e) => e.kind === 'purchase' && e.idempotencyKey.startsWith('buy:')).map((e) => e.idempotencyKey.slice(4));

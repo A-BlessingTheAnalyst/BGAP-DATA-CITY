@@ -38,6 +38,9 @@ jobs:
       - name: Traffic logic tests
         run: npm run test:traffic
 
+      - name: Garage and driving tests
+        run: npm run test:garage
+
       - name: Validate missions
         run: npm run validate:missions
 
