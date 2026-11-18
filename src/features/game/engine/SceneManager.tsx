@@ -7,7 +7,7 @@ import { Skybox } from '../world/Skybox';
 import { WorkstationDesk } from '../world/Buildings/WorkstationDesk';
 import { MarketBoulevard } from '../world/kit/district';
 import { City } from '../world/kit/City';
-import { Pedestrians, Traffic } from '../world/kit/streetLife';
+import { Pedestrians, Traffic, TrafficLights } from '../world/kit/streetLife';
 import { CITY_LANES, CITY_WALKWAYS } from '../world/kit/cityPlan';
 import { PlayerCharacter, playerRuntime } from '../characters/PlayerCharacter';
 import { CafeOwnerNPC } from '../characters/NPCs/CafeOwnerNPC';
@@ -17,6 +17,8 @@ import { MissionClients } from '../world/MissionClients';
 import { CustomWaypoint } from '../world/CustomWaypoint';
 import { TailorCounter } from '../world/TailorCounter';
 import { CityAudio } from '../audio/CityAudio';
+import { BarkLayer } from '../world/BarkLayer';
+import { loadBarks } from '../world/barks';
 import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
 
 // The game world: the whole city from the master plan (world/kit/cityPlan.ts), the hand-dressed
@@ -24,6 +26,7 @@ import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
 // then the story characters, the player and the camera (inside physics, for occlusion rays).
 export const SceneManager: React.FC = () => {
   const { laptop, owner } = MARKET_LAYOUT.cafe;
+  React.useEffect(() => { loadBarks(); }, []);
   return (
     <>
       <EnvironmentLighting />
@@ -34,7 +37,9 @@ export const SceneManager: React.FC = () => {
         <City physics />
         <MarketBoulevard physics streets={false} life={false} />
         <Traffic lanes={CITY_LANES} />
+        <TrafficLights />
         <Pedestrians walkways={CITY_WALKWAYS} count={22} focus={playerRuntime.position} />
+        <BarkLayer />
 
         {/* Chapter 1 story points */}
         <WorkstationDesk position={laptop} workstationId="ws_cafe_laptop" />

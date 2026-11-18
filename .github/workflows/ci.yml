@@ -35,6 +35,9 @@ jobs:
       - name: Shop and profile tests
         run: npm run test:shop
 
+      - name: Traffic logic tests
+        run: npm run test:traffic
+
       - name: Validate missions
         run: npm run validate:missions
 

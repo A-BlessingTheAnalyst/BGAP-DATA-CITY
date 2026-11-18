@@ -1,13 +1,18 @@
 'use client';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Group, Mesh, MeshBasicMaterial, PlaneGeometry } from 'three';
+import { Color, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from 'three';
+import { RigidBody, CuboidCollider, RapierRigidBody } from '@react-three/rapier';
 import { init as initRecast, Crowd, NavMeshQuery, CrowdAgent } from 'recast-navigation';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { EntityManager, FollowPathBehavior, Path, Vehicle, Vector3 as YVec } from 'yuka';
 import { CHARACTERS, CharacterDef, Outfit } from './characters';
 import { CastMember } from './CastMember';
 import type { Body, Hair } from './CharacterModel';
+import { INTERSECTIONS, HALF_ROAD } from './cityPlan';
+import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, type BlockState, type SignalPhase } from './trafficLogic';
+import { playerRuntime, playerNudge } from '../../characters/PlayerCharacter';
+import { pushBark } from '../barks';
 
 const FEMALE_HAIR: Hair[] = ['Hair_BuzzedFemale', 'Hair_Buns', 'Hair_Long', 'none'];
 const MALE_HAIR: Hair[] = ['Hair_Buzzed', 'Hair_SimpleParted', 'Hair_Beard', 'none'];
@@ -107,7 +112,7 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
     };
   }, [walkways, count, focus]);
 
-  useFrame((_, dt) => {
+  useFrame(({ clock }, dt) => {
     const c = live.current;
     if (!c) return;
     c.crowd.update(Math.min(dt, 0.05));
@@ -133,6 +138,15 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
       if (v.x * v.x + v.z * v.z > 0.01) g.rotation.y = Math.atan2(v.x, v.z);
       const t = a.target();
       if ((t.x - p.x) ** 2 + (t.z - p.z) ** 2 < 1) a.requestMoveTarget(c.query.findRandomPointAroundCircle(p, 40).randomPoint);
+
+      // A sprinting player who barrels into a walker gets shouted at and sidestepped.
+      const pl = playerRuntime.position;
+      const dx = p.x - pl.x, dz = p.z - pl.z;
+      if (playerRuntime.speed > 5 && dx * dx + dz * dz < 1.1) {
+        pushBark('bumped', [p.x, p.y + 1.6, p.z], `ped${i}`, clock.elapsedTime, 2.5);
+        const side = new Vector3(-dz, 0, dx).normalize().multiplyScalar(2.5);
+        a.requestMoveTarget({ x: p.x + side.x, y: p.y, z: p.z + side.z });
+      }
     });
   });
 
@@ -152,6 +166,12 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
 
 export interface Lane { points: [number, number][]; vehicles: ('taxi' | 'sedan' | 'suv' | 'van' | 'danfo' | 'keke' | 'okada')[]; speed: number }
 
+/** Rough footprint (width, height, length) in metres, for the player collider and the "blocked" check. */
+const FOOTPRINT: Record<Lane['vehicles'][number], [number, number, number]> = {
+  taxi: [1.8, 1.7, 4.4], sedan: [1.8, 1.6, 4.5], suv: [2, 2, 4.7], van: [2, 2.3, 5.4],
+  danfo: [2, 2.4, 6], keke: [1.4, 2.2, 2.4], okada: [0.8, 1.3, 2],
+};
+
 function VehicleModel({ kind }: { kind: Lane['vehicles'][number] }): ReactNode {
   switch (kind) {
     case 'danfo': return <Minibus />;
@@ -161,9 +181,17 @@ function VehicleModel({ kind }: { kind: Lane['vehicles'][number] }): ReactNode {
   }
 }
 
+/** Four-way junctions only (the ones that get traffic lights), each with a fixed, varied phase offset. */
+const FOUR_WAY = INTERSECTIONS.filter((i) => i.arms === 4).map((i, k) => ({ ...i, offset: (k * 3.7) % 20 }));
+const SIGNAL_ZONE = 14; // metres ahead a vehicle starts checking a light
+const STOP_LINE_PAD = 1.2;
+
 export function Traffic({ lanes }: { lanes: Lane[] }) {
   const refs = useRef<(Group | null)[]>([]);
+  const bodies = useRef<(RapierRigidBody | null)[]>([]);
   const flat = useMemo(() => lanes.flatMap((l, li) => l.vehicles.map((v, vi) => ({ kind: v, lane: li, slot: vi, count: l.vehicles.length }))), [lanes]);
+  // One "blocked by the player" state machine per vehicle (streetLife.trafficLogic.stepBlockState).
+  const block = useRef<BlockState[]>([]);
 
   const sim = useMemo(() => {
     const manager = new EntityManager();
@@ -190,15 +218,15 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
       manager.add(v);
       return v;
     });
+    block.current = vehicles.map(() => ({ phase: 'none', timer: 0 }));
     return { manager, vehicles };
   }, [flat, lanes]);
 
-
-  useFrame(({ camera }, dt) => {
-    const d = Math.min(dt, 0.05);
-    // Slow down behind a vehicle that is close ahead in the direction of travel.
+  useFrame(({ camera, clock }, dt) => {
+    const d = Math.min(dt, 0.05), t = clock.elapsedTime, p = playerRuntime.position;
     sim.vehicles.forEach((v, vi) => {
       let brake = 1;
+      // Slow down behind a vehicle that is close ahead in the direction of travel.
       sim.vehicles.forEach((o, oi) => {
         if (o === v || flat[oi].lane !== flat[vi].lane) return;
         const dx = o.position.x - v.position.x, dz = o.position.z - v.position.z;
@@ -208,26 +236,117 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
         const ahead = (dx * v.velocity.x + dz * v.velocity.z) / sp;
         if (ahead > 0 && ahead < 9 && Math.abs(dx * v.velocity.z - dz * v.velocity.x) / sp < 2.2) brake = Math.min(brake, (ahead - 3) / 6);
       });
+
+      // Stop for a red light ahead (checked against the nearest approaching four-way junction).
+      const sp = Math.hypot(v.velocity.x, v.velocity.z) || 1;
+      const dirx = v.velocity.x / sp, dirz = v.velocity.z / sp;
+      for (const inter of FOUR_WAY) {
+        const dx = inter.x - v.position.x, dz = inter.z - v.position.z;
+        const along = dx * dirx + dz * dirz;
+        const perp = Math.abs(dx * dirz - dz * dirx);
+        if (perp > 3 || along <= 0 || along > SIGNAL_ZONE) continue;
+        const axis: 'x' | 'z' = Math.abs(dirz) > Math.abs(dirx) ? 'z' : 'x';
+        const phase = signalPhase(t, axis, inter.offset);
+        brake = Math.min(brake, signalBrakeFactor(phase, along - HALF_ROAD - STOP_LINE_PAD));
+        break;
+      }
       if (brake < 1) v.velocity.multiplyScalar(Math.max(0, brake));
+
+      // Blocked-by-player escalation: brake (0s) → horn (~1.5s) → shout (~4s) → push (~9s).
+      const blocked = isBlockedByPlayer(v.position.x, v.position.z, dirx, dirz, p.x, p.z);
+      const prevPhase = block.current[vi]?.phase ?? 'none';
+      const next = stepBlockState(block.current[vi] ?? { phase: 'none', timer: 0 }, blocked, d);
+      block.current[vi] = next;
+      if (next.phase !== 'none') v.velocity.multiplyScalar(0.1); // held at a near-stop while blocked
+      // Each situation gets its own cooldown key: an edge trigger on one phase must never be
+      // suppressed by another phase's cooldown on the same vehicle (horn then shout then push).
+      const vehId = `veh${vi}`;
+      if (next.phase === 'horn' && prevPhase !== 'horn') pushBark('horn', [v.position.x, 1, v.position.z], `${vehId}:horn`, t, 3);
+      if (next.phase === 'shout' && prevPhase !== 'shout') pushBark('shout', [v.position.x, 1, v.position.z], `${vehId}:shout`, t, 5);
+      if (next.phase === 'push' && prevPhase !== 'push') {
+        pushBark('push', [v.position.x, 1, v.position.z], `${vehId}:push`, t, 2.5);
+        // A gentle shove out of the lane, away from the vehicle.
+        const away = new Vector3(p.x - v.position.x, 0, p.z - v.position.z);
+        if (away.lengthSq() > 0.0001) { away.normalize().multiplyScalar(2.2); playerNudge.x += away.x; playerNudge.z += away.z; }
+      }
+      if (prevPhase !== 'none' && next.phase === 'none') pushBark('thanks', [v.position.x, 1, v.position.z], `${vehId}:thanks`, t, 6);
     });
     sim.manager.update(d);
     streetRuntime.vehicles.length = sim.vehicles.length;
     sim.vehicles.forEach((v, i) => {
       streetRuntime.vehicles[i] = { x: v.position.x, z: v.position.z, speed: Math.sqrt(v.getSpeedSquared()), kind: flat[i].kind };
       const g = refs.current[i];
-      if (!g) return;
-      // Vehicles are many small meshes; past 160 m they are specks in the haze.
-      g.visible = (v.position.x - camera.position.x) ** 2 + (v.position.z - camera.position.z) ** 2 < 160 * 160;
-      g.position.set(v.position.x, 0, v.position.z);
-      if (v.getSpeedSquared() > 0.05) g.rotation.y = Math.atan2(v.velocity.x, v.velocity.z);
+      if (g) {
+        // Vehicles are many small meshes; past 160 m they are specks in the haze.
+        g.visible = (v.position.x - camera.position.x) ** 2 + (v.position.z - camera.position.z) ** 2 < 160 * 160;
+        g.position.set(v.position.x, 0, v.position.z);
+        if (v.getSpeedSquared() > 0.05) g.rotation.y = Math.atan2(v.velocity.x, v.velocity.z);
+      }
+      const b = bodies.current[i];
+      if (b) {
+        b.setNextKinematicTranslation({ x: v.position.x, y: FOOTPRINT[flat[i].kind][1] / 2, z: v.position.z });
+        if (v.getSpeedSquared() > 0.05) {
+          const half = (g?.rotation.y ?? 0) / 2;
+          b.setNextKinematicRotation({ x: 0, y: Math.sin(half), z: 0, w: Math.cos(half) });
+        }
+      }
     });
   });
 
   return (
     <>
-      {flat.map((f, i) => (
-        <group key={i} ref={(g) => { refs.current[i] = g; }}>
-          <VehicleModel kind={f.kind} />
+      {flat.map((f, i) => {
+        const [w, h, len] = FOOTPRINT[f.kind];
+        return (
+          <group key={i} ref={(g) => { refs.current[i] = g; }}>
+            <VehicleModel kind={f.kind} />
+            {/* Kinematic collider so the player can't walk through moving traffic. */}
+            <RigidBody ref={(b) => { bodies.current[i] = b; }} type="kinematicPosition" colliders={false} position={[0, h / 2, 0]}>
+              <CuboidCollider args={[w / 2, h / 2, len / 2]} />
+            </RigidBody>
+          </group>
+        );
+      })}
+    </>
+  );
+}
+
+/** Lamps at every four-way junction, coloured by the live signal phase (no new geometry: tiny emissive spheres on poles already placed by City.tsx's road tiles). */
+export function TrafficLights() {
+  const ns = useRef<(Mesh | null)[]>([]);
+  const ew = useRef<(Mesh | null)[]>([]);
+  const colourFor = (phase: SignalPhase) => (phase === 'green' ? '#34D399' : phase === 'yellow' ? '#FBBF24' : '#F87171');
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    FOUR_WAY.forEach((inter, i) => {
+      const nsPhase = signalPhase(t, 'z', inter.offset), ewPhase = signalPhase(t, 'x', inter.offset);
+      const a = ns.current[i], b = ew.current[i];
+      if (a) (a.material as MeshBasicMaterial).color.set(colourFor(nsPhase));
+      if (b) (b.material as MeshBasicMaterial).color.set(colourFor(ewPhase));
+    });
+  });
+  return (
+    <>
+      {FOUR_WAY.map((inter, i) => (
+        <group key={i} position={[inter.x, 0, inter.z]}>
+          {/* NS lamp (governs roads running along z) sits on the +x corner pole. */}
+          <mesh position={[HALF_ROAD + 0.9, 3.1, 0]}>
+            <boxGeometry args={[0.06, 2.8, 0.06]} />
+            <meshStandardMaterial color="#2B2F36" />
+          </mesh>
+          <mesh ref={(m) => { ns.current[i] = m; }} position={[HALF_ROAD + 0.9, 4.3, 0]}>
+            <sphereGeometry args={[0.16, 10, 10]} />
+            <meshBasicMaterial color={new Color('#F87171')} toneMapped={false} />
+          </mesh>
+          {/* EW lamp (governs roads running along x) sits on the -z corner pole. */}
+          <mesh position={[0, 3.1, -HALF_ROAD - 0.9]}>
+            <boxGeometry args={[0.06, 2.8, 0.06]} />
+            <meshStandardMaterial color="#2B2F36" />
+          </mesh>
+          <mesh ref={(m) => { ew.current[i] = m; }} position={[0, 4.3, -HALF_ROAD - 0.9]}>
+            <sphereGeometry args={[0.16, 10, 10]} />
+            <meshBasicMaterial color={new Color('#F87171')} toneMapped={false} />
+          </mesh>
         </group>
       ))}
     </>

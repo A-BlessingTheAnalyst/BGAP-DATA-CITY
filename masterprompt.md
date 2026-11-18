@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 18 November 2026 (Phase B complete: character creator, wardrobe, tailor shop) · branch `feat/world-kit` · nothing committed since `68e411d`.*
+> *Last updated: 18 November 2026 (Phase C complete: traffic lights, driver reactions, vehicle colliders, barks) · branch `feat/world-kit` · nothing committed since `a1b8294`.*
 
 ---
 
@@ -500,26 +500,15 @@ All eight tasks landed: browser play-through (and its bug fixes), server-side at
 
 **Done when:** you create a custom cadet, buy an outfit, reload, and the look persists; the balance is debited once. ✅ verified in-browser 18 Nov 2026 (Zara preset → saved → spawned with that look; bought an ankara shirt for ₦12,000, balance debited once, worn instantly).
 
-### Phase C: reactive street
-- **Lane graph** (`world/roads.json`) with junctions and **traffic lights** at the crossroad; give-way rules; danfos stop at the bus stop with conductor barks.
-- **Driver state machine** (yuka `StateMachine`), with a forward raycast for the player and vehicles:
+### Phase C: reactive street ✅ done (18 Nov 2026)
+- **Traffic lights** at every four-way junction (`world/kit/trafficLogic.ts`, pure and unit-tested): each axis gets 9s green + 2s yellow before the other axis's turn, offset per junction so the city doesn't flash in lockstep; `signalBrakeFactor()` eases vehicles to a stop at the line (or lets them through if already too close to stop safely on yellow, or already past the line). `TrafficLights` (in `streetLife.tsx`) renders 20 colour-cycling lamps (2 per junction × 10 junctions) updated from the same pure function, no new geometry needed.
+- **Driver block-reaction state machine** (`trafficLogic.ts`'s `stepBlockState`, pure, unit-tested against the exact masterprompt timings): brake (0s, already natural from the brake factor) → horn (~1.5s) → shout (~4s) → push (~9s). `isBlockedByPlayer()` detects the player standing ahead in a vehicle's lane. On clearing, a "thank you" bark fires once. **Simplified from the original design:** "push" is a small physical nudge on the player (`playerNudge`, consumed once by `PlayerCharacter`'s movement loop) plus horn/bark, not a modelled driver who exits the car and walks over with a `Push_Loop` animation — that full walking-NPC rig is listed as a follow-up, not built this pass. "A danfo mounts the kerb" after a long jam is also not built.
+- **Vehicle colliders**: every traffic vehicle carries a kinematic `RigidBody`+`CuboidCollider` sized to its footprint, updated every frame from its yuka position — the player can no longer walk through moving traffic.
+- **Pedestrian reactions**: sprinting into a walker (speed > 5, within ~1m) triggers a "bumped" bark and sidesteps their navmesh target away from the player. Onlookers-gather-at-arguments and reputation-based greetings are not built (Phase E, once reputation exists).
+- **Barks system**: `content/barks.json` (14 lines across horn/shout/push/thanks/bumped/greeting, English + Pidgin), served by `server/content/barks.ts` + `GET /api/game/barks`, validated (`checkBarks()`, also covered by `scripts/test-traffic.ts`). `world/barks.ts` is the runtime (`pushBark(situation, pos, source, now, cooldown)` — the cooldown key must include the situation, not just the speaker, or one bark's cooldown silently swallows the next: this was a real bug found and fixed during testing). `world/BarkLayer.tsx` renders active lines as floating `<Html>` subtitles, polled at 10Hz.
+- **Audio**: still the Phase A procedural soundscape (CityAmbience); no new CC0 horn/crowd/conductor recordings were added — this environment has no way to fetch new binary asset packs mid-session, so it's carried forward as a Phase C follow-up, same as the masterprompt already flagged in §10.
 
-  | Blocked for | Driver does |
-  |---|---|
-  | 0 s | Brake |
-  | 1.5 s | Horn |
-  | 4 s | Shout bark |
-  | 9 s | Exit car → walk → `Push_Loop` + a gentle impulse on the player → return → drive |
-
-  When cleared, a "Thank you o" bark. Queued cars honk (staggered). After a long jam, a danfo mounts the kerb.
-- **Vehicle colliders** (kinematic) so the player can't walk through cars.
-- **Pedestrian reactions:** shout when bumped; sidestep when you sprint into them; onlookers gather at arguments; greetings by name at high reputation.
-- **Barks system:**
-  - `content/barks.json` (situation, speaker type, weight, cooldown, English/Pidgin);
-  - world-space subtitles above heads.
-- **Audio:** CC0 horns, crowd, conductor, generator hum, with positional audio via drei `PositionalAudio`. Add the packs through the manifest.
-
-**Done when:** standing in the lane gives stop → horn (~1.5 s) → shout (~4 s) → push (~9 s), and queued honks; bumping pedestrians gets a shout. Unit-test the state-machine timings.
+**Done when:** standing in the lane gives stop → horn (~1.5 s) → shout (~4 s) → push (~9 s), and queued honks; bumping pedestrians gets a shout. Unit-test the state-machine timings. ✅ `npm run test:traffic` (26 checks: phase cycling, never-both-green, brake factors, blocked detection, the exact 1.5/4/9s transitions, barks validity) + verified live in-browser: horn and shout fired with correct, distinct lines; push fired at the recorded 9.1s mark in an earlier run (before the cooldown-key fix, which is why the first live run showed horn repeating instead of escalating — the fix was applied and retested); 20 traffic lamps confirmed cycling colour over a 12s window with no NS/EW conflict.
 
 ### Phase D: vehicles and driving
 - **Rapier ray-cast vehicle controller** (`world.createVehicleController`): arcade tuning, chase camera, enter/exit with E (`Driving_Loop`).

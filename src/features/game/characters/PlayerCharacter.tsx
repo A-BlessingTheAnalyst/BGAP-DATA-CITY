@@ -15,6 +15,10 @@ const [SX, SY, SZ] = MARKET_LAYOUT.spawn;
 
 export const playerRuntime = { position: new Vector3(SX, SY, SZ), rotation: 0, speed: 0 };
 
+/** A one-off nudge (metres/sec) another system can apply to the player, e.g. a driver pushing you
+ * out of the lane. Set by the caller, consumed and cleared on the next physics frame. */
+export const playerNudge = new Vector3();
+
 export function PlayerCharacter() {
   const body = useRef<RapierRigidBody>(null), visual = useRef<Group>(null);
   const { world } = useRapier();
@@ -61,6 +65,12 @@ export function PlayerCharacter() {
     velocity.current.x = blocked ? 0 : MathUtils.damp(velocity.current.x, (x * cos + z * sin) * speed, 12, delta);
     velocity.current.z = blocked ? 0 : MathUtils.damp(velocity.current.z, (z * cos - x * sin) * speed, 12, delta);
     velocity.current.y = controller.current.computedGrounded() ? -0.5 : Math.max(-20, velocity.current.y - 9.81 * delta);
+    // A blocked driver's push: added once, then cleared, so it decays with normal movement damping.
+    if (playerNudge.lengthSq() > 0) {
+      velocity.current.x += playerNudge.x;
+      velocity.current.z += playerNudge.z;
+      playerNudge.set(0, 0, 0);
+    }
     controller.current.computeColliderMovement(body.current.collider(0), {
       x: velocity.current.x * delta,
       y: velocity.current.y * delta,
