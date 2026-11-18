@@ -103,6 +103,29 @@ async function main() {
     check(gig.def.findings.every((f) => f.options.filter((o) => o.correct).length === 1), `${gig.def.id}: each finding has exactly one right answer`);
   }
 
+  console.log('Sunrise Primary: partial payments with reversed/duplicate noise');
+  const SUNRISE = 'tier2_sunrise_fees';
+  for (const [name, sql] of Object.entries({
+    'reference style': `SELECT s.name, s.term_fee - COALESCE(SUM(CASE WHEN p.status = 'confirmed' THEN p.amount END), 0) AS balance FROM students s LEFT JOIN payments p ON p.student_id = s.student_id GROUP BY s.student_id, s.name, s.term_fee HAVING s.term_fee - COALESCE(SUM(CASE WHEN p.status = 'confirmed' THEN p.amount END), 0) > 0`,
+    'WHERE filter instead of CASE': `SELECT s.name, s.term_fee - COALESCE((SELECT SUM(amount) FROM payments p WHERE p.student_id = s.student_id AND p.status = 'confirmed'), 0) AS owed FROM students s WHERE s.term_fee - COALESCE((SELECT SUM(amount) FROM payments p WHERE p.student_id = s.student_id AND p.status = 'confirmed'), 0) > 0`,
+    'CTE': `WITH paid AS (SELECT student_id, SUM(amount) AS total FROM payments WHERE status = 'confirmed' GROUP BY student_id) SELECT s.name, s.term_fee - COALESCE(paid.total, 0) AS balance FROM students s LEFT JOIN paid ON paid.student_id = s.student_id WHERE s.term_fee - COALESCE(paid.total, 0) > 0`,
+  })) { const r = await grade(SUNRISE, sql); check(r.passRate === 1, `${name} passes`); }
+  for (const [name, sql] of Object.entries({
+    'counts every status': `SELECT s.name, s.term_fee - COALESCE(SUM(p.amount), 0) AS balance FROM students s LEFT JOIN payments p ON p.student_id = s.student_id GROUP BY s.student_id, s.name, s.term_fee HAVING s.term_fee - COALESCE(SUM(p.amount), 0) > 0`,
+    'ignores reversed but keeps duplicate': `SELECT s.name, s.term_fee - COALESCE(SUM(CASE WHEN p.status != 'reversed' THEN p.amount END), 0) AS balance FROM students s LEFT JOIN payments p ON p.student_id = s.student_id GROUP BY s.student_id, s.name, s.term_fee HAVING s.term_fee - COALESCE(SUM(CASE WHEN p.status != 'reversed' THEN p.amount END), 0) > 0`,
+  })) { const r = await grade(SUNRISE, sql); check(r.passRate < 1, `${name} fails (${(r.passRate * 100).toFixed(0)}%)`); }
+
+  console.log('Musa Keke Fleet: cost per km with repair-bill and null-distance noise');
+  const KEKE = 'tier2_keke_fleet';
+  for (const [name, sql] of Object.entries({
+    'reference style': `SELECT keke_id, SUM(cost) * 1.0 / SUM(distance_km) AS cost_per_km FROM keke_log WHERE category = 'fuel' AND distance_km IS NOT NULL GROUP BY keke_id ORDER BY cost_per_km DESC LIMIT 1`,
+    'CTE + window rank': `WITH r AS (SELECT keke_id, SUM(cost) * 1.0 / SUM(distance_km) AS rate FROM keke_log WHERE category = 'fuel' AND distance_km IS NOT NULL GROUP BY keke_id) SELECT keke_id, rate FROM (SELECT *, RANK() OVER (ORDER BY rate DESC) rk FROM r) WHERE rk = 1`,
+  })) { const r = await grade(KEKE, sql); check(r.passRate === 1, `${name} passes`); }
+  for (const [name, sql] of Object.entries({
+    'forgets the category filter': `SELECT keke_id, SUM(cost) * 1.0 / SUM(distance_km) AS cost_per_km FROM keke_log WHERE distance_km IS NOT NULL GROUP BY keke_id ORDER BY cost_per_km DESC LIMIT 1`,
+    'treats a missing distance as zero': `SELECT keke_id, SUM(cost) * 1.0 / SUM(COALESCE(distance_km, 0) + 1) AS cost_per_km FROM keke_log WHERE category = 'fuel' GROUP BY keke_id ORDER BY cost_per_km DESC LIMIT 1`,
+  })) { const r = await grade(KEKE, sql); check(r.passRate < 1, `${name} fails (${(r.passRate * 100).toFixed(0)}%)`); }
+
   console.log('Server-side attempts (hints and timing the client cannot fake)');
   {
     const os = await import('node:os');

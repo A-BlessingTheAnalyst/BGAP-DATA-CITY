@@ -1,0 +1,17 @@
+payment_id,student_id,paid_at,amount,method,status
+P1,S1000,2026-11-04,29500,transfer,confirmed
+P2,S1000,2026-11-04,11500,transfer,reversed
+P3,S1001,2026-11-04,26500,cash,confirmed
+P4,S1001,2026-11-04,26500,cash,duplicate
+P5,S1002,2026-11-04,7000,pos,confirmed
+P6,S1002,2026-11-05,4500,cash,confirmed
+P7,S1002,2026-11-06,2500,pos,confirmed
+P8,S1002,2026-11-06,15000,transfer,reversed
+P9,S1003,2026-11-04,10000,pos,confirmed
+P10,S1003,2026-11-05,23000,cash,confirmed
+P11,S1004,2026-11-04,8500,transfer,confirmed
+P12,S1004,2026-11-05,9000,cash,confirmed
+P13,S1004,2026-11-06,6500,cash,confirmed
+P14,S1005,2026-11-04,22000,transfer,confirmed
+P15,S1005,2026-11-05,7000,cash,confirmed
+P16,S1005,2026-11-06,6500,transfer,confirmed

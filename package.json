@@ -15,6 +15,7 @@
     "test:shop": "tsx scripts/test-shop.ts",
     "test:traffic": "tsx scripts/test-traffic.ts",
     "test:garage": "tsx scripts/test-garage.ts",
+    "test:reputation": "tsx scripts/test-reputation.ts",
     "validate:missions": "tsx scripts/validate-missions.ts",
     "validate:layout": "tsx scripts/validate-layout.ts",
     "postinstall": "node scripts/copy-duckdb.mjs"

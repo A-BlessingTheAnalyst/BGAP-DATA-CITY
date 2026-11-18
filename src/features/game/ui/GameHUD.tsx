@@ -13,7 +13,8 @@ import { MobileTouchControls } from '../input/MobileTouchControls';
 import { useGameState } from '../engine/GameState';
 import { Volume2, VolumeX, Menu, Shield, Smartphone } from 'lucide-react';
 import { DataPhone } from './phone/DataPhone';
-import { loadMissions, naira, refreshWallet, useCareerBootstrap } from './phone/useCareer';
+import { loadMissions, naira, refreshWallet, useCareerBootstrap, useCareerStore } from './phone/useCareer';
+import { overallReputation } from '@/shared/reputation';
 
 export const GameHUD: React.FC = () => {
   const isMuted = useGameState((s) => s.isMuted);
@@ -21,7 +22,10 @@ export const GameHUD: React.FC = () => {
   const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const balance = useGameState((s) => s.walletBalance);
-  const completed = useGameState((s) => s.completedMissions.length);
+  const completedIds = useGameState((s) => s.completedMissions);
+  const completed = completedIds.length;
+  const missions = useCareerStore((s) => s.missions);
+  const rank = overallReputation(missions ?? [], completedIds).rank;
   const isPhoneOpen = useGameState((s) => s.isPhoneOpen);
   const setPhoneOpen = useGameState((s) => s.setPhoneOpen);
   useCareerBootstrap();
@@ -35,7 +39,7 @@ export const GameHUD: React.FC = () => {
         <div className="bg-bgap-surface/85 backdrop-blur-md border border-bgap-border rounded-xl p-3 shadow-hud-glass text-xs">
           <div className="flex items-center gap-2 mb-1">
             <Shield className="w-4 h-4 text-bgap-emerald" />
-            <span className="font-bold text-bgap-text">Cadet Analyst</span>
+            <span className="font-bold text-bgap-text">{rank}</span>
             <span className="px-1.5 py-0.5 bg-bgap-emerald/20 text-bgap-emerald rounded font-mono font-bold">
               {completed} {completed === 1 ? 'job' : 'jobs'} done
             </span>

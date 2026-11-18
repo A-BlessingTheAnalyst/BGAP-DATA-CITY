@@ -1,0 +1,196 @@
+{
+  "id": "tier2_sunrise_fees",
+  "kind": "story",
+  "tier": 2,
+  "skill": "SQL",
+  "title": "The Half-Paid Term",
+  "summary": "Sunrise Primary's fee spreadsheet says the term is almost fully paid. The school account says otherwise. Find out who still owes, and why the sheet is wrong.",
+  "pay": 55000,
+  "xp": 220,
+  "badgeId": "badge_fee_detective",
+  "passMark": 75,
+  "client": {
+    "name": "Mrs. Adaeze Chukwu",
+    "business": "Sunrise Primary School",
+    "character": "sunrise_bursar",
+    "brief": [
+      "Our bursary clerk's sheet says almost every family has paid in full for the term. But the account balance tells a different story.",
+      "Parents pay in bits — part cash, part transfer — and some bank transfers bounce days later. I need to know exactly who still owes, and how much, before half-term reports go out."
+    ],
+    "thanks": "Now I can see it in black and white. I'll call the parents on this list myself. Thank you, cadet."
+  },
+  "location": {
+    "district": "gardens",
+    "remote": false,
+    "npc": [
+      -128,
+      0,
+      -58
+    ],
+    "workstation": [
+      -126.5,
+      0,
+      -55
+    ]
+  },
+  "starterSql": "-- Sunrise Primary: who still owes fees this term?\n-- students: one row per pupil, with the term fee for their class.\n-- payments: every payment logged against a student — some are partial, some bounced or were entered twice.\n\nSELECT *\nFROM payments\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "students",
+      "description": "Every pupil enrolled this term, with the fee owed for their class.",
+      "columns": [
+        {
+          "name": "student_id",
+          "type": "VARCHAR",
+          "desc": "Pupil reference",
+          "pk": true
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "desc": "Pupil's first name"
+        },
+        {
+          "name": "class",
+          "type": "VARCHAR",
+          "desc": "Class (Primary 2, 4 or 6)"
+        },
+        {
+          "name": "term_fee",
+          "type": "INTEGER",
+          "desc": "Full term fee for their class, in naira (₦)"
+        }
+      ]
+    },
+    {
+      "name": "payments",
+      "description": "Every payment logged against a student this term. Parents often pay in two or three instalments.",
+      "columns": [
+        {
+          "name": "payment_id",
+          "type": "VARCHAR",
+          "desc": "Payment reference",
+          "pk": true
+        },
+        {
+          "name": "student_id",
+          "type": "VARCHAR",
+          "desc": "Which pupil it was for"
+        },
+        {
+          "name": "paid_at",
+          "type": "DATE",
+          "desc": "Date logged"
+        },
+        {
+          "name": "amount",
+          "type": "INTEGER",
+          "desc": "Amount in naira (₦)"
+        },
+        {
+          "name": "method",
+          "type": "VARCHAR",
+          "desc": "cash, transfer or pos"
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "desc": "confirmed, reversed (bank bounced it) or duplicate (entered twice by mistake)"
+        }
+      ]
+    }
+  ],
+  "hints": [
+    {
+      "title": "Hint 1: Only confirmed money counts",
+      "desc": "A reversed payment bounced — the money never arrived. A duplicate is the same payment typed in twice. Neither should count toward what a family has paid."
+    },
+    {
+      "title": "Hint 2: Join and sum per pupil",
+      "desc": "Join students to payments, keep only status = 'confirmed', and total each pupil's confirmed payments.",
+      "snippet": "LEFT JOIN payments p ON p.student_id = s.student_id"
+    },
+    {
+      "title": "Hint 3: Shape of the answer",
+      "desc": "One row per pupil who still owes money: their name and term_fee minus confirmed payments. Leave out anyone who has paid in full."
+    }
+  ],
+  "findings": [
+    {
+      "id": "total_owed",
+      "claim": "How much does Sunrise Primary still have outstanding this term, and from how many pupils?",
+      "options": [
+        {
+          "id": "owed_158500_11",
+          "text": "₦158,500 from 11 pupils — every logged payment counted, reversed and duplicate included"
+        },
+        {
+          "id": "owed_201500_13",
+          "text": "₦201,500 from 13 pupils — only confirmed payments counted",
+          "correct": true
+        },
+        {
+          "id": "owed_0_0",
+          "text": "Nothing — the fee sheet is correct and every family has paid in full"
+        }
+      ]
+    },
+    {
+      "id": "cause",
+      "claim": "Why does the clerk's spreadsheet look so much better than the real picture?",
+      "options": [
+        {
+          "id": "cause_reversed",
+          "text": "It counts bounced bank transfers and duplicate entries as if the money had actually arrived.",
+          "correct": true
+        },
+        {
+          "id": "cause_discount",
+          "text": "The school is quietly giving every family a discount."
+        },
+        {
+          "id": "cause_newterm",
+          "text": "The clerk is looking at last term's payments by mistake."
+        }
+      ],
+      "evidence": "bounced_transfer_notice"
+    }
+  ],
+  "successFeedback": "Once bounced transfers and double-entered payments are taken out, thirteen families are still short — ₦201,500 in all. The clerk was simply counting money that never arrived.",
+  "trapFixture": "reversed-heavy",
+  "fixtures": [
+    {
+      "id": "sample",
+      "purpose": "The pupils and payments you can see",
+      "failHint": "Your list of outstanding balances doesn't match the school's records."
+    },
+    {
+      "id": "reversed-heavy",
+      "purpose": "A class where most payments bounced or were duplicated",
+      "failHint": "A reversed or duplicate payment never actually arrived — don't count it toward what a pupil has paid."
+    },
+    {
+      "id": "small-class",
+      "purpose": "A smaller class, to check the JOIN and GROUP BY generalise",
+      "failHint": "Check your join and grouping work for any class size, not just the sample."
+    },
+    {
+      "id": "all-paid",
+      "purpose": "A term where every pupil has paid in full",
+      "failHint": "When nobody still owes money, your query should return no rows."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "bounced_transfer_notice",
+      "prop": "slip",
+      "title": "A bank reversal notice",
+      "position": [
+        -127.5,
+        0.9,
+        -57
+      ],
+      "text": "Pinned to the bursary noticeboard: \"NOTICE OF REVERSAL — transfer reference TRX-88213 for ₦12,500 was returned unpaid (insufficient funds) three days after it was logged as received. Please update the ledger.\" Underneath, in pen: \"Also check for anyone who got entered twice — Kemi's assistant typed Femi's payment in twice last week.\""
+    }
+  ]
+}

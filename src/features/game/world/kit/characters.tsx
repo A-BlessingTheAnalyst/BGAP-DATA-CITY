@@ -212,6 +212,12 @@ export const CHARACTERS: CharacterDef[] = [
   { id: 'zee_owner', name: 'Aunty Zainab', role: 'Owner, Zee Fabrics', district: 'Market Boulevard', story: 'Sells ankara, lace and aso-oke. Wants to stock up for the festive season without tying up cash.', pose: 'talk',
     look: { body: 'female', hair: 'none', skinTone: 1.0 },
     outfit: { skin: PALETTE.skin[3], top: PALETTE.fabric.ankaraBlue, bottom: PALETTE.fabric.ankaraBlue, garment: 'boubou', head: 'gele', headColor: PALETTE.fabric.ankaraGreen, accessories: [], build: 'average' } },
+  { id: 'sunrise_bursar', name: 'Mrs. Adaeze Chukwu', role: 'Bursar, Sunrise Primary', district: 'Ilé Gardens', story: 'Chapter: The Half-Paid Term. Keeps the school accounts straight and wants every family’s balance right before reports go out.', pose: 'talk',
+    look: { body: 'female', hair: 'Hair_SimpleParted', skinTone: 1.0, height: 0.98 },
+    outfit: { skin: PALETTE.skin[3], top: PALETTE.fabric.maroon, bottom: '#2B2F36', garment: 'suit', head: 'short', accessories: ['glasses', 'clipboard'], accent: PALETTE.trim.gold, build: 'average', height: 0.98 } },
+  { id: 'keke_owner', name: 'Alhaji Musa', role: 'Keke fleet owner', district: 'Ilé Gardens', story: 'Chapter: Running on Empty. Runs six tricycle taxis out of Ilé Gardens and can’t work out which ones are actually making money.', pose: 'talk',
+    look: { body: 'male', hair: 'Hair_Beard', skinTone: 0.9, height: 1.03 },
+    outfit: { skin: PALETTE.skin[2], top: PALETTE.fabric.indigo, bottom: PALETTE.fabric.khaki, garment: 'kaftan', head: 'cap', headColor: PALETTE.fabric.indigo, accessories: ['phone'], build: 'broad', height: 1.03 } },
   // Crowd archetypes
   { id: 'crowd_trader', name: 'Market trader', role: 'Crowd', district: 'Market Boulevard', story: 'Carries produce on a head tray between the stalls.', pose: 'walk',
     look: { body: 'female', hair: 'none', skinTone: 0.9, tint: '#7FC79A' },

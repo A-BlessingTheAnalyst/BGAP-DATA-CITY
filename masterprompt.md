@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 18 November 2026 (Phase D core: dealership, driving licence, kinematic driving, garage, hail-a-ride fast travel) · branch `feat/world-kit` · nothing committed since `0feed8a`.*
+> *Last updated: 18 November 2026 (Phase E partial: 2 new T2 cases, reputation system) · branch `feat/world-kit` · nothing committed since `f8f3824`.*
 
 ---
 
@@ -522,31 +522,27 @@ All eight tasks landed: browser play-through (and its bug fixes), server-side at
 
 **Verification note:** as in Phase C, this environment's browser pane suspends `requestAnimationFrame` almost entirely once backgrounded (confirmed at 0 ticks over 13s in one check), which froze camera/physics-driven behaviour (but not click-driven UI) until a click re-woke it — not a code regression. A `location.reload()` also left a stale reference to the `PlayerCharacter` module's teleport singleton via Fast Refresh, making the very first hail test look broken; a full `navigate()` reload resolved it and the retest passed cleanly. Both are noted here so a future session doesn't chase the same false leads.
 
-### Phase E: career content, new districts and new skill tools
-- **Districts:** the layout for all six now exists in `cityPlan.ts` (blocks, landmarks, generated buildings). Remaining: dress Ilé Gardens and Finance Row for play (compound walls, gates, interiors for client buildings, signage), put case NPCs on their streets, and stream districts by zone if performance needs it.
-- **Cases 4–10:**
+### Phase E: career content, new districts and new skill tools — partial (18 Nov 2026)
+- **Districts:** unchanged from Phase A — the layout for all six exists in `cityPlan.ts`. Still remaining: dressing Ilé Gardens/Finance Row further (compound walls, gates, building interiors), and district streaming if perf needs it. Two case NPCs are now placed in Ilé Gardens (see below), which is the first story content that district has had.
+- **Cases 4–10 — 2 of 7 built, to the same quality bar as the Tier 1 cases** (full hidden-fixture grading, a real trap, grader acceptance tests, evidence, in-world NPC placement):
+  - **T2 Sunrise fees** (`content/missions/tier2_sunrise_fees`) — JOIN + partial payments. Two tables (`students`, `payments`); the trap is reversed bank transfers and duplicate entries counted as real money (both still carry a `status` the player must filter on). Client: Mrs. Adaeze Chukwu, bursar, in Ilé Gardens near Sunrise Primary. 4 fixtures incl. an "everyone's paid" empty-result edge case. 5 new grader checks.
+  - **T2 Keke fleet** (`content/missions/tier2_keke_fleet`) — cost/km with outliers and nulls. One table (`keke_log`) mixing fuel and repair entries; the trap is a single large repair bill that — if not filtered by `category = 'fuel'` — makes the WRONG keke (KK-02) look like the worst performer instead of the real culprit (KK-04), with some days missing an odometer reading (`distance_km IS NULL`) on top. Client: Alhaji Musa, fleet owner, also in Ilé Gardens. 4 fixtures. 4 new grader checks.
+  - **Not built:** Grace Pharmacy (T2), Kora late deliveries and Okeke price creep (T3), Lumen churn and Meridian defaults (T4) — the remaining five cases from the table below are untouched; T3/T4 also need window-function/cohort-level data design this pass didn't get to.
 
-  | Tier | Case |
-  |---|---|
-  | T2 | Sunrise fees (JOIN, partial payments) |
-  | T2 | Keke fleet (cost/km, outliers, nulls) |
-  | T2 | Grace Pharmacy (dates, FIFO, waste) |
-  | T3 | Kora late deliveries (window functions, SLA) |
-  | T3 | Okeke price creep (time series, chart) |
-  | T4 | Lumen churn (cohorts, A/B) |
-  | T4 | Meridian defaults (Simpson's paradox) |
+  | Tier | Case | Status |
+  |---|---|---|
+  | T2 | Sunrise fees (JOIN, partial payments) | ✅ built |
+  | T2 | Keke fleet (cost/km, outliers, nulls) | ✅ built |
+  | T2 | Grace Pharmacy (dates, FIFO, waste) | Not built |
+  | T3 | Kora late deliveries (window functions, SLA) | Not built |
+  | T3 | Okeke price creep (time series, chart) | Not built |
+  | T4 | Lumen churn (cohorts, A/B) | Not built |
+  | T4 | Meridian defaults (Simpson's paradox) | Not built |
 
-  Each case needs data scripts, fixtures, tests and NPC placement.
-- **New tools:**
-  - **Spreadsheet grid** (formulas SUM/IF/lookup/pivot; run on DuckDB underneath; graded on outputs).
-  - **Chart builder** (pick fields → bar, line or pie; graded on whether it answers the question).
-  - Statistics panel (Tier 4).
-- **Reputation** per employer and district (0–100), ranks Cadet → Partner, and gates on tiers and districts.
-- **Salaried contracts** at Tier 3+: daily wage while completing weekly tasks.
-- **More gig templates:** inventory, payroll, attendance, Tier 2–3 variants.
-- **Story chapters** with authored dialogue JSON and consequences (the café gets busier; billboards change).
+- **Reputation** (`src/shared/reputation.ts`, pure, derived): per-district score 0–100 from completed in-world missions (tier-weighted points, capped), five ranks Cadet Analyst → Partner. Nothing is stored separately — it's computed live from the same public mission list and completed-mission list the rest of the game already trusts, so there's nothing new to fake. The HUD's "Cadet Analyst" label now shows the real computed overall rank; the DataPhone Wallet tab shows the per-district breakdown. `tierReadyIn()` is a soft readiness check (tier 1 always open; tier N+1 wants some reputation in that district first) — **not yet wired to anything**, since there's no T3+ content yet to gate. 18 new tests (`scripts/test-reputation.ts`).
+- **Not built this pass (documented, not silently skipped):** the spreadsheet grid, the chart builder and the statistics panel (three separate new editor/grading surfaces, each comparable in size to the SQL terminal — real future work, not attempted here); salaried contracts; more gig templates; authored story-chapter consequences (the café getting busier, billboards changing).
 
-**Done when:** scenarios 4–10 pass validation and are playable; the spreadsheet and chart tools grade; reputation gates work.
+**Done when:** scenarios 4–10 pass validation and are playable; the spreadsheet and chart tools grade; reputation gates work. **Partially met**: 2 of 7 new scenarios (both T2) pass validation, are graded with full fixture coverage, and have in-world NPCs — verified via `validate:missions`, `validate:layout`, `test:grader` (9 new checks across both cases) and live in-browser (both "Talk to [client]" prompts confirmed on approach; the full dialogue→terminal→submit loop was *not* re-verified live for these two specific cases in this session, since the user began actively playing partway through testing and further automated input would have fought them for control — the dialogue/terminal pipeline itself is unchanged, shared code already proven live for the three Tier 1 cases). Reputation is real and visible (not gated on anything yet, since nothing above T2 exists to gate). Spreadsheet/chart tools: not built.
 
 ### Phase F: aviation
 - Airfield district; flight-school lesson for the licence (₦15M).

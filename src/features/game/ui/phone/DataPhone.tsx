@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Briefcase, Wallet as WalletIcon, MapPin, Laptop, CheckCircle2, X, RefreshCw, Shirt, Car } from 'lucide-react';
 import { WardrobeApp } from '../wardrobe/WardrobeApp';
 import { GarageApp } from '../garage/GarageApp';
+import { reputationByDistrict, DISTRICT_NAME } from '@/shared/reputation';
 import { loadGarage } from '../garage/useGarage';
 import { useGameState } from '../../engine/GameState';
 import { AudioManager } from '../../audio/AudioManager';
@@ -74,6 +75,9 @@ function Wallet() {
   const balance = useGameState((s) => s.walletBalance);
   const entries = useCareerStore((s) => s.entries);
   const xp = useCareerStore((s) => s.xp);
+  const missions = useCareerStore((s) => s.missions);
+  const completed = useGameState((s) => s.completedMissions);
+  const reputation = reputationByDistrict(missions ?? [], completed);
   return (
     <div className="space-y-4">
       <div className="rounded-xl border border-bgap-border bg-bgap-card p-4">
@@ -81,6 +85,22 @@ function Wallet() {
         <div className="text-3xl font-bold text-bgap-text font-mono tabular-nums">{balance === null ? '…' : naira(balance)}</div>
         <div className="text-[11px] text-bgap-muted mt-1">{xp} XP earned</div>
       </div>
+      {reputation.length > 0 && (
+        <div>
+          <h3 className="text-[11px] font-mono uppercase tracking-wider text-bgap-muted mb-1.5">Reputation</h3>
+          <ul className="space-y-1.5">
+            {reputation.map((r) => (
+              <li key={r.district} className="flex items-center justify-between text-xs bg-bgap-card rounded-lg px-2.5 py-1.5 border border-bgap-border">
+                <span className="text-bgap-text">{DISTRICT_NAME[r.district]}</span>
+                <span className="flex items-center gap-2">
+                  <span className="text-bgap-muted">{r.rank}</span>
+                  <span className="font-mono text-bgap-cyan w-8 text-right">{r.score}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h3 className="text-[11px] font-mono uppercase tracking-wider text-bgap-muted">Recent activity</h3>
         <button onClick={() => refreshWallet()} aria-label="Refresh wallet" className="text-bgap-muted hover:text-bgap-text"><RefreshCw className="w-3.5 h-3.5" /></button>

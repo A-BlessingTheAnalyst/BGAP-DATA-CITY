@@ -41,6 +41,9 @@ jobs:
       - name: Garage and driving tests
         run: npm run test:garage
 
+      - name: Reputation tests
+        run: npm run test:reputation
+
       - name: Validate missions
         run: npm run validate:missions
 

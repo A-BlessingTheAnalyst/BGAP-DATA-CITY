@@ -1,0 +1,174 @@
+{
+  "id": "tier2_keke_fleet",
+  "kind": "story",
+  "tier": 2,
+  "skill": "SQL",
+  "title": "Running on Empty",
+  "summary": "One of Alhaji Musa's six kekes is eating fuel money. His spreadsheet blames the wrong one. Find the keke that's really costing him.",
+  "pay": 60000,
+  "xp": 230,
+  "badgeId": "badge_fleet_analyst",
+  "passMark": 75,
+  "client": {
+    "name": "Alhaji Musa",
+    "business": "Musa Keke Fleet",
+    "character": "keke_owner",
+    "brief": [
+      "I log every fuel fill-up and every repair for my six tricycles. One of them is costing me far more per kilometre than the others — I want to know which, before I sell the wrong one.",
+      "Some days the driver forgets to write the odometer reading. Don't let that throw you off, and don't let one repair bill fool you either."
+    ],
+    "thanks": "KK-04, not KK-02! I was about to sell the wrong keke. That repair bill had me completely fooled. Thank you."
+  },
+  "location": {
+    "district": "gardens",
+    "remote": false,
+    "npc": [
+      -113,
+      0,
+      100
+    ],
+    "workstation": [
+      -112,
+      0,
+      96
+    ]
+  },
+  "starterSql": "-- Musa Keke Fleet: which keke really costs the most to run, per kilometre?\n-- keke_log mixes fuel fill-ups and repair bills; some days have no odometer reading.\n\nSELECT *\nFROM keke_log\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "keke_log",
+      "description": "Every fuel fill-up and repair logged for the six-keke fleet.",
+      "columns": [
+        {
+          "name": "log_id",
+          "type": "VARCHAR",
+          "desc": "Log entry reference",
+          "pk": true
+        },
+        {
+          "name": "keke_id",
+          "type": "VARCHAR",
+          "desc": "Which tricycle"
+        },
+        {
+          "name": "logged_at",
+          "type": "DATE",
+          "desc": "Date logged"
+        },
+        {
+          "name": "category",
+          "type": "VARCHAR",
+          "desc": "fuel or repair"
+        },
+        {
+          "name": "litres",
+          "type": "DOUBLE",
+          "desc": "Litres bought (fuel rows only; blank for repairs)"
+        },
+        {
+          "name": "cost",
+          "type": "INTEGER",
+          "desc": "Amount paid, in naira (₦)"
+        },
+        {
+          "name": "distance_km",
+          "type": "DOUBLE",
+          "desc": "Odometer distance since the last entry (blank on days the driver forgot to log it)"
+        }
+      ]
+    }
+  ],
+  "hints": [
+    {
+      "title": "Hint 1: Two different kinds of cost",
+      "desc": "A repair bill is real money, but it isn't fuel cost, and folding it into a cost-per-km figure makes an otherwise-efficient keke look terrible for one day."
+    },
+    {
+      "title": "Hint 2: Filter before you divide",
+      "desc": "Only use fuel rows with a logged distance when working out cost per kilometre.",
+      "snippet": "WHERE category = 'fuel' AND distance_km IS NOT NULL"
+    },
+    {
+      "title": "Hint 3: Shape of the answer",
+      "desc": "Sum fuel cost and sum distance per keke, divide one by the other, and find the keke with the highest ratio."
+    }
+  ],
+  "findings": [
+    {
+      "id": "worst_keke",
+      "claim": "Which keke genuinely costs the most to run per kilometre, and should be looked at first?",
+      "options": [
+        {
+          "id": "kk02_repair",
+          "text": "KK-02 — its running costs are far above the rest of the fleet"
+        },
+        {
+          "id": "kk04_fuel",
+          "text": "KK-04 — once the repair bill is set aside, its fuel cost per km is the real outlier",
+          "correct": true
+        },
+        {
+          "id": "none_same",
+          "text": "None of them — every keke costs roughly the same to run"
+        }
+      ]
+    },
+    {
+      "id": "cause",
+      "claim": "Why did the fleet spreadsheet point at the wrong keke?",
+      "options": [
+        {
+          "id": "cause_repair_mixed",
+          "text": "A single repair bill was averaged in with fuel costs, inflating that keke's apparent running cost for one day.",
+          "correct": true
+        },
+        {
+          "id": "cause_fuel_price",
+          "text": "Fuel prices went up sharply that week, affecting every keke equally."
+        },
+        {
+          "id": "cause_theft",
+          "text": "A driver has been siphoning fuel to sell."
+        }
+      ],
+      "evidence": "repair_invoice"
+    }
+  ],
+  "successFeedback": "KK-02's number was a cracked-axle repair bill, not fuel. Once that's set aside, KK-04 is the one quietly burning naira — its engine needs a service, not a sale.",
+  "trapFixture": "many-nulls",
+  "fixtures": [
+    {
+      "id": "sample",
+      "purpose": "The log you can see",
+      "failHint": "Your answer doesn't match the fleet's logged costs and distances."
+    },
+    {
+      "id": "many-nulls",
+      "purpose": "A week with more missing odometer readings and a heavy repair bill",
+      "failHint": "A repair bill isn't a fuel cost, and a day with no odometer reading can't be divided into — leave both out."
+    },
+    {
+      "id": "small-fleet",
+      "purpose": "A smaller fleet with no repair noise, to check the ratio itself is right",
+      "failHint": "Check your cost-per-km formula on a fleet with no repair bills to distract from."
+    },
+    {
+      "id": "no-repairs",
+      "purpose": "A fleet where nobody has had a repair yet",
+      "failHint": "With no repair rows at all, your filter should still pick out the right keke."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "repair_invoice",
+      "prop": "slip",
+      "title": "A mechanic's invoice",
+      "position": [
+        -111.5,
+        0.9,
+        98
+      ],
+      "text": "Found clipped to Alhaji Musa's fuel ledger: \"INVOICE — KK-02, cracked rear axle, parts and labour: ₦48,000. Paid 18/11.\" Someone had copied this straight into the same column as the fuel receipts."
+    }
+  ]
+}
