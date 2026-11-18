@@ -1,0 +1,44 @@
+# Data City CI (roadmap T03): every push and pull request must type-check, pass the grader
+# acceptance tests, validate every mission package and the city layout, and build.
+name: CI
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Grader acceptance tests
+        run: npm run test:grader
+
+      - name: Validate missions
+        run: npm run validate:missions
+
+      - name: Validate city layout
+        run: npm run validate:layout
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'

@@ -1,5 +1,4 @@
 import { GameProfile } from '@/shared/types/user';
-import { MissionAttempt, MissionDefinition } from '@/shared/types/mission';
 
 // Mock DB store for initial skeleton / development fallback
 const mockProfiles: Record<string, GameProfile> = {
@@ -39,13 +38,4 @@ export class GameRepository {
     );
   }
 
-  static async updateCheckpoint(
-    userId: string,
-    zoneId: string,
-    position: [number, number, number],
-    rotationY: number
-  ) {
-    console.log('[DB] Checkpoint saved for user:', userId, { zoneId, position, rotationY });
-    return true;
-  }
 }

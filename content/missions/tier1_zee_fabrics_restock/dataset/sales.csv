@@ -1,0 +1,49 @@
+sale_id,sold_at,fabric,yards,price_per_yard,customer_type
+2,2026-11-10 08:33:00,Swiss lace,6,10150,retail
+44,2026-11-10 08:35:00,Brocade,29,4400,wholesale
+18,2026-11-10 08:44:00,George wrapper,20,6050,wholesale
+14,2026-11-10 09:41:00,Brocade,3,9150,retail
+33,2026-11-10 10:05:00,Brocade,6,9100,retail
+43,2026-11-10 10:26:00,Brocade,3,8900,retail
+20,2026-11-10 11:50:00,Ankara (Dutch wax),5,4550,retail
+6,2026-11-10 13:47:00,Aso-oke,5,6350,retail
+46,2026-11-10 13:55:00,Brocade,8,8950,retail
+1,2026-11-10 15:13:00,Swiss lace,2,10750,retail
+7,2026-11-10 15:32:00,Chiffon,28,7150,wholesale
+36,2026-11-10 16:01:00,Adire,13,5250,wholesale
+42,2026-11-10 16:28:00,George wrapper,2,12550,retail
+21,2026-11-10 16:30:00,Chiffon,6,13400,retail
+39,2026-11-10 17:39:00,Brocade,24,4400,wholesale
+35,2026-11-11 08:47:00,Brocade,6,9200,retail
+5,2026-11-11 11:06:00,George wrapper,7,12050,retail
+23,2026-11-11 11:17:00,Swiss lace,11,5500,wholesale
+25,2026-11-11 11:38:00,Chiffon,14,7150,wholesale
+3,2026-11-11 12:30:00,George wrapper,7,11050,retail
+9,2026-11-11 13:01:00,Ankara (Dutch wax),6,4500,retail
+34,2026-11-11 13:41:00,Aso-oke,13,3300,wholesale
+15,2026-11-11 16:07:00,Aso-oke,2,6500,retail
+19,2026-11-11 16:15:00,Ankara (Dutch wax),8,4350,retail
+4,2026-11-11 17:53:00,Aso-oke,2,6750,retail
+40,2026-11-11 19:26:00,Ankara (Dutch wax),14,2200,wholesale
+41,2026-11-12 10:05:00,Chiffon,5,14400,retail
+17,2026-11-12 11:06:00,George wrapper,3,11450,retail
+47,2026-11-12 11:55:00,Brocade,30,4400,wholesale
+29,2026-11-12 12:22:00,Adire,6,10700,retail
+32,2026-11-12 13:49:00,Brocade,2,8650,retail
+13,2026-11-12 14:42:00,Swiss lace,5,10600,retail
+24,2026-11-12 15:42:00,Brocade,10,4400,wholesale
+45,2026-11-12 16:01:00,Aso-oke,3,6050,retail
+27,2026-11-12 19:35:00,Aso-oke,5,6600,retail
+11,2026-11-12 20:18:00,Chiffon,7,14150,retail
+28,2026-11-13 09:16:00,Ankara (Dutch wax),29,2200,wholesale
+16,2026-11-13 09:32:00,Swiss lace,25,5500,wholesale
+48,2026-11-13 11:51:00,Chiffon,4,14250,retail
+22,2026-11-13 11:54:00,Brocade,16,4400,wholesale
+10,2026-11-13 12:15:00,Aso-oke,6,6000,retail
+12,2026-11-13 12:32:00,Ankara (Dutch wax),4,4200,retail
+37,2026-11-13 14:46:00,Adire,3,10450,retail
+38,2026-11-13 17:47:00,Chiffon,3,13650,retail
+31,2026-11-13 17:48:00,Swiss lace,3,10550,retail
+30,2026-11-13 17:57:00,Adire,26,5250,wholesale
+26,2026-11-13 18:01:00,Chiffon,17,7150,wholesale
+8,2026-11-13 18:11:00,Swiss lace,2,10150,retail

@@ -26,8 +26,38 @@ interface GameStateStore {
   // Active Workstation (SQL Terminal)
   isWorkstationActive: boolean;
   activeWorkstationId: string | null;
-  openWorkstation: (id: string) => void;
+  /** Which mission the terminal is working on. */
+  terminalMissionId: string | null;
+  openWorkstation: (id: string, missionId?: string) => void;
   closeWorkstation: () => void;
+
+  // Career (mirrors server state; the server decides money)
+  completedMissions: string[];
+  markMissionCompleted: (id: string) => void;
+  walletBalance: number | null;
+  setWalletBalance: (balance: number) => void;
+  /** Mission shown on the minimap and waypoint. */
+  trackedMissionId: string | null;
+  trackMission: (id: string | null) => void;
+  /** Missions whose client you've spoken to this session. */
+  talkedTo: string[];
+  markTalkedTo: (missionId: string) => void;
+
+  // DataPhone
+  isPhoneOpen: boolean;
+  setPhoneOpen: (open: boolean) => void;
+
+  // City map (M) and the player's own map pin
+  isMapOpen: boolean;
+  setMapOpen: (open: boolean) => void;
+  customWaypoint: [number, number] | null;
+  setCustomWaypoint: (p: [number, number] | null) => void;
+
+  // Field evidence: keys are "<missionId>:<evidenceId>"; remembered in this browser.
+  foundEvidence: string[];
+  openEvidence: { missionId: string; evidenceId: string } | null;
+  pickUpEvidence: (missionId: string, evidenceId: string) => void;
+  closeEvidence: () => void;
 
   // Mission State
   missionState: MissionState;
@@ -43,8 +73,18 @@ interface GameStateStore {
   togglePause: () => void;
 }
 
+const EVIDENCE_KEY = 'datacity.foundEvidence';
+function loadFoundEvidence(): string[] {
+  try {
+    const v = typeof window === 'undefined' ? null : JSON.parse(window.localStorage.getItem(EVIDENCE_KEY) ?? '[]');
+    return Array.isArray(v) ? v.filter((x) => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
 export const useGameState = create<GameStateStore>((set) => ({
-  playerPosition: [0, 0.9, 0],
+  playerPosition: [-7, 0.9, -14],
   playerRotationY: 0,
   setPlayerTransform: (pos, rotY) => set({ playerPosition: pos, playerRotationY: rotY }),
 
@@ -72,10 +112,13 @@ export const useGameState = create<GameStateStore>((set) => ({
 
   isWorkstationActive: false,
   activeWorkstationId: null,
-  openWorkstation: (id) =>
+  terminalMissionId: null,
+  openWorkstation: (id, missionId) =>
     set({
       isWorkstationActive: true,
       activeWorkstationId: id,
+      terminalMissionId: missionId ?? (id.startsWith('ws:') ? id.slice(3) : 'ch1_cafe_revenue_mystery'),
+      isPhoneOpen: false,
       cameraMode: 'interaction',
     }),
   closeWorkstation: () =>
@@ -84,6 +127,33 @@ export const useGameState = create<GameStateStore>((set) => ({
       activeWorkstationId: null,
       cameraMode: 'follow',
     }),
+
+  completedMissions: [],
+  markMissionCompleted: (id) => set((st) => (st.completedMissions.includes(id) ? st : { completedMissions: [...st.completedMissions, id] })),
+  walletBalance: null,
+  setWalletBalance: (balance) => set({ walletBalance: balance }),
+  trackedMissionId: 'ch1_cafe_revenue_mystery',
+  trackMission: (id) => set({ trackedMissionId: id }),
+  talkedTo: [],
+  markTalkedTo: (id) => set((st) => (st.talkedTo.includes(id) ? st : { talkedTo: [...st.talkedTo, id] })),
+
+  isPhoneOpen: false,
+  setPhoneOpen: (open) => set({ isPhoneOpen: open }),
+
+  isMapOpen: false,
+  setMapOpen: (open) => set({ isMapOpen: open }),
+  customWaypoint: null,
+  setCustomWaypoint: (p) => set({ customWaypoint: p }),
+
+  foundEvidence: loadFoundEvidence(),
+  openEvidence: null,
+  pickUpEvidence: (missionId, evidenceId) => set((st) => {
+    const key = `${missionId}:${evidenceId}`;
+    const foundEvidence = st.foundEvidence.includes(key) ? st.foundEvidence : [...st.foundEvidence, key];
+    try { window.localStorage.setItem(EVIDENCE_KEY, JSON.stringify(foundEvidence)); } catch { /* storage blocked: keep it for this session */ }
+    return { foundEvidence, openEvidence: { missionId, evidenceId } };
+  }),
+  closeEvidence: () => set({ openEvidence: null }),
 
   missionState: 'available',
   activeMissionId: 'ch1_cafe_revenue_mystery',

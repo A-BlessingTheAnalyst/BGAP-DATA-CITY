@@ -1,0 +1,5 @@
+id,transaction_code,sale_at,item_name,quantity,unit_price,payment_status,payment_method
+1,TX-5001,2026-11-09 10:00:00,Pepper Soup,2,3000,completed,cash
+2,TX-5002,2026-11-10 10:00:00,Pepper Soup,2,3000,voided,cash
+3,TX-5003,2026-11-10 11:00:00,Pepper Soup,1,3000,refunded,cash
+4,TX-5004,2026-11-11 12:00:00,Pepper Soup,3,3000,completed,transfer

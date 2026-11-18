@@ -1,0 +1,15 @@
+id,transaction_code,sale_at,item_name,quantity,unit_price,payment_status,payment_method
+1,TX-1001,2026-10-01 08:15:00,Espresso Doppio,2,2500,completed,pos_card
+2,TX-1002,2026-10-01 09:30:00,Club Sandwich Combo,3,4500,completed,cash
+3,TX-1003,2026-10-01 10:45:00,Caramel Macchiato,4,3000,completed,transfer
+4,TX-1004,2026-10-01 13:00:00,Catering Platter Special,1,85000,completed,transfer
+5,TX-1005,2026-10-01 15:20:00,Avocado Toast & Tea,2,5000,refunded,pos_card
+6,TX-1006,2026-10-01 16:40:00,Accidental Duplicate Order,5,6000,voided,pos_card
+7,TX-1007,2026-10-02 08:30:00,Vanilla Latte,4,3000,completed,pos_card
+8,TX-1008,2026-10-02 11:15:00,Suya Beef Wrap,6,4000,completed,transfer
+9,TX-1009,2026-10-02 14:00:00,Meeting Room Coffee Box,2,45000,completed,transfer
+10,TX-1010,2026-10-02 16:30:00,Gluten Free Pastry Pack,2,8000,voided,pos_card
+11,TX-1011,2026-10-03 09:00:00,Iced Americano,3,2250,completed,cash
+12,TX-1012,2026-10-03 12:10:00,Executive Lunch Basket,1,75000,completed,transfer
+13,TX-1013,2026-10-03 14:45:00,Sparkling Berry Brew,3,3200,completed,pos_card
+14,TX-1014,2026-10-03 17:00:00,Catering Test Order,2,25000,refunded,transfer

@@ -1,42 +1,55 @@
 import { NextResponse } from 'next/server';
 import { RubricEngine } from '@/server/assessment/RubricEngine';
+import { getMission } from '@/server/content/missions';
 import { SandboxRunner } from '@/server/assessment/SandboxRunner';
-import { RewardLedgerService } from '@/server/rewards/RewardLedgerService';
+import { creditMissionReward, getWallet } from '@/server/economy/wallet';
 import { SessionValidator } from '@/server/game/SessionValidator';
+import { getAttempt, isFast, recordSubmission } from '@/server/game/attempts';
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export const dynamic = 'force-dynamic';
+
+/**
+ * Grades a submission on the player's attempt (`[id]` is the attempt id from /missions/[id]/start).
+ * Hints and timing come from the attempt record, never the request body; pay is written once per
+ * mission through the idempotent ledger.
+ */
+export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await SessionValidator.validateSession(request.headers.get('authorization'));
-    const body = await request.json();
-    const { query, explanationId, hintsUsed = 0, missionId = 'ch1_cafe_revenue_mystery' } = body;
+    const attempt = await getAttempt(session.userId, params.id);
+    if (!attempt) return NextResponse.json({ error: 'Start the case first: this attempt was not found.' }, { status: 404 });
+    const pkg = getMission(attempt.missionId);
+    if (!pkg) return NextResponse.json({ error: 'Unknown mission.' }, { status: 404 });
+    const { query, findings, explanationId } = await request.json();
 
-    // Enforce read-only AST constraints
-    SandboxRunner.enforceConstraints(query);
+    // Read-only, single-statement check before the query reaches DuckDB.
+    SandboxRunner.enforceConstraints(String(query ?? ''));
 
-    // Evaluate submission against authoritative rubric
-    const result = RubricEngine.gradeSubmission({
-      query,
+    const fast = isFast(attempt, pkg.def);
+    const result = await RubricEngine.gradeSubmission({
+      missionId: pkg.def.id,
+      query: String(query),
       explanationId,
-      hintsUsed,
+      findings: findings && typeof findings === 'object' ? findings : undefined,
+      hintsUsed: attempt.hintLog.length,
+      fast,
     });
+    await recordSubmission(session.userId, attempt.id, result);
 
+    let alreadyPaid = false;
     if (result.isPassed) {
-      // Deterministic idempotency key: reward:<userId>:<missionId> strictly prevents double reward grants
-      const deterministicKey = `reward:${session.userId}:${missionId}`;
-      await RewardLedgerService.grantReward({
+      const { created } = await creditMissionReward({
         userId: session.userId,
+        missionId: pkg.def.id,
+        amount: result.creditsEarned,
         xp: result.xpEarned,
-        credits: result.creditsEarned,
-        reason: `MISSION_COMPLETE:${missionId}`,
-        idempotencyKey: deterministicKey,
+        reason: `Paid by ${pkg.def.client.business}`,
       });
+      alreadyPaid = !created;
     }
-
-    return NextResponse.json(result);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Submission error' }, { status: 400 });
+    const wallet = await getWallet(session.userId);
+    return NextResponse.json({ ...result, hintsUsed: attempt.hintLog.length, fast, alreadyPaid, balance: wallet.balance });
+  } catch (err) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Submission error' }, { status: 400 });
   }
 }

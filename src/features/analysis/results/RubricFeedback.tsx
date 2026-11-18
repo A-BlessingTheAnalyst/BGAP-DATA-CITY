@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const RubricFeedback: React.FC<Props> = ({ result, onClose }) => {
-  const { isPassed, totalScore, scoreBreakdown, feedback, xpEarned, creditsEarned, badgeAwarded } = result;
+  const { isPassed, totalScore, scoreBreakdown, feedback, xpEarned, creditsEarned, badgeAwarded, alreadyPaid, fast, hintsUsed } = result;
 
   return (
     <div className="space-y-4 select-none">
@@ -22,7 +22,7 @@ export const RubricFeedback: React.FC<Props> = ({ result, onClose }) => {
             <XCircle className="w-5 h-5 text-red-400" />
           )}
           <span className="font-bold text-sm text-bgap-text">
-            {isPassed ? 'Mission Accomplished!' : 'Evaluation Incomplete'}
+            {isPassed ? 'Case closed. Client paid.' : 'Not there yet'}
           </span>
         </div>
         <span className="text-lg font-mono font-bold text-bgap-cyan">{totalScore}%</span>
@@ -35,15 +35,15 @@ export const RubricFeedback: React.FC<Props> = ({ result, onClose }) => {
       {/* Rubric Breakdown Progress Bars */}
       <div className="space-y-2 text-xs font-mono">
         <div className="flex justify-between text-bgap-muted">
-          <span>Revenue Aggregation (50%)</span>
+          <span>Correct results on hidden data (50%)</span>
           <span className="text-bgap-text font-bold">{scoreBreakdown.calculation}/50</span>
         </div>
         <div className="flex justify-between text-bgap-muted">
-          <span>Status Filter Logic (20%)</span>
+          <span>Handled the case’s trap (20%)</span>
           <span className="text-bgap-text font-bold">{scoreBreakdown.filter}/20</span>
         </div>
         <div className="flex justify-between text-bgap-muted">
-          <span>Business Interpretation (20%)</span>
+          <span>Findings backed by evidence (20%)</span>
           <span className="text-bgap-text font-bold">{scoreBreakdown.explanation}/20</span>
         </div>
         <div className="flex justify-between text-bgap-muted">
@@ -57,8 +57,21 @@ export const RubricFeedback: React.FC<Props> = ({ result, onClose }) => {
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-bgap-gold" />
             <div>
-              <div className="text-xs font-bold text-bgap-text">Badge: Café Data Sleuth</div>
-              <div className="text-[10px] text-bgap-muted">+{xpEarned} XP • +{creditsEarned} Credits</div>
+              {alreadyPaid ? (
+                <>
+                  <div className="text-xs font-bold text-bgap-text">Already paid for this case</div>
+                  <div className="text-[10px] text-bgap-muted">Each client pays once. Nothing new was added to your wallet.</div>
+                </>
+              ) : (
+                <>
+                  <div className="text-xs font-bold text-bgap-text">{badgeAwarded ? 'Badge earned · payment received' : 'Payment received'}</div>
+                  <div className="text-[10px] text-bgap-muted">
+                    +₦{creditsEarned.toLocaleString('en-NG')} · +{xpEarned} XP
+                    {fast ? ' · fast-finish bonus' : ''}
+                    {hintsUsed ? ` · ${hintsUsed} hint${hintsUsed === 1 ? '' : 's'} used` : ''}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

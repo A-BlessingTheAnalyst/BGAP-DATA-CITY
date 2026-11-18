@@ -1,0 +1,70 @@
+{
+  "id": "tier1_zee_fabrics_restock",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "Restock for the Festive Rush",
+  "summary": "Aunty Zainab can only afford to restock three fabrics. Find the three that bring in the most money.",
+  "pay": 18000,
+  "xp": 140,
+  "badgeId": "badge_ranker",
+  "passMark": 75,
+  "client": {
+    "name": "Aunty Zainab",
+    "business": "Zee Fabrics",
+    "character": "zee_owner",
+    "brief": [
+      "Festive season is coming and everybody wants new clothes for owambe. But my money can only restock three fabrics.",
+      "My apprentice says Brocade because we sell the most yards. I'm not sure. Which three bring in the most money?"
+    ],
+    "thanks": "Chiffon! My apprentice will hear it today. Come back for owambe season, I'll sew you something fine."
+  },
+  "location": { "district": "market", "remote": false, "npc": [-8.2, 0, 24.2], "workstation": [-7.8, 0, 27.3] },
+  "starterSql": "-- Zee Fabrics: which three fabrics bring in the most money?\n-- Careful: wholesale buyers pay less per yard than retail customers.\n\nSELECT *\nFROM sales\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "sales",
+      "description": "Zee Fabrics sales book, 10–13 November. Prices change from sale to sale: wholesale buyers get a big discount.",
+      "columns": [
+        { "name": "sale_id", "type": "INTEGER", "desc": "Sale number", "pk": true },
+        { "name": "sold_at", "type": "TIMESTAMP", "desc": "Date and time of sale" },
+        { "name": "fabric", "type": "VARCHAR", "desc": "Fabric sold" },
+        { "name": "yards", "type": "INTEGER", "desc": "Yards cut for this customer" },
+        { "name": "price_per_yard", "type": "DOUBLE", "desc": "Price charged per yard on this sale, in naira (₦)" },
+        { "name": "customer_type", "type": "VARCHAR", "desc": "retail or wholesale" }
+      ]
+    }
+  ],
+  "hints": [
+    { "title": "Hint 1: Yards aren't money", "desc": "A fabric can sell lots of yards cheaply. Money from a sale is yards × the price on that sale." },
+    { "title": "Hint 2: Multiply before you add", "desc": "Work out each sale's money first, then add per fabric. Averaging the price per yard gives the wrong answer when prices vary.", "snippet": "SUM(yards * price_per_yard)" },
+    { "title": "Hint 3: Keep the top three", "desc": "GROUP BY fabric, sort by revenue from highest to lowest, LIMIT 3. Return the fabric and its revenue." }
+  ],
+  "findings": [
+    {
+      "id": "restock_first",
+      "claim": "Which fabric should she restock first?",
+      "options": [
+        { "id": "Brocade", "text": "Brocade: it sells the most yards" },
+        { "id": "Chiffon", "text": "Chiffon: it brings in the most money", "correct": true },
+        { "id": "Swiss lace", "text": "Swiss lace: it's the most expensive" }
+      ]
+    },
+    {
+      "id": "apprentice",
+      "claim": "Why was the apprentice's advice misleading?",
+      "options": [
+        { "id": "apprentice_volume", "text": "Brocade moves lots of yards, but mostly to wholesale buyers at a steep discount.", "correct": true },
+        { "id": "apprentice_returns", "text": "Most Brocade sales were returned." },
+        { "id": "apprentice_right", "text": "It wasn't. Brocade earns the most." }
+      ]
+    }
+  ],
+  "successFeedback": "Chiffon earns the most even though Brocade sells more yards: Brocade's big wholesale orders go at a steep discount. Volume isn't value.",
+  "trapFixture": "wholesale-heavy",
+  "fixtures": [
+    { "id": "sample", "purpose": "The sales book you can see", "failHint": "Your top three fabrics or their revenue don’t match the sales book." },
+    { "id": "wholesale-heavy", "purpose": "A week with deep wholesale discounts", "failHint": "Revenue must use each sale’s own price. Multiply yards by price_per_yard on every row before adding." },
+    { "id": "another-week", "purpose": "Another week of sales", "failHint": "Your query gives the wrong top three on a different week of data." }
+  ]
+}

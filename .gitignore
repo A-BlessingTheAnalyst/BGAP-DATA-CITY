@@ -35,3 +35,12 @@ next-env.d.ts
 
 # 3D assets temporary / cache
 *.blend1
+
+# Raw downloaded asset packs (optimized GLBs live in public/assets/kits)
+/assets-src/
+
+# Local development data (wallet ledger file store)
+/.data/
+
+# DuckDB-Wasm bundles, copied from node_modules by scripts/copy-duckdb.mjs
+/public/duckdb/

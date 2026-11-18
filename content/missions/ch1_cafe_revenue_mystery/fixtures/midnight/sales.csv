@@ -1,0 +1,5 @@
+id,transaction_code,sale_at,item_name,quantity,unit_price,payment_status,payment_method
+1,TX-4001,2026-11-07 23:58:00,Suya Wrap,2,2500,completed,cash
+2,TX-4002,2026-11-07 23:59:59,Chapman,1,1500,completed,cash
+3,TX-4003,2026-11-08 00:00:00,Suya Wrap,1,2500,completed,pos_card
+4,TX-4004,2026-11-08 00:15:00,Chapman,2,1500,refunded,pos_card

@@ -5,16 +5,35 @@ import { RigidBody, CapsuleCollider, RapierRigidBody, useRapier } from '@react-t
 import { Group, Vector3, MathUtils } from 'three';
 import { useGameState } from '../engine/GameState';
 import { useInput } from '../input/useInput';
-import { RiggedHumanoid } from './RiggedHumanoid';
+import { CastMember } from '../world/kit/CastMember';
+import { CHARACTERS } from '../world/kit/characters';
 
-export const playerRuntime = { position: new Vector3(0, 0.95, 0), rotation: 0, speed: 0 };
+const PLAYER = CHARACTERS.find((c) => c.id === 'player_analyst')!;
+import { AudioManager } from '../audio/AudioManager';
+import { MARKET_LAYOUT } from '@/shared/constants/marketLayout';
+import { CITY_BOUNDS } from '../world/kit/cityPlan';
+
+const [SX, SY, SZ] = MARKET_LAYOUT.spawn;
+
+export const playerRuntime = { position: new Vector3(SX, SY, SZ), rotation: 0, speed: 0 };
 
 export function PlayerCharacter() {
   const body = useRef<RapierRigidBody>(null), visual = useRef<Group>(null);
   const { world } = useRapier();
   const controller = useRef<ReturnType<typeof world.createCharacterController>>();
-  const input = useInput(), velocity = useRef(new Vector3()), elapsed = useRef(0);
-  const [animAction, setAnimAction] = useState<'Idle' | 'Walk' | 'Run' | 'Type'>('Idle');
+  const input = useInput(), velocity = useRef(new Vector3()), elapsed = useRef(0), stepClock = useRef(0);
+  const [animAction, setAnimAction] = useState<'Idle' | 'Run' | 'Sprint' | 'Type'>('Idle');
+
+  // Development-only play-test handle: read the player position or teleport (x, z) from the console.
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    const w = window as unknown as { __player?: unknown };
+    w.__player = {
+      runtime: playerRuntime,
+      teleport: (x: number, z: number) => body.current?.setNextKinematicTranslation({ x, y: SY, z }),
+    };
+    return () => { delete w.__player; };
+  }, []);
 
   useEffect(() => {
     const c = world.createCharacterController(0.02);
@@ -31,7 +50,7 @@ export function PlayerCharacter() {
   useFrame((_, dt) => {
     if (!body.current || !controller.current) return;
     const delta = Math.min(dt, 0.04), s = useGameState.getState();
-    const blocked = s.isPaused || s.isDialogueActive || s.isWorkstationActive;
+    const blocked = s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isMapOpen;
     let x = blocked ? 0 : Number(input.right) - Number(input.left) + input.axisX;
     let z = blocked ? 0 : Number(input.backward) - Number(input.forward) + input.axisZ;
     const length = Math.max(1, Math.hypot(x, z));
@@ -47,9 +66,12 @@ export function PlayerCharacter() {
       z: velocity.current.z * delta,
     });
     const movement = controller.current.computedMovement(), p = body.current.translation();
-    const out = p.y < -10 || Math.abs(p.x) > 55 || Math.abs(p.z) > 55;
+    // Perimeter walls keep you in; the clamp is a backstop. Only a fall through the world respawns.
+    const B = CITY_BOUNDS, m = 1.5;
     body.current.setNextKinematicTranslation(
-      out ? { x: 0, y: 0.95, z: 0 } : { x: p.x + movement.x, y: p.y + movement.y, z: p.z + movement.z }
+      p.y < -10
+        ? { x: SX, y: SY, z: SZ }
+        : { x: MathUtils.clamp(p.x + movement.x, B.minX + m, B.maxX - m), y: p.y + movement.y, z: MathUtils.clamp(p.z + movement.z, B.minZ + m, B.maxZ - m) }
     );
     playerRuntime.position.set(p.x, p.y, p.z);
     playerRuntime.speed = Math.hypot(movement.x, movement.z) / delta;
@@ -61,16 +83,29 @@ export function PlayerCharacter() {
       playerRuntime.rotation = visual.current.rotation.y;
     }
 
-    let nextAnim: 'Idle' | 'Walk' | 'Run' | 'Type' = 'Idle';
+    // Default movement (4 m/s) is a jog; holding sprint (7 m/s) plays the sprint clip.
+    let nextAnim: 'Idle' | 'Run' | 'Sprint' | 'Type' = 'Idle';
     if (s.isWorkstationActive) {
       nextAnim = 'Type';
-    } else if (playerRuntime.speed > 4.5) {
-      nextAnim = 'Run';
+    } else if (playerRuntime.speed > 5.2) {
+      nextAnim = 'Sprint';
     } else if (playerRuntime.speed > 0.2) {
-      nextAnim = 'Walk';
+      nextAnim = 'Run';
     } else {
       nextAnim = 'Idle';
     }
+    // Footsteps paced to gait: faster cadence when sprinting.
+    if (nextAnim === 'Run' || nextAnim === 'Sprint') {
+      stepClock.current += delta;
+      const interval = nextAnim === 'Sprint' ? 0.27 : 0.34;
+      if (stepClock.current >= interval) {
+        stepClock.current = 0;
+        AudioManager.playFootstep(nextAnim === 'Sprint');
+      }
+    } else {
+      stepClock.current = 0.3;
+    }
+
     if (nextAnim !== animAction) {
       setAnimAction(nextAnim);
     }
@@ -83,14 +118,10 @@ export function PlayerCharacter() {
   });
 
   return (
-    <RigidBody ref={body} type="kinematicPosition" colliders={false} position={[0, 0.95, 0]} enabledRotations={[false, false, false]}>
+    <RigidBody ref={body} type="kinematicPosition" colliders={false} position={MARKET_LAYOUT.spawn} enabledRotations={[false, false, false]}>
       <CapsuleCollider args={[0.55, 0.32]} />
       <group ref={visual} position={[0, -0.87, 0]}>
-        <RiggedHumanoid
-          modelUrl="/assets/characters/analyst.glb"
-          actionName={animAction}
-          speed={() => playerRuntime.speed}
-        />
+        <CastMember def={PLAYER} action={animAction} />
       </group>
     </RigidBody>
   );

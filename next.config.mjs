@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['three', '@react-three/fiber', '@react-three/drei', '@react-three/rapier'],
+  // Native DuckDB bindings for the server-side SQL grader must not be bundled by webpack.
+  experimental: { serverComponentsExternalPackages: ['@duckdb/node-api', '@duckdb/node-bindings'] },
   webpack: (config, { isServer }) => {
     config.experiments = {
       ...config.experiments,

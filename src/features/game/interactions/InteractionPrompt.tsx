@@ -7,8 +7,9 @@ export const InteractionPrompt: React.FC = () => {
   const activeTarget = useGameState((s) => s.activeTarget);
   const isDialogueActive = useGameState((s) => s.isDialogueActive);
   const isWorkstationActive = useGameState((s) => s.isWorkstationActive);
+  const reading = useGameState((s) => s.openEvidence !== null);
 
-  if (!activeTarget || isDialogueActive || isWorkstationActive) return null;
+  if (!activeTarget || isDialogueActive || isWorkstationActive || reading) return null;
 
   return (
     <div className="absolute bottom-28 inset-x-0 flex justify-center pointer-events-none select-none z-20">
