@@ -61,3 +61,13 @@ export function stepBlockState(state: BlockState, blocked: boolean, dt: number):
   else if (timer >= BLOCK_THRESHOLDS.horn) phase = 'horn';
   return { phase, timer };
 }
+
+/**
+ * Lamp colour for a signal phase. `colorblindSafe` swaps green/red for blue/orange (Phase G
+ * accessibility) — distinguishable across protanopia, deuteranopia and tritanopia, unlike red/green.
+ */
+export function lampColour(phase: SignalPhase, colorblindSafe = false): string {
+  if (phase === 'yellow') return '#FBBF24';
+  if (phase === 'green') return colorblindSafe ? '#3B82F6' : '#34D399';
+  return colorblindSafe ? '#F97316' : '#F87171';
+}

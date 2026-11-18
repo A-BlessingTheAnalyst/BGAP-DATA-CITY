@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Minimap, DistrictBanner } from './Minimap';
 import { CityMap } from './map/CityMap';
 import { CharacterCreator } from './wardrobe/CharacterCreator';
@@ -28,6 +28,11 @@ export const GameHUD: React.FC = () => {
   const rank = overallReputation(missions ?? [], completedIds).rank;
   const isPhoneOpen = useGameState((s) => s.isPhoneOpen);
   const setPhoneOpen = useGameState((s) => s.setPhoneOpen);
+  const largeText = useGameState((s) => s.largeText);
+  useEffect(() => {
+    // Accessibility: scales every rem-based Tailwind text size at once (opt-in, off by default).
+    document.documentElement.style.fontSize = largeText ? '125%' : '';
+  }, [largeText]);
   useCareerBootstrap();
   React.useEffect(() => { loadWardrobe(); }, []);
 

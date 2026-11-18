@@ -82,6 +82,12 @@ interface GameStateStore {
   setGraphicsQuality: (quality: GraphicsQuality) => void;
   toggleMute: () => void;
   togglePause: () => void;
+
+  // Phase G: accessibility, remembered in this browser
+  reducedMotion: boolean;
+  largeText: boolean;
+  colorblindSafe: boolean;
+  setAccessibility: (patch: Partial<{ reducedMotion: boolean; largeText: boolean; colorblindSafe: boolean }>) => void;
 }
 
 const EVIDENCE_KEY = 'datacity.foundEvidence';
@@ -91,6 +97,16 @@ function loadFoundEvidence(): string[] {
     return Array.isArray(v) ? v.filter((x) => typeof x === 'string') : [];
   } catch {
     return [];
+  }
+}
+
+const A11Y_KEY = 'datacity.accessibility';
+function loadAccessibility() {
+  try {
+    const v = typeof window === 'undefined' ? null : JSON.parse(window.localStorage.getItem(A11Y_KEY) ?? '{}');
+    return { reducedMotion: !!v?.reducedMotion, largeText: !!v?.largeText, colorblindSafe: !!v?.colorblindSafe };
+  } catch {
+    return { reducedMotion: false, largeText: false, colorblindSafe: false };
   }
 }
 
@@ -183,6 +199,13 @@ export const useGameState = create<GameStateStore>((set) => ({
   isMuted: false,
   isPaused: false,
   setGraphicsQuality: (quality) => set({ graphicsQuality: quality }),
+
+  ...loadAccessibility(),
+  setAccessibility: (patch) => set((st) => {
+    const next = { reducedMotion: st.reducedMotion, largeText: st.largeText, colorblindSafe: st.colorblindSafe, ...patch };
+    try { window.localStorage.setItem(A11Y_KEY, JSON.stringify(next)); } catch { /* storage blocked: keep it for this session */ }
+    return next;
+  }),
   toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
   togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
 }));

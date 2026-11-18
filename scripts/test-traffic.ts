@@ -1,6 +1,6 @@
 // Phase C acceptance tests: traffic-light phasing and the driver block-reaction state machine
 // timings (masterprompt §11 Phase C: stop → horn ~1.5s → shout ~4s → push ~9s).  Run: npm run test:traffic
-import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, LIGHT_TIMING, type BlockState } from '../src/features/game/world/kit/trafficLogic';
+import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, lampColour, LIGHT_TIMING, type BlockState } from '../src/features/game/world/kit/trafficLogic';
 
 let failures = 0;
 const check = (ok: boolean, label: string) => {
@@ -54,6 +54,12 @@ function main() {
   check(s.phase === 'push', 'push kicks in at ~9s');
   s = stepBlockState(s, false, 0.1);
   check(s.phase === 'none' && s.timer === 0, 'the player moving away resets the state instantly (a "thank you" moment)');
+
+  console.log('Phase G: colour-blind-safe traffic lights');
+  check(lampColour('green', false) !== lampColour('green', true), 'the safe palette actually changes the green lamp');
+  check(lampColour('red', false) !== lampColour('red', true), 'the safe palette actually changes the red lamp');
+  check(lampColour('yellow', false) === lampColour('yellow', true), 'yellow is already colour-blind-safe and stays the same');
+  check(lampColour('green', true) !== lampColour('red', true), 'go and stop are always two different colours, safe mode or not');
 
   console.log('Barks content');
   // eslint-disable-next-line @typescript-eslint/no-var-requires

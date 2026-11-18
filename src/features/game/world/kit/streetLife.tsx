@@ -10,9 +10,10 @@ import { CHARACTERS, CharacterDef, Outfit } from './characters';
 import { CastMember } from './CastMember';
 import type { Body, Hair } from './CharacterModel';
 import { INTERSECTIONS, HALF_ROAD } from './cityPlan';
-import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, type BlockState, type SignalPhase } from './trafficLogic';
+import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, lampColour, type BlockState } from './trafficLogic';
 import { playerRuntime, playerNudge } from '../../characters/PlayerCharacter';
 import { pushBark } from '../barks';
+import { useGameState } from '../../engine/GameState';
 
 const FEMALE_HAIR: Hair[] = ['Hair_BuzzedFemale', 'Hair_Buns', 'Hair_Long', 'none'];
 const MALE_HAIR: Hair[] = ['Hair_Buzzed', 'Hair_SimpleParted', 'Hair_Beard', 'none'];
@@ -315,14 +316,14 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
 export function TrafficLights() {
   const ns = useRef<(Mesh | null)[]>([]);
   const ew = useRef<(Mesh | null)[]>([]);
-  const colourFor = (phase: SignalPhase) => (phase === 'green' ? '#34D399' : phase === 'yellow' ? '#FBBF24' : '#F87171');
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
+    const safe = useGameState.getState().colorblindSafe;
     FOUR_WAY.forEach((inter, i) => {
       const nsPhase = signalPhase(t, 'z', inter.offset), ewPhase = signalPhase(t, 'x', inter.offset);
       const a = ns.current[i], b = ew.current[i];
-      if (a) (a.material as MeshBasicMaterial).color.set(colourFor(nsPhase));
-      if (b) (b.material as MeshBasicMaterial).color.set(colourFor(ewPhase));
+      if (a) (a.material as MeshBasicMaterial).color.set(lampColour(nsPhase, safe));
+      if (b) (b.material as MeshBasicMaterial).color.set(lampColour(ewPhase, safe));
     });
   });
   return (
