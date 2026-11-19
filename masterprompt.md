@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 18 November 2026 (Phase G: accessibility settings — reduced motion, large text, colour-blind-safe traffic lights) · branch `feat/world-kit` · nothing committed since `f871d51`.*
+> *Last updated: 19 November 2026 (§12.1–12.4 built: ambient traffic is jackable, every vehicle has a visible seated driver, vehicle-entry licence check covers jacked traffic, exit steps you out beside the vehicle, walk/run animation speed now tracks actual travel speed — none of it live-verified yet, the Browser pane stayed backgrounded all session; §12.5 map rotation still untouched) · branch `feat/world-kit` · last pushed commit `2ca749d` (uncommitted local changes on top).*
 
 ---
 
@@ -12,12 +12,12 @@
 
 1. **Respect the owner's standing rules (section 1)**, especially: do not push to the remote until the owner asks.
 2. **Run the game and the checks first** (section 4) so you see the current state.
-3. **Work phase by phase** (section 11). Phase A is done; Phase B is next.
+3. **Work phase by phase** (section 11). Phases A–G all have at least a first pass done (some partial/scoped down — read each phase's own notes). **Section 12 is current work**: the owner's live-play bug reports and feature request. §12.1–12.4 are coded, type-checked, tested and built clean, but **not yet live-verified** (the Browser pane was backgrounded all of 19 Nov's session) — that's §13 step 1, start there. §12.5 (map rotation) hasn't been touched yet.
 4. **Keep data analysis at the centre.** Every feature must serve the four pillars (section 2). Money only comes from graded analysis.
-5. **After each phase:**
+5. **After each phase, and after each item in section 12:**
    - run `npm run type-check`, `npm run build`, `npm run test:grader`, `npm run validate:missions` and `npm run validate:layout`;
-   - play the change in the browser;
-   - update section 10 (status) and section 11 (phases) of this file.
+   - play the change in the browser, **watched live** — section 12.5 is a cautionary tale about trusting pure code-reading or algebra over actually seeing it happen;
+   - update section 10 (status), section 11 (phases) and section 12 (owner feedback) of this file.
 6. **Design references:**
    - `docs/game-design.md` and its published page, Data City Game Design: https://claude.ai/artifact/NxbRmsRypEErfMBG7eWj6s
    - Engineering roadmap: `docs/roadmap.html`, published as Data City Roadmap: https://claude.ai/artifact/CeVJapsGWz1PYLyp4yeqCd
@@ -578,16 +578,51 @@ All eight tasks landed: browser play-through (and its bug fixes), server-side at
 
 ---
 
-## 12. Immediate next steps (do these first)
-1. Commit the branch (owner's call) and push when the owner says so, so CI runs for the first time; fix anything it finds.
-2. Play the expanded city in a normal browser window and measure fps (the desktop pane throttles); if it's under 60 on desktop, merge landmark geometry first.
-3. Start **Phase B**: the character creator overlay before first spawn (quick-pick cadets, then custom skin, hair and outfit colours), saved to the profile on the server.
-4. Then the outfit catalog (`content/outfits.json`) and the tailor shop with `POST /api/game/shop/buy` writing a ledger `purchase`.
-5. Update §10 and §11 here as each lands.
+## 12. Owner feedback (18 Nov 2026) — reported issues and the investigation/fix plan
+
+Phases A–G (§11) are built, tested and pushed. The owner then played the live build and reported five problems in one message. **Exact asks, kept verbatim so nothing gets softened in translation:**
+
+> "i want it to have real cars, i noticed that the characteres in the game seem to be walking but not actually walking. i also noticed that the drivers of cars are not visible and the main character (the person playing) cannot enter a car or a plane yet. then i noticed that the map works differently when the person is going left the map seems like it is going right. we need to fix everything. and make it better."
+
+Below is each item, what it most likely means, and the investigation/fix plan — written here **before** touching code, per the owner's explicit instruction to record the plan first.
+
+### 12.1 "Real cars" — ✅ built (19 Nov 2026)
+**Reading:** two things — (a) the player should be able to get into *any* car on the street, not only a dealership car, and (b) cars should read as more convincing.
+**What shipped:** ambient traffic is now jackable. `world/kit/streetLife.tsx`'s `Traffic` registers one `InteractionTarget` per vehicle directly in the module-level `interactionTargets` map (mutated in place every frame, not via the `<InteractionTrigger>` React component, so 40+ moving targets cost no extra re-renders), id'd `vehicle:traffic:<i>`. Pressing E near one hands that one yuka vehicle to a player-controlled kinematic branch (reusing `DrivableCar.tsx`'s ground-vehicle accel/brake/turn math, via a shared lazily-created `world.createCharacterController()` since only one vehicle can be jacked at a time) and writes the result back into the yuka `Vehicle`'s own `position`/`velocity`, so releasing it (E) hands smoothly back to `FollowPathBehavior` from wherever it ends up. (b) judged resolved by §12.2's driver + the jacking itself — no new models added this pass.
+
+### 12.2 "Drivers not visible" — ✅ built (19 Nov 2026)
+**What shipped:** every ambient vehicle now renders a seated driver — a cheap procedural `Person` (not the full rigged `CastMember`, to keep 40+ instances light) from the existing crowd-archetype palette, seated at an eyeballed per-vehicle offset. The player's own car (`DrivableCar.tsx`) and a jacked ambient vehicle (`streetLife.tsx`) both now show the player's actual look (`usePlayerDef()`) seated at the wheel via `CastMember` with the `Drive` clip (`Driving_Loop` — was already in `CLIP` but unused). `PlayerCharacter.tsx` still hides the player's own walking body while `isDriving` (unchanged — the seated figure is rendered by whichever vehicle component they're in, not by `PlayerCharacter` itself).
+
+### 12.3 "Cannot enter a car or a plane yet" — ✅ addressed (19 Nov 2026)
+Root cause was (a) from the original reading: ambient street traffic was never enterable by design (fixed by §12.1), and the dev account owned no vehicles/licences at the time, so the only entry points it could reach were ambient cars. `useInput.ts`'s `interact()` now branches on the vehicle id prefix: a `traffic:`-prefixed id (ambient/jacked) always needs the ground driving licence (no catalog lookup — no ambient choppers exist); an owned-vehicle id keeps its existing catalog + flight-licence lookup. Exiting any vehicle (owned or jacked) now steps the player out to its right-hand side via `requestTeleport` instead of leaving them standing exactly inside the vehicle's collider.
+
+### 12.4 "Characters walking but not actually walking" — ✅ fixed (19 Nov 2026)
+**Root cause found by reading the animation code, not by guessing:** `CharacterModel.tsx` always played every clip at a fixed `timeScale` of 1, regardless of how fast the character was actually translating. The player's `Run`/`Sprint` clips (and the crowd's `Walk_Loop`, always on) played at full authored rate even while `MathUtils.damp`-eased acceleration meant the actual ground speed was much lower — classic foot-sliding, which reads exactly as "walking but not actually walking."
+**Fix:** `CharacterModel` now accepts an optional `speedScaleRef` (a stable mutable `{current: number}`, not a prop that would need a re-render every frame) and applies it to the live `AnimationAction.timeScale` inside its existing per-frame `useFrame`. `PlayerCharacter.tsx` computes it each frame from `playerRuntime.speed` against the clip's nominal speed (4 m/s jog, 7 m/s sprint), clamped to [0.4, 1.6]. `Pedestrians` in `streetLife.tsx` does the same per recast agent against a 1.3 m/s nominal walk speed, clamped to [0.2, 1.3] — so a crowd agent that's briefly slowed (crowding, re-targeting) now visibly slows its footfall instead of sliding at full walk rate.
+**Not live-verified this pass** (see §12.6) — this is a code-level fix for a mechanism that's unambiguous once you read `CharacterModel.tsx`'s `useEffect`/`useFrame`, but it should still be watched in motion next session to confirm it reads right, not just technically-correct.
+
+### 12.5 "The map works differently when going left — seems to go right" — not touched this pass
+**Status unchanged from the last entry:** every rotation formula in `Minimap.tsx` and `CityMap.tsx` was independently re-derived by hand and matched the code exactly (see the previous revision of this section, kept below for the full derivation notes). Per the owner's standing instruction not to trust another round of algebra, this needs to be watched live — turning the camera and comparing the minimap/arrow against a known landmark's true bearing. That live check could not be done this pass (§12.6) and is carried forward as the top of §13.
+<details><summary>Prior algebraic check (18 Nov 2026), kept for reference</summary>
+
+Every rotation formula in `Minimap.tsx` (the world-rotation `theta`, the off-screen target chevron, the player arrow) and in `CityMap.tsx` (the fixed player arrow) was independently re-derived by hand from first principles (world convention: +X east, +Z north; map convention: svgY = −worldZ, matching `MapLayers.tsx`/`CityLayers`; rotations solved by adding angles via `atan2`, not by eyeballing compass directions, which is error-prone and produced a false positive on an earlier pass). Every formula currently in the code matched the from-scratch derivation exactly. That doesn't rule out a bug — it means if the math is sound, the issue is more likely a mouse-drag sign (`ThirdPersonCamera.tsx`'s `runtimeInput.yaw -= (e.clientX - x) * 0.005`), a units slip, or something only watching it live will show.
+</details>
+
+### 12.6 How this was verified this pass
+Type-check, the full test suite (`test:grader`, `test:shop`, `test:traffic`, `test:garage`, `test:reputation`), `validate:missions`, `validate:layout` and `npm run build` all pass clean after every change in §12.1–12.4. **Live in-browser verification (walking, jacking a car, watching the seated driver, watching the animation scale, turning the camera to watch the map) could not be completed this pass**: the Claude Browser pane stayed reported as hidden/backgrounded for the whole session (confirmed via a direct `requestAnimationFrame` frame-count probe — under 2 ticks/second instead of ~60 — even immediately after a fresh `navigate()`, a canvas click, and an explicit "show this pane" call), so WASD/driving input and animation never had real frames to run on. Console was otherwise clean (no errors from the app itself; the only errors seen were from the agent's own test script dispatching a `KeyboardEvent` on `window` instead of a real element). **This is the first item for whoever picks this up next: open `/game` in a normal, focused browser window (not the backgrounded pane) and walk through §13's checklist.**
 
 ---
 
-## 13. Conventions
+## 13. Immediate next steps (do these first)
+1. **Live-verify §12.1–12.4 in a real, focused browser window** (the pane was backgrounded all of 19 Nov's session — see §12.6): own nothing → walk up to an ambient car → confirm the "Jack this X [E]" prompt and a visible seated driver on every passing vehicle → press E → confirm you're driving it and your own character is now seated at the wheel → drive, exit, confirm you step out beside it, not inside it → repeat with an owned/dealership car → watch a sprinting/jogging player and a few pedestrians for any remaining foot-sliding.
+2. Then §12.5: watch the minimap/full map live while turning, compare against a known landmark — do **not** re-derive the formulas again first.
+3. Commit the branch (owner's call) and push when the owner says so, so CI runs; fix anything it finds.
+4. Play the expanded city in a normal browser window and measure fps (the desktop pane throttles); if it's under 60 on desktop, merge landmark geometry first.
+5. Update §10, §11 and §12 here as each lands.
+
+---
+
+## 14. Conventions
 - **Code:**
   - TypeScript strict; `@/` maps to `src/`.
   - Server-only code lives in `src/server/` and must never be imported by client components.

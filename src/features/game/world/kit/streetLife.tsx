@@ -1,19 +1,22 @@
 'use client';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Color, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from 'three';
-import { RigidBody, CuboidCollider, RapierRigidBody } from '@react-three/rapier';
+import { Color, Group, MathUtils, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from 'three';
+import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
 import { init as initRecast, Crowd, NavMeshQuery, CrowdAgent } from 'recast-navigation';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { EntityManager, FollowPathBehavior, Path, Vehicle, Vector3 as YVec } from 'yuka';
-import { CHARACTERS, CharacterDef, Outfit } from './characters';
+import { CHARACTERS, CharacterDef, Outfit, Person } from './characters';
 import { CastMember } from './CastMember';
 import type { Body, Hair } from './CharacterModel';
 import { INTERSECTIONS, HALF_ROAD } from './cityPlan';
 import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, lampColour, type BlockState } from './trafficLogic';
-import { playerRuntime, playerNudge } from '../../characters/PlayerCharacter';
+import { playerRuntime, playerNudge, driveRuntime } from '../../characters/PlayerCharacter';
 import { pushBark } from '../barks';
 import { useGameState } from '../../engine/GameState';
+import { interactionTargets } from '../../physics/InteractionTrigger';
+import { runtimeInput } from '../../input/InputManager';
+import { usePlayerDef } from '../../ui/wardrobe/useWardrobe';
 
 const FEMALE_HAIR: Hair[] = ['Hair_BuzzedFemale', 'Hair_Buns', 'Hair_Long', 'none'];
 const MALE_HAIR: Hair[] = ['Hair_Buzzed', 'Hair_SimpleParted', 'Hair_Beard', 'none'];
@@ -70,6 +73,9 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
       : (MALE_HAIR.includes(base.look.hair ?? 'none') ? base.look.hair! : MALE_HAIR[i % MALE_HAIR.length]);
     return { ...base, id: `${base.id}_${i}`, outfit, look: { ...base.look, body, hair, skinTone: 0.85 + ((i * 7) % 5) * 0.08 } };
   }), [count]);
+  // Per-agent, mutated every frame (no re-render) so each walker's foot-fall rate tracks its
+  // actual recast speed instead of always playing the walk clip at full rate.
+  const animScales = useMemo(() => Array.from({ length: count }, () => ({ current: 1 })), [count]);
 
   useEffect(() => {
     let disposed = false;
@@ -137,6 +143,9 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
       const v = a.velocity();
       g.position.set(p.x, p.y, p.z);
       if (v.x * v.x + v.z * v.z > 0.01) g.rotation.y = Math.atan2(v.x, v.z);
+      // Walk_Loop is authored around ~1.3 m/s; scale it to this agent's actual ground speed so it
+      // never looks like it's walking in place when steering slows it (crowding, re-targeting).
+      animScales[i].current = Math.min(1.3, Math.max(0.2, Math.hypot(v.x, v.z) / 1.3));
       const t = a.target();
       if ((t.x - p.x) ** 2 + (t.z - p.z) ** 2 < 1) a.requestMoveTarget(c.query.findRandomPointAroundCircle(p, 40).randomPoint);
 
@@ -156,7 +165,7 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
     <>
       {cast.map((c, i) => (
         <group key={i} ref={(g) => { refs.current[i] = g; }}>
-          <CastMember def={c} walking />
+          <CastMember def={c} walking speedScaleRef={animScales[i]} />
         </group>
       ))}
     </>
@@ -182,17 +191,69 @@ function VehicleModel({ kind }: { kind: Lane['vehicles'][number] }): ReactNode {
   }
 }
 
+const KIND_LABEL: Record<Lane['vehicles'][number], string> = {
+  taxi: 'Taxi', sedan: 'Sedan', suv: 'SUV', van: 'Van', danfo: 'Danfo', keke: 'Keke', okada: 'Okada',
+};
+
+/** A cheap procedural figure seated in the driver's spot (every ambient vehicle has a visible
+ * driver now — Owner feedback 18 Nov 2026, masterprompt.md §12.2). Full rigged CastMember bodies
+ * are reserved for the player's own car (one instance); traffic can have 40+, so this stays light. */
+function Driver({ kind, seed }: { kind: Lane['vehicles'][number]; seed: number }) {
+  const [, h] = FOOTPRINT[kind];
+  return (
+    <group position={[kind === 'okada' ? 0 : -0.35, h * 0.4, kind === 'danfo' || kind === 'van' ? 0.7 : 0.15]} scale={0.88}>
+      <Person outfit={crowdOutfit(seed)} walking={false} />
+    </group>
+  );
+}
+
 /** Four-way junctions only (the ones that get traffic lights), each with a fixed, varied phase offset. */
 const FOUR_WAY = INTERSECTIONS.filter((i) => i.arms === 4).map((i, k) => ({ ...i, offset: (k * 3.7) % 20 }));
 const SIGNAL_ZONE = 14; // metres ahead a vehicle starts checking a light
 const STOP_LINE_PAD = 1.2;
 
 export function Traffic({ lanes }: { lanes: Lane[] }) {
+  const { world } = useRapier();
   const refs = useRef<(Group | null)[]>([]);
   const bodies = useRef<(RapierRigidBody | null)[]>([]);
   const flat = useMemo(() => lanes.flatMap((l, li) => l.vehicles.map((v, vi) => ({ kind: v, lane: li, slot: vi, count: l.vehicles.length }))), [lanes]);
   // One "blocked by the player" state machine per vehicle (streetLife.trafficLogic.stepBlockState).
   const block = useRef<BlockState[]>([]);
+  const playerDef = usePlayerDef();
+
+  // Owner feedback 18 Nov 2026 (masterprompt.md §12.1/§12.3): ambient traffic is now jackable, not
+  // just owned/dealership cars. One shared character controller drives whichever vehicle is jacked
+  // (only one at a time), reusing DrivableCar.tsx's ground-vehicle kinematics.
+  const jackController = useRef<ReturnType<typeof world.createCharacterController>>();
+  const jackSpeed = useRef(0);
+  const jackYaw = useRef(0);
+  const prevJackIdx = useRef(-1);
+  // Which vehicle (if any) the player is currently jacked into — reactive only on the rare
+  // transition (entering/leaving a car), so it's safe to drive the render from a hook here.
+  const drivingVehicleId = useGameState((s) => (s.isDriving ? s.drivingVehicleId : null));
+  const jackedRenderIdx = drivingVehicleId?.startsWith('traffic:') ? Number(drivingVehicleId.slice('traffic:'.length)) : -1;
+
+  useEffect(() => {
+    const c = world.createCharacterController(0.02);
+    c.enableSnapToGround(0.3);
+    jackController.current = c;
+    return () => { world.removeCharacterController(c); jackController.current = undefined; };
+  }, [world]);
+
+  // Every ambient vehicle gets an InteractionTarget directly in the module-level registry (not the
+  // <InteractionTrigger> component) so its live position can be mutated in place every frame below,
+  // with zero extra React re-renders for 40+ moving targets.
+  useEffect(() => {
+    const ids = flat.map((_, i) => `vehicle:traffic:${i}`);
+    flat.forEach((f, i) => {
+      interactionTargets.set(ids[i], {
+        id: ids[i], type: 'vehicle', label: KIND_LABEL[f.kind],
+        actionText: `Jack this ${KIND_LABEL[f.kind]} [E]`,
+        position: [0, 0.6, 0], radius: 2.6,
+      });
+    });
+    return () => { ids.forEach((id) => interactionTargets.delete(id)); };
+  }, [flat]);
 
   const sim = useMemo(() => {
     const manager = new EntityManager();
@@ -225,7 +286,19 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
 
   useFrame(({ camera, clock }, dt) => {
     const d = Math.min(dt, 0.05), t = clock.elapsedTime, p = playerRuntime.position;
+    const s = useGameState.getState();
+    const jackIdx = s.isDriving && s.drivingVehicleId?.startsWith('traffic:') ? Number(s.drivingVehicleId.slice('traffic:'.length)) : -1;
+    if (jackIdx !== prevJackIdx.current) {
+      if (jackIdx >= 0) {
+        const jv = sim.vehicles[jackIdx];
+        jackYaw.current = Math.atan2(jv.velocity.x, jv.velocity.z) || 0;
+        jackSpeed.current = Math.hypot(jv.velocity.x, jv.velocity.z);
+      }
+      prevJackIdx.current = jackIdx;
+    }
     sim.vehicles.forEach((v, vi) => {
+      // The jacked vehicle is driven by the player below, not by yuka's steering/braking/signals.
+      if (vi === jackIdx) return;
       let brake = 1;
       // Slow down behind a vehicle that is close ahead in the direction of travel.
       sim.vehicles.forEach((o, oi) => {
@@ -273,20 +346,52 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
       if (prevPhase !== 'none' && next.phase === 'none') pushBark('thanks', [v.position.x, 1, v.position.z], `${vehId}:thanks`, t, 6);
     });
     sim.manager.update(d);
+
+    // Player-controlled movement for the jacked vehicle, written back into its yuka state so
+    // releasing it (E) hands smoothly back to FollowPathBehavior from wherever it ends up.
+    if (jackIdx >= 0 && bodies.current[jackIdx]) {
+      const jv = sim.vehicles[jackIdx];
+      const kind = flat[jackIdx].kind;
+      const maxSpeed = kind === 'okada' ? 10 : kind === 'danfo' || kind === 'van' ? 7 : 9;
+      const throttle = (runtimeInput.forward ? 1 : 0) - (runtimeInput.backward ? 1 : 0);
+      const steer = (runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0);
+      const boost = runtimeInput.sprint ? 1 : 0.6;
+      if (throttle !== 0) jackSpeed.current = MathUtils.clamp(jackSpeed.current + throttle * 6 * d, -maxSpeed * 0.5, maxSpeed * boost);
+      else jackSpeed.current = MathUtils.damp(jackSpeed.current, 0, 2.5, d);
+      if (Math.abs(jackSpeed.current) > 0.3) jackYaw.current += steer * 1.8 * d * Math.sign(jackSpeed.current) * Math.min(1, Math.abs(jackSpeed.current) / 3);
+      const dx = Math.sin(jackYaw.current) * jackSpeed.current * d, dz = Math.cos(jackYaw.current) * jackSpeed.current * d;
+      let mx = dx, mz = dz;
+      const jc = jackController.current;
+      if (jc) {
+        jc.computeColliderMovement(bodies.current[jackIdx]!.collider(0), { x: dx, y: -0.3 * d, z: dz });
+        const m = jc.computedMovement();
+        mx = m.x; mz = m.z;
+        if (Math.abs(m.x) < Math.abs(dx) * 0.4 || Math.abs(m.z) < Math.abs(dz) * 0.4) jackSpeed.current *= 0.3; // hit something
+      }
+      jv.position.x += mx;
+      jv.position.z += mz;
+      jv.velocity.set(mx / d, 0, mz / d);
+      driveRuntime.position.set(jv.position.x, FOOTPRINT[kind][1] * 0.5 + 0.3, jv.position.z);
+      driveRuntime.rotationY = jackYaw.current;
+    }
+
     streetRuntime.vehicles.length = sim.vehicles.length;
     sim.vehicles.forEach((v, i) => {
       streetRuntime.vehicles[i] = { x: v.position.x, z: v.position.z, speed: Math.sqrt(v.getSpeedSquared()), kind: flat[i].kind };
+      const target = interactionTargets.get(`vehicle:traffic:${i}`);
+      if (target) { target.position[0] = v.position.x; target.position[2] = v.position.z; }
       const g = refs.current[i];
       if (g) {
         // Vehicles are many small meshes; past 160 m they are specks in the haze.
         g.visible = (v.position.x - camera.position.x) ** 2 + (v.position.z - camera.position.z) ** 2 < 160 * 160;
         g.position.set(v.position.x, 0, v.position.z);
-        if (v.getSpeedSquared() > 0.05) g.rotation.y = Math.atan2(v.velocity.x, v.velocity.z);
+        if (i === jackIdx) g.rotation.y = jackYaw.current;
+        else if (v.getSpeedSquared() > 0.05) g.rotation.y = Math.atan2(v.velocity.x, v.velocity.z);
       }
       const b = bodies.current[i];
       if (b) {
         b.setNextKinematicTranslation({ x: v.position.x, y: FOOTPRINT[flat[i].kind][1] / 2, z: v.position.z });
-        if (v.getSpeedSquared() > 0.05) {
+        if (i === jackIdx || v.getSpeedSquared() > 0.05) {
           const half = (g?.rotation.y ?? 0) / 2;
           b.setNextKinematicRotation({ x: 0, y: Math.sin(half), z: 0, w: Math.cos(half) });
         }
@@ -301,7 +406,15 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
         return (
           <group key={i} ref={(g) => { refs.current[i] = g; }}>
             <VehicleModel kind={f.kind} />
-            {/* Kinematic collider so the player can't walk through moving traffic. */}
+            {i === jackedRenderIdx ? (
+              <group position={[f.kind === 'okada' ? 0 : -0.35, h * 0.4, f.kind === 'danfo' || f.kind === 'van' ? 0.7 : 0.15]} scale={0.95}>
+                <CastMember def={playerDef} action="Drive" />
+              </group>
+            ) : (
+              <Driver kind={f.kind} seed={i} />
+            )}
+            {/* Kinematic collider so the player can't walk through moving traffic (and the body the
+                jacked-vehicle controller above sweeps for collision). */}
             <RigidBody ref={(b) => { bodies.current[i] = b; }} type="kinematicPosition" colliders={false} position={[0, h / 2, 0]}>
               <CuboidCollider args={[w / 2, h / 2, len / 2]} />
             </RigidBody>

@@ -35,6 +35,7 @@ export function PlayerCharacter() {
   const controller = useRef<ReturnType<typeof world.createCharacterController>>();
   const input = useInput(), velocity = useRef(new Vector3()), elapsed = useRef(0), stepClock = useRef(0);
   const [animAction, setAnimAction] = useState<'Idle' | 'Run' | 'Sprint' | 'Type'>('Idle');
+  const animScale = useRef(1);
   const player = usePlayerDef();
 
   // Development-only play-test handle: read the player position or teleport (x, z) from the console.
@@ -158,6 +159,11 @@ export function PlayerCharacter() {
     if (nextAnim !== animAction) {
       setAnimAction(nextAnim);
     }
+    // Jog/sprint clips are authored for one reference speed; scale playback to the player's
+    // actual speed so feet never slide (too fast) or blur in place (too slow) during the
+    // acceleration ramp (fixes "characters seem to be walking but not actually walking").
+    const nominal = nextAnim === 'Sprint' ? 7 : nextAnim === 'Run' ? 4 : 1;
+    animScale.current = nextAnim === 'Idle' || nextAnim === 'Type' ? 1 : MathUtils.clamp(playerRuntime.speed / nominal, 0.4, 1.6);
 
     elapsed.current += delta;
     if (elapsed.current > 0.1) {
@@ -170,7 +176,7 @@ export function PlayerCharacter() {
     <RigidBody ref={body} type="kinematicPosition" colliders={false} position={MARKET_LAYOUT.spawn} enabledRotations={[false, false, false]}>
       <CapsuleCollider args={[0.55, 0.32]} />
       <group ref={visual} position={[0, -0.87, 0]} visible={!isDriving}>
-        {!isDriving && <CastMember def={player} action={animAction} />}
+        {!isDriving && <CastMember def={player} action={animAction} speedScaleRef={animScale} />}
       </group>
     </RigidBody>
   );

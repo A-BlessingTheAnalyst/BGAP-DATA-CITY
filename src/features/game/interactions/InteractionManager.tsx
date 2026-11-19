@@ -14,15 +14,18 @@ export const InteractionManager: React.FC = () => {
   const isDialogueActive = useGameState((s) => s.isDialogueActive);
   const isWorkstationActive = useGameState((s) => s.isWorkstationActive);
   const isPaused = useGameState((s) => s.isPaused);
+  const isDriving = useGameState((s) => s.isDriving);
   const setActiveTarget = useGameState((s) => s.setActiveTarget);
 
   // Central proximity evaluator loop: evaluates nearest eligible target without trigger contention
   useEffect(() => {
+    // While driving, prompts for nearby vehicles/NPCs would be confusing (E always exits the car
+    // first), so stop evaluating and drop whatever was active.
+    if (isDialogueActive || isWorkstationActive || isPaused || isDriving) {
+      setActiveTarget(null);
+      return;
+    }
     const interval = setInterval(() => {
-      if (isDialogueActive || isWorkstationActive || isPaused) {
-        return;
-      }
-
       const p = playerRuntime.position;
       let closest: InteractionTarget | null = null;
       let minDist = Infinity;
@@ -46,7 +49,7 @@ export const InteractionManager: React.FC = () => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [isDialogueActive, isWorkstationActive, isPaused, setActiveTarget]);
+  }, [isDialogueActive, isWorkstationActive, isPaused, isDriving, setActiveTarget]);
 
   return (
     <>
