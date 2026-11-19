@@ -1,0 +1,65 @@
+{
+  "id": "tier1_log_parsing",
+  "kind": "story",
+  "tier": 1,
+  "skill": "Python",
+  "title": "The Endpoint That Isn't Actually Busy",
+  "summary": "Chidi's raw log count says /api/garage is Datacore's busiest endpoint. Almost none of those requests actually succeed.",
+  "pay": 17000,
+  "xp": 140,
+  "badgeId": "badge_log_parser",
+  "passMark": 75,
+  "client": {
+    "name": "Chidi Okafor",
+    "business": "Datacore",
+    "character": "chidi",
+    "brief": [
+      "This log file has one line per request — method, path, status code, how long it took. /api/garage has way more lines than anything else, so that's where I was about to add more servers.",
+      "But I just noticed most of those lines are 500s and 502s — a client out there is stuck retrying something that's failing, not real traffic. Can you write something to count what's actually succeeding?"
+    ],
+    "thanks": "wallet. I'd have thrown capacity at the wrong service — garage's failures were drowning out the real traffic in a raw count."
+  },
+  "location": { "district": "tech", "remote": false, "npc": [156.5, 0, 60], "workstation": [159, 0, 60] },
+  "starterSql": "# Which endpoint is really getting the most traffic?\n# Careful: a failed request (500, 502, 503) still shows up as a line in the log.\n#\n# access_log is a list of dicts, each with one key: \"line\" — the raw log line.\n# Set a variable named `result` to your answer (the path, as a string).\n\nfor row in access_log[:5]:\n    print(row['line'])\n\nresult = None",
+  "tables": [
+    {
+      "name": "access_log",
+      "description": "Raw request log, one line per request: \"DATE TIME METHOD PATH STATUS DURATIONms\".",
+      "columns": [
+        { "name": "line", "type": "VARCHAR", "desc": "The raw log line, space-separated" }
+      ]
+    }
+  ],
+  "hints": [
+    { "title": "Hint 1: A log line isn't a success", "desc": "Every request gets a line, including ones that failed. Split each line on spaces to pull out the path and the status code." },
+    { "title": "Hint 2: Only count the 2xx ones", "desc": "A status of \"200\" means it actually worked. Only count a request toward a path's total when its status is \"200\".", "snippet": "if status == '200': counts[path] += 1" },
+    { "title": "Hint 3: Then take the highest count", "desc": "Once you have successful-request counts per path, `result` is the path with the highest one." }
+  ],
+  "findings": [
+    {
+      "id": "busiest_endpoint",
+      "claim": "Which endpoint is really getting the most traffic?",
+      "options": [
+        { "id": "garage", "text": "/api/garage — it has by far the most log lines" },
+        { "id": "wallet", "text": "/api/wallet — fewer total lines, but almost all of them succeed", "correct": true },
+        { "id": "missions", "text": "/api/missions — tied with garage for the most lines" }
+      ]
+    },
+    {
+      "id": "why_garage_misleads",
+      "claim": "Why did the raw line count point at the wrong endpoint?",
+      "options": [
+        { "id": "garage_retries", "text": "A broken client is stuck retrying a failing request against /api/garage, filling the log with 500s and 502s that aren't real usage.", "correct": true },
+        { "id": "garage_missing", "text": "/api/wallet's requests aren't being logged at all." },
+        { "id": "garage_right", "text": "It didn't mislead — /api/garage really is the busiest." }
+      ]
+    }
+  ],
+  "successFeedback": "/api/garage racks up the most log lines, but most of them are a retrying client's failures, not real use. Once you only count the 200s, /api/wallet is clearly the busiest endpoint.",
+  "trapFixture": "failures-not-counted",
+  "fixtures": [
+    { "id": "sample", "purpose": "The log you can see", "failHint": "Your answer doesn't match the endpoint with the most successful (200) requests here." },
+    { "id": "failures-not-counted", "purpose": "The same pattern, sharper", "failHint": "A flooded endpoint can have the most log lines and still not be the busiest. Only count status 200." },
+    { "id": "another-day", "purpose": "A different day where a different endpoint is flooded with failures", "failHint": "Your answer is wrong on a different day's log — it may be hardcoded to always exclude one path instead of checking the status." }
+  ]
+}

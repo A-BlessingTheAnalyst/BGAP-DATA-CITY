@@ -19,11 +19,14 @@ export function interact() {
  AudioManager.playUi('open');
  if (s.activeTarget.type === 'vehicle') {
   const vehicleId = s.activeTarget.id.slice('vehicle:'.length);
+  // Jacking an ambient street vehicle ("vehicle:traffic:<i>") is a quick, informal ride — it
+  // needs no licence (owning and registering a car from the dealership still does). Owner
+  // feedback 19 Nov 2026: the ₦200,000 driving-test paywall made jacking look broken, since a
+  // fresh account can't afford it and nothing visibly happened beyond a quiet error sound.
+  if (vehicleId.startsWith('traffic:')) { s.setDriving(vehicleId); resetInput(); return; }
   const g = useGarage.getState();
-  // Jacked ambient traffic ("vehicle:traffic:<i>") has no catalog entry — it always needs the
-  // ground driving licence, same as an owned car (no ambient choppers exist in traffic).
-  const def = vehicleId.startsWith('traffic:') ? undefined : g.catalog.find((v) => v.id === vehicleId);
-  const ok = vehicleId.startsWith('traffic:') ? g.hasLicence : def?.licence === 'flight' ? g.hasFlightLicence : g.hasLicence;
+  const def = g.catalog.find((v) => v.id === vehicleId);
+  const ok = def?.licence === 'flight' ? g.hasFlightLicence : g.hasLicence;
   if (!ok) { AudioManager.playUi('error'); resetInput(); return; }
   s.setDriving(vehicleId);
   resetInput();

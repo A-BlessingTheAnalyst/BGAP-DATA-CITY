@@ -1,0 +1,68 @@
+{
+  "id": "tier1_server_uptime",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "The Server That's Really Hurting Us",
+  "summary": "Chidi's dashboard ranks servers by how often they flicker. He thinks that's the whole story.",
+  "pay": 16000,
+  "xp": 130,
+  "badgeId": "badge_uptime_analyst",
+  "passMark": 75,
+  "client": {
+    "name": "Chidi Okafor",
+    "business": "Datacore",
+    "character": "chidi",
+    "brief": [
+      "kora-1 and lumen-2 are flagged red on my dashboard — they log way more outage events than datacore-3. Management wants me to replace one of them.",
+      "But a flicker that clears in two minutes isn't the same as a server that's actually down for an hour and a half. I need the real cost, not the event count."
+    ],
+    "thanks": "datacore-3. I'll move the migration there first — three long outages a week is a bigger deal than the dashboard made it look."
+  },
+  "location": { "district": "tech", "remote": false, "npc": [142.5, 0, -38], "workstation": [145, 0, -38] },
+  "starterSql": "-- Which server is actually costing us the most downtime?\n-- Careful: more outage events doesn't mean more total time down.\n\nSELECT *\nFROM outages\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "outages",
+      "description": "Every logged outage across the three servers this month, with how long it lasted.",
+      "columns": [
+        { "name": "outage_id", "type": "INTEGER", "desc": "Event number", "pk": true },
+        { "name": "server", "type": "VARCHAR", "desc": "kora-1, lumen-2 or datacore-3" },
+        { "name": "started_at", "type": "TIMESTAMP", "desc": "When the outage began" },
+        { "name": "duration_minutes", "type": "INTEGER", "desc": "How long it lasted, in minutes" }
+      ]
+    }
+  ],
+  "hints": [
+    { "title": "Hint 1: An event count isn't downtime", "desc": "A server with fourteen two-minute blips and a server with three ninety-minute outages can log very different total downtime." },
+    { "title": "Hint 2: Sum the actual minutes", "desc": "For each server, add up duration_minutes across all its outages.", "snippet": "SUM(duration_minutes)" },
+    { "title": "Hint 3: Rank by that total", "desc": "GROUP BY server, order by total downtime descending, take the top one." }
+  ],
+  "findings": [
+    {
+      "id": "worst_server",
+      "claim": "Which server is really costing the most downtime?",
+      "options": [
+        { "id": "kora", "text": "kora-1 — it has the most outage events" },
+        { "id": "datacore", "text": "datacore-3 — a handful of outages, but they run far longer", "correct": true },
+        { "id": "lumen", "text": "lumen-2 — tied with kora-1 for most events" }
+      ]
+    },
+    {
+      "id": "dashboard_mistake",
+      "claim": "Why did the event-count dashboard point at the wrong server?",
+      "options": [
+        { "id": "dash_count", "text": "It ranks by number of outages, not how long each one actually lasted.", "correct": true },
+        { "id": "dash_missing", "text": "datacore-3's outages aren't logged at all." },
+        { "id": "dash_right", "text": "It isn't wrong — kora-1 really is the worst." }
+      ]
+    }
+  ],
+  "successFeedback": "kora-1 and lumen-2 log far more outage events, but each one clears in a couple of minutes. datacore-3 rarely goes down, but when it does, it's down for well over an hour — far more total downtime.",
+  "trapFixture": "duration-not-count",
+  "fixtures": [
+    { "id": "sample", "purpose": "This month's outage log", "failHint": "Your answer doesn't match the server with the most total downtime here." },
+    { "id": "duration-not-count", "purpose": "The same pattern, sharper", "failHint": "A server with few outages can still cost the most downtime. Sum duration_minutes, don't count rows." },
+    { "id": "another-week", "purpose": "A different week where a different server is the real problem", "failHint": "Your query gives the wrong server on a different week's data — it may be hardcoded instead of computing the total." }
+  ]
+}

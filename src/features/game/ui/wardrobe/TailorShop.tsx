@@ -88,15 +88,18 @@ export function TailorShop() {
   };
 
   return (
-    <div role="dialog" aria-label="Zee Fabrics Tailoring" className="fixed inset-0 z-50 bg-[#0B0F18]/95 backdrop-blur-sm flex flex-col md:flex-row pointer-events-auto select-none">
+    <div role="dialog" aria-label="Zee Fabrics Tailoring" className="fixed inset-0 z-50 bg-bgap-dark/95 backdrop-blur-sm flex flex-col md:flex-row pointer-events-auto select-none">
+      {/* The fitting-room strip stays a dark, warm backdrop on purpose (contrast for the 3D
+          render, same as the character creator's studio panel) even though the rest of this
+          screen went light — so its own text is fixed light, not theme-token-based. */}
       <div className="md:w-[40%] h-[36vh] md:h-full relative bg-gradient-to-b from-[#3A1F1A] to-[#120C0B]">
         <CadetPreview def={preview} className="absolute inset-0" />
         <div className="absolute top-4 left-4">
           <div className="text-[11px] font-mono uppercase tracking-[0.25em] text-amber-300 flex items-center gap-1.5"><Scissors className="w-3.5 h-3.5" />Zee Fabrics Tailoring</div>
-          <h1 className="text-2xl font-extrabold text-bgap-text">{trying ? `Trying on: ${trying.name}` : 'The mirror'}</h1>
+          <h1 className="text-2xl font-extrabold text-white">{trying ? `Trying on: ${trying.name}` : 'The mirror'}</h1>
         </div>
         {trying && (
-          <button onClick={() => setTrying(null)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/50 text-xs text-bgap-text border border-white/20">Take it off</button>
+          <button onClick={() => setTrying(null)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/50 text-xs text-white border border-white/20">Take it off</button>
         )}
       </div>
 
@@ -120,7 +123,7 @@ export function TailorShop() {
             const affordable = balance !== null && balance >= it.price;
             return (
               <li key={it.id} className={`rounded-xl border p-3 flex gap-3 ${trying?.id === it.id ? 'border-amber-400 bg-amber-400/5' : 'border-bgap-border bg-bgap-card'}`}>
-                <button onClick={() => { setTrying(trying?.id === it.id ? null : it); AudioManager.playUi('select'); }} aria-label={`Try on ${it.name}`} className="shrink-0 w-14 h-14 rounded-lg border border-white/10 relative overflow-hidden" style={{ background: it.color }}>
+                <button onClick={() => { setTrying(trying?.id === it.id ? null : it); AudioManager.playUi('select'); }} aria-label={`Try on ${it.name}`} className="shrink-0 w-14 h-14 rounded-lg border border-bgap-border relative overflow-hidden" style={{ background: it.color }}>
                   {it.accent && <span className="absolute inset-x-0 bottom-0 h-3" style={{ background: it.accent }} />}
                 </button>
                 <div className="min-w-0 flex-1">

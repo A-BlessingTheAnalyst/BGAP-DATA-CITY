@@ -197,12 +197,15 @@ const KIND_LABEL: Record<Lane['vehicles'][number], string> = {
 
 /** A cheap procedural figure seated in the driver's spot (every ambient vehicle has a visible
  * driver now — Owner feedback 18 Nov 2026, masterprompt.md §12.2). Full rigged CastMember bodies
- * are reserved for the player's own car (one instance); traffic can have 40+, so this stays light. */
+ * are reserved for the player's own car (one instance); traffic can have 40+, so this stays light.
+ * Owner feedback 19 Nov 2026: the first pass positioned the group well above the vehicle's own
+ * floor (scaled off total vehicle height), so a standing figure's hip ended up near the roofline —
+ * "drivers standing inside the car". `seated` bends the legs out of a straight dangle (see
+ * characters.tsx) and this now sits the hip pivot near the vehicle's actual floor, not its roof. */
 function Driver({ kind, seed }: { kind: Lane['vehicles'][number]; seed: number }) {
-  const [, h] = FOOTPRINT[kind];
   return (
-    <group position={[kind === 'okada' ? 0 : -0.35, h * 0.4, kind === 'danfo' || kind === 'van' ? 0.7 : 0.15]} scale={0.88}>
-      <Person outfit={crowdOutfit(seed)} walking={false} />
+    <group position={[kind === 'okada' ? 0 : -0.32, 0.05, kind === 'danfo' || kind === 'van' ? 0.6 : 0.1]} scale={0.86}>
+      <Person outfit={crowdOutfit(seed)} seated />
     </group>
   );
 }
@@ -407,7 +410,7 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
           <group key={i} ref={(g) => { refs.current[i] = g; }}>
             <VehicleModel kind={f.kind} />
             {i === jackedRenderIdx ? (
-              <group position={[f.kind === 'okada' ? 0 : -0.35, h * 0.4, f.kind === 'danfo' || f.kind === 'van' ? 0.7 : 0.15]} scale={0.95}>
+              <group position={[f.kind === 'okada' ? 0 : -0.3, 0.15, f.kind === 'danfo' || f.kind === 'van' ? 0.6 : 0.1]} scale={0.95}>
                 <CastMember def={playerDef} action="Drive" />
               </group>
             ) : (

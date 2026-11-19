@@ -1,6 +1,6 @@
 import React from 'react';
 import GameClient from './GameClient';
-import { SessionValidator } from '@/server/game/SessionValidator';
+import { SessionValidator, DEV_USER_ID } from '@/server/game/SessionValidator';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +15,7 @@ export default async function GamePage() {
     session = await SessionValidator.validateSession(null);
   } catch (err) {
     session = {
-      userId: 'dev-cadet-analyst',
+      userId: DEV_USER_ID,
       email: 'cadet@aidlearn.org',
       role: 'student' as const,
     };

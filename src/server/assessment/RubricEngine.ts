@@ -39,6 +39,10 @@ export class RubricEngine {
     if (!pkg) throw new Error(`Unknown mission ${params.missionId}`);
     const def = pkg.def;
     const hints = Math.max(0, Math.floor(params.hintsUsed || 0));
+    // Python missions (reference.py, no reference.sql) aren't submittable through this endpoint
+    // yet — PythonGrader.ts exists and is validated by scripts/test-python-grader.ts, but the
+    // in-browser Python editor and its own submit route aren't built (masterprompt.md §15.4).
+    if (!pkg.grading) throw new Error(`Mission ${def.id} is a Python mission; it isn't submittable through the SQL grading endpoint yet.`);
     const graded = await gradeSql(def.id, params.query, pkg.grading);
 
     const answers: Record<string, string> = { ...(params.findings ?? {}) };

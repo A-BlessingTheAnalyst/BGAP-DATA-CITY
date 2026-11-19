@@ -110,14 +110,17 @@ export function CharacterCreator() {
   };
 
   return (
-    <div role="dialog" aria-label="Create your cadet" className="fixed inset-0 z-50 bg-[#070B13]/95 backdrop-blur-sm flex flex-col md:flex-row pointer-events-auto select-none">
+    <div role="dialog" aria-label="Create your cadet" className="fixed inset-0 z-50 bg-bgap-dark/95 backdrop-blur-sm flex flex-col md:flex-row pointer-events-auto select-none">
+      {/* The character studio strip stays a dark backdrop on purpose (contrast for the 3D
+          render, same choice as WardrobeApp's CadetPreview thumbnail) even though the rest of
+          this screen went light — so its own text is fixed light, not theme-token-based. */}
       <div className="md:w-[45%] h-[38vh] md:h-full relative bg-gradient-to-b from-[#16233A] to-[#0B111D]">
         <CadetPreview def={def} className="absolute inset-0" />
         <div className="absolute top-4 left-4">
           <div className="text-[11px] font-mono uppercase tracking-[0.25em] text-bgap-cyan">BGAP Academy</div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-bgap-text">{isNew ? 'Create your cadet' : 'Edit your cadet'}</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white">{isNew ? 'Create your cadet' : 'Edit your cadet'}</h1>
         </div>
-        <div className="absolute bottom-3 inset-x-0 text-center text-[11px] text-bgap-muted">Drag to turn</div>
+        <div className="absolute bottom-3 inset-x-0 text-center text-[11px] text-white/60">Drag to turn</div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 md:p-8 space-y-6">

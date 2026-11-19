@@ -1,0 +1,70 @@
+{
+  "id": "tier1_cohort_review",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "Which Cohort Really Gets It?",
+  "summary": "Dr. Ifeoma's TA says the Weekend cohort is struggling. The attempt log tells a different story.",
+  "pay": 16000,
+  "xp": 130,
+  "badgeId": "badge_cohort_analyst",
+  "passMark": 75,
+  "client": {
+    "name": "Dr. Ifeoma Nwosu",
+    "business": "Academy SQL course",
+    "character": "dr_ifeoma",
+    "brief": [
+      "My TA keeps flagging the Weekend cohort — their average scores look the worst of the three. I'm about to move one cohort onto the advanced track, and he's pushing for Morning or Afternoon.",
+      "But averaging every attempt punishes anyone who tried more than once. I want to know who actually masters the material, not who got it right on the first try."
+    ],
+    "thanks": "Weekend it is. They retried because they cared, not because they're behind — I should've seen that myself."
+  },
+  "location": { "district": "academy", "remote": false, "npc": [-61.4, 0, -125.4], "workstation": [-58.9, 0, -125.4] },
+  "starterSql": "-- Which cohort should move to the advanced track?\n-- Careful: a cadet who retries shows up as several rows here.\n\nSELECT *\nFROM cadet_attempts\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "cadet_attempts",
+      "description": "Every submission across the three Academy cohorts this term. A cadet who retries a quiz appears once per attempt.",
+      "columns": [
+        { "name": "attempt_id", "type": "INTEGER", "desc": "Submission number", "pk": true },
+        { "name": "cadet_id", "type": "VARCHAR", "desc": "Cadet identifier" },
+        { "name": "cohort", "type": "VARCHAR", "desc": "Morning, Afternoon or Weekend" },
+        { "name": "attempt_number", "type": "INTEGER", "desc": "1st, 2nd, 3rd try at this quiz" },
+        { "name": "score", "type": "INTEGER", "desc": "Score on that attempt, out of 100" },
+        { "name": "submitted_at", "type": "TIMESTAMP", "desc": "When it was submitted" }
+      ]
+    }
+  ],
+  "hints": [
+    { "title": "Hint 1: Retries aren't new cadets", "desc": "Someone who tried three times shows up as three rows. Averaging all of them treats their early, low scores as if a different person scored them." },
+    { "title": "Hint 2: Find each cadet's best, first", "desc": "Group by cadet (and cohort) and take their MAX(score) — that's what they actually know by the end.", "snippet": "GROUP BY cadet_id, cohort" },
+    { "title": "Hint 3: Then average those bests by cohort", "desc": "Wrap that as a subquery, then AVG() the best scores GROUP BY cohort, and take the top one." }
+  ],
+  "findings": [
+    {
+      "id": "best_cohort",
+      "claim": "Which cohort should move to the advanced track?",
+      "options": [
+        { "id": "morning", "text": "Morning — highest average score on record" },
+        { "id": "weekend", "text": "Weekend — highest average once you count each cadet's best attempt", "correct": true },
+        { "id": "afternoon", "text": "Afternoon — most consistent scores" }
+      ]
+    },
+    {
+      "id": "ta_mistake",
+      "claim": "Why did the TA's read get it backwards?",
+      "options": [
+        { "id": "ta_wrong_metric", "text": "He averaged every attempt, so Weekend's early low scores dragged their average down even though they ended strong.", "correct": true },
+        { "id": "ta_bad_data", "text": "The attempt log is missing rows for the Weekend cohort." },
+        { "id": "ta_right", "text": "He didn't get it backwards — Morning really is ahead." }
+      ]
+    }
+  ],
+  "successFeedback": "Averaging every attempt punishes cadets for retrying. Once you take each cadet's best score, Weekend comes out on top — they kept at it until it clicked.",
+  "trapFixture": "retriers-win",
+  "fixtures": [
+    { "id": "sample", "purpose": "The attempt log you can see", "failHint": "Your answer doesn't match the cohort with the highest average best-score here." },
+    { "id": "retriers-win", "purpose": "A term where the retry pattern is even sharper", "failHint": "A cohort with lots of retries can still have the best true scores. Use each cadet's MAX(score), not every row." },
+    { "id": "another-term", "purpose": "A different term where a different cohort is the hidden high performer", "failHint": "Your query gives the wrong cohort on a different term's data — it may be hardcoded to one answer instead of computing it." }
+  ]
+}

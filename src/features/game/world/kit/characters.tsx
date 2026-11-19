@@ -32,7 +32,7 @@ function M({ color, rough = 0.85, metal = 0 }: { color: string; rough?: number; 
   return <meshStandardMaterial color={color} roughness={rough} metalness={metal} />;
 }
 
-export function Person({ outfit, walking = false, speed = 1.3, talking = false, seed = 0 }: { outfit: Outfit; walking?: boolean; speed?: number; talking?: boolean; seed?: number }) {
+export function Person({ outfit, walking = false, speed = 1.3, talking = false, seed = 0, seated = false }: { outfit: Outfit; walking?: boolean; speed?: number; talking?: boolean; seed?: number; seated?: boolean }) {
   const o = outfit;
   const acc = new Set(o.accessories ?? []);
   const bw = o.build === 'broad' ? 1.15 : o.build === 'slim' ? 0.9 : 1;
@@ -43,6 +43,18 @@ export function Person({ outfit, walking = false, speed = 1.3, talking = false, 
 
   useFrame((_, dt) => {
     t.current += Math.min(dt, 0.05);
+    // Seated (driving): hips bent ~90° so the thigh runs forward into the footwell instead of
+    // hanging straight down — a standing figure dropped into a car reads as "glued to the seat
+    // floating at chest height" (owner feedback 19 Nov 2026), not sitting in it.
+    if (seated) {
+      if (LL.current) LL.current.rotation.x = -1.48;
+      if (RL.current) RL.current.rotation.x = -1.48;
+      if (L.current) L.current.rotation.x = -0.32;
+      if (R.current) R.current.rotation.x = -0.32;
+      if (H.current) H.current.rotation.y = Math.sin(t.current * 0.6) * 0.08;
+      if (body.current) body.current.position.y = Math.sin(t.current * 1.6) * 0.008;
+      return;
+    }
     gait.current = MathUtils.damp(gait.current, walking ? 1 : 0, 6, dt);
     const sw = Math.sin(t.current * speed * 5.5) * 0.55 * gait.current;
     const breathe = Math.sin(t.current * 1.6) * 0.012;
@@ -218,6 +230,9 @@ export const CHARACTERS: CharacterDef[] = [
   { id: 'keke_owner', name: 'Alhaji Musa', role: 'Keke fleet owner', district: 'Ilé Gardens', story: 'Chapter: Running on Empty. Runs six tricycle taxis out of Ilé Gardens and can’t work out which ones are actually making money.', pose: 'talk',
     look: { body: 'male', hair: 'Hair_Beard', skinTone: 0.9, height: 1.03 },
     outfit: { skin: PALETTE.skin[2], top: PALETTE.fabric.indigo, bottom: PALETTE.fabric.khaki, garment: 'kaftan', head: 'cap', headColor: PALETTE.fabric.indigo, accessories: ['phone'], build: 'broad', height: 1.03 } },
+  { id: 'funke_station', name: 'Mrs. Funke Alabi', role: 'Manager, Atlas Fuel', district: 'City Gateway', story: 'Runs the pumps and the forecourt shop. Keeps a sharp eye on margins, not just which tank empties fastest.', pose: 'talk',
+    look: { body: 'female', hair: 'Hair_SimpleParted', skinTone: 1.0 },
+    outfit: { skin: PALETTE.skin[4], top: PALETTE.fabric.ankaraYellow, bottom: '#2A3340', garment: 'hiVis', head: 'cap', headColor: '#2A3340', accessories: ['clipboard'], build: 'average' } },
   // Crowd archetypes
   { id: 'crowd_trader', name: 'Market trader', role: 'Crowd', district: 'Market Boulevard', story: 'Carries produce on a head tray between the stalls.', pose: 'walk',
     look: { body: 'female', hair: 'none', skinTone: 0.9, tint: '#7FC79A' },

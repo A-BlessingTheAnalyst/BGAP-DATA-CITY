@@ -1,0 +1,70 @@
+{
+  "id": "tier1_fuel_margins",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "Pump the Right Tank",
+  "summary": "Mrs. Alabi can only top up one tank before the weekend rush. Petrol and Diesel sell the most litres — but is that where the money is?",
+  "pay": 15000,
+  "xp": 120,
+  "badgeId": "badge_margin_analyst",
+  "passMark": 75,
+  "client": {
+    "name": "Mrs. Funke Alabi",
+    "business": "Atlas Fuel station",
+    "character": "funke_station",
+    "brief": [
+      "The tanker only has room to refill one tank before Friday traffic hits the Gateway road. Petrol and Diesel move the most litres by far, so my pump attendants want those topped up first.",
+      "But Premium has a much thinner stock and a much fatter margin. Litres sold isn't the same as naira earned — tell me which tank actually makes us the most money."
+    ],
+    "thanks": "Premium. I'd have burned the weekend's profit refilling the wrong tank if you hadn't checked the margins."
+  },
+  "location": { "district": "gateway", "remote": false, "npc": [178.5, 0, -125.6], "workstation": [181, 0, -125.6] },
+  "starterSql": "-- Which fuel actually earns the most profit?\n-- Careful: price_per_litre isn't profit — subtract what it cost first.\n\nSELECT *\nFROM fuel_sales\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "fuel_sales",
+      "description": "Every pump sale at Atlas Fuel station this week.",
+      "columns": [
+        { "name": "sale_id", "type": "INTEGER", "desc": "Sale number", "pk": true },
+        { "name": "fuel_type", "type": "VARCHAR", "desc": "Petrol, Diesel or Premium" },
+        { "name": "litres", "type": "INTEGER", "desc": "Litres sold in this sale" },
+        { "name": "price_per_litre", "type": "INTEGER", "desc": "What the customer paid per litre, in naira (₦)" },
+        { "name": "cost_per_litre", "type": "INTEGER", "desc": "What the station paid the supplier per litre, in naira (₦)" },
+        { "name": "sold_at", "type": "TIMESTAMP", "desc": "When the sale happened" }
+      ]
+    }
+  ],
+  "hints": [
+    { "title": "Hint 1: Price isn't profit", "desc": "A sale's profit is (price_per_litre − cost_per_litre) × litres — the margin on every litre sold, not just how much changed hands." },
+    { "title": "Hint 2: Litres sold tells a different story", "desc": "Ranking by SUM(litres) alone will point at whichever fuel moves the most volume, even if its margin is thin." },
+    { "title": "Hint 3: Sum the real profit per fuel", "desc": "GROUP BY fuel_type, SUM the per-sale profit, and take the top one.", "snippet": "SUM((price_per_litre - cost_per_litre) * litres)" }
+  ],
+  "findings": [
+    {
+      "id": "best_fuel",
+      "claim": "Which fuel should get the one tanker refill?",
+      "options": [
+        { "id": "diesel", "text": "Diesel — it sells the most litres this week" },
+        { "id": "premium", "text": "Premium — far fewer litres, but a much bigger margin per litre", "correct": true },
+        { "id": "petrol", "text": "Petrol — tied with Diesel for the most volume" }
+      ]
+    },
+    {
+      "id": "attendant_mistake",
+      "claim": "Why did the pump attendants' advice point the wrong way?",
+      "options": [
+        { "id": "att_volume", "text": "They were going by litres sold, not how much profit each litre actually earns.", "correct": true },
+        { "id": "att_no_data", "text": "Premium's sales aren't in the system." },
+        { "id": "att_right", "text": "They weren't wrong — Diesel really earns the most." }
+      ]
+    }
+  ],
+  "successFeedback": "Petrol and Diesel sell in bulk, but on a thin margin. Premium sells far fewer litres at a much bigger markup — once you multiply it out, it's the tank making the real money this week.",
+  "trapFixture": "margin-not-volume",
+  "fixtures": [
+    { "id": "sample", "purpose": "This week's sales", "failHint": "Your answer doesn't match the fuel with the most total profit here." },
+    { "id": "margin-not-volume", "purpose": "The same pattern, sharper", "failHint": "A fuel sold in small volume can still earn the most profit. Multiply margin by litres per sale, don't just total litres." },
+    { "id": "another-week", "purpose": "A different week where a different fuel is the hidden earner", "failHint": "Your query gives the wrong fuel on a different week's data — it may be hardcoded instead of computing the profit." }
+  ]
+}

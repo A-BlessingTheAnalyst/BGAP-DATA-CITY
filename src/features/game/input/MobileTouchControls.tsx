@@ -14,6 +14,6 @@ export function MobileTouchControls() {
  onPointerMove={e => { if (!e.currentTarget.hasPointerCapture(e.pointerId) || !base.current) return; const r=base.current.getBoundingClientRect(); let x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2; const m=Math.max(1,Math.hypot(x,y)/38); x/=m;y/=m; runtimeInput.axisX=x/38;runtimeInput.axisZ=y/38;setKnob([x,y]); }}
  onPointerUp={clear} onPointerCancel={clear} onLostPointerCapture={clear}>
  <div className="w-12 h-12 rounded-full bg-bgap-cyan/80" style={{transform:'translate('+knob[0]+'px,'+knob[1]+'px)'}} /></div>
- <div className="flex gap-2"><button aria-label="Run" onPointerDown={()=>{runtimeInput.sprint=true;}} onPointerUp={()=>{runtimeInput.sprint=false;}} onPointerCancel={clear} className="rounded-xl bg-bgap-card p-4 text-white">Run</button>
+ <div className="flex gap-2"><button aria-label="Run" onPointerDown={()=>{runtimeInput.sprint=true;}} onPointerUp={()=>{runtimeInput.sprint=false;}} onPointerCancel={clear} className="rounded-xl bg-bgap-card p-4 text-bgap-text">Run</button>
  {active && <button onClick={interact} className="rounded-xl bg-bgap-cyan p-4 text-bgap-dark font-bold">Interact</button>}</div></div>;
 }

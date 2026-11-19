@@ -9,6 +9,7 @@ import { CONTENT_ROOT, getMission } from '../src/server/content/missions';
 import { generatedGigs } from '../src/server/content/gigs';
 import { parseCsv } from '../src/server/content/csv';
 import { gradeSql } from '../src/server/assessment/SqlGrader';
+import { gradePython } from '../src/server/assessment/PythonGrader';
 import type { MissionDef } from '../src/shared/types/content';
 
 let errors = 0;
@@ -40,7 +41,8 @@ function checkStructure(def: MissionDef, dir: string | null) {
   if (!fxIds.includes(def.trapFixture)) fail(id, `trapFixture "${def.trapFixture}" is not in fixtures`);
   if (fxIds.length < 3) fail(id, 'needs at least three hidden fixtures');
   if (!dir) return;
-  if (!fs.existsSync(path.join(dir, 'reference.sql'))) fail(id, 'missing reference.sql');
+  const isPython = fs.existsSync(path.join(dir, 'reference.py'));
+  if (!isPython && !fs.existsSync(path.join(dir, 'reference.sql'))) fail(id, 'missing reference.sql (or reference.py for a Python mission)');
   for (const t of def.tables) {
     const file = path.join(dir, 'dataset', `${t.name}.csv`);
     if (!fs.existsSync(file)) { fail(id, `missing dataset/${t.name}.csv`); continue; }
@@ -56,10 +58,19 @@ function checkStructure(def: MissionDef, dir: string | null) {
 
 async function checkGrading(id: string) {
   const pkg = getMission(id)!;
-  const ref = await gradeSql(id, pkg.grading.referenceSql, pkg.grading);
+  if (pkg.pyGrading) {
+    const ref = await gradePython(id, pkg.pyGrading.referencePython, pkg.pyGrading);
+    if (ref.codeError) fail(id, `reference.py errors: ${ref.codeError}`);
+    else if (ref.passRate !== 1) fail(id, 'reference.py does not pass its own fixtures');
+    const lazy = await gradePython(id, `result = ${pkg.def.tables[0].name}`, pkg.pyGrading);
+    if (lazy.passRate === 1) fail(id, '`result = <table>` (the raw rows) passes every fixture; the fixtures don’t test anything');
+    return;
+  }
+  const grading = pkg.grading!;
+  const ref = await gradeSql(id, grading.referenceSql, grading);
   if (ref.queryError) fail(id, `reference.sql errors: ${ref.queryError}`);
   else if (ref.passRate !== 1) fail(id, 'reference.sql does not pass its own fixtures');
-  const lazy = await gradeSql(id, `SELECT * FROM ${pkg.def.tables[0].name}`, pkg.grading);
+  const lazy = await gradeSql(id, `SELECT * FROM ${pkg.def.tables[0].name}`, grading);
   if (lazy.passRate === 1) fail(id, '`SELECT *` passes every fixture; the fixtures don’t test anything');
 }
 
