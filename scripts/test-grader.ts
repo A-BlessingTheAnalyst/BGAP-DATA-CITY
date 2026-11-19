@@ -96,9 +96,10 @@ async function main() {
   console.log('Generated gigs');
   const { generatedGigs } = await import('../src/server/content/gigs');
   for (const gig of generatedGigs()) {
-    const ref = await grade(gig.def.id, gig.grading.referenceSql, gig.grading);
+    const grading = gig.grading!; // generated gigs are always SQL-graded
+    const ref = await grade(gig.def.id, grading.referenceSql, grading);
     check(ref.passRate === 1, `${gig.def.id}: its own reference answer passes every fixture`);
-    const lazy = await grade(gig.def.id, `SELECT * FROM ${gig.def.tables[0].name}`, gig.grading);
+    const lazy = await grade(gig.def.id, `SELECT * FROM ${gig.def.tables[0].name}`, grading);
     check(lazy.passRate < 1, `${gig.def.id}: SELECT * fails`);
     check(gig.def.findings.every((f) => f.options.filter((o) => o.correct).length === 1), `${gig.def.id}: each finding has exactly one right answer`);
   }

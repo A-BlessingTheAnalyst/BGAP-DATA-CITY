@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { MissionDef, PublicMission, PublicMissionDetail, Row, TableDef } from '@/shared/types/content';
-import type { CaseFixtures, Cell, Fixture } from '@/server/assessment/fixtures/types';
+import type { CaseFixtures, Cell, Fixture, PyCaseFixtures, PyFixture } from '@/server/assessment/fixtures/types';
 import { parseCsv } from './csv';
 import { generatedGigs, getGeneratedGig } from './gigs';
 
@@ -17,7 +17,10 @@ export const CONTENT_ROOT = path.join(process.cwd(), 'content', 'missions');
 export interface MissionPackage {
   def: MissionDef;
   data: Record<string, Row[]>;
-  grading: CaseFixtures;
+  /** Present for SQL missions (reference.sql in the mission's folder). */
+  grading?: CaseFixtures;
+  /** Present for Python missions (reference.py instead of reference.sql). */
+  pyGrading?: PyCaseFixtures;
 }
 
 const NUMERIC = /^(TINYINT|SMALLINT|INTEGER|INT|BIGINT|HUGEINT|DOUBLE|FLOAT|REAL|DECIMAL|NUMERIC)/i;
@@ -48,15 +51,28 @@ function loadPackage(dir: string): MissionPackage {
   const def = JSON.parse(fs.readFileSync(path.join(dir, 'mission.json'), 'utf8')) as MissionDef;
   const data: Record<string, Row[]> = {};
   for (const t of def.tables) data[t.name] = readTable(path.join(dir, 'dataset', `${t.name}.csv`), t);
-  const fixtures: Fixture[] = def.fixtures.map((meta) => {
+
+  // Each fixture's per-table rows, computed once and shared by both grading shapes below
+  // (a fixture may reuse the visible dataset for a table it doesn't override).
+  const fixtureRows: { meta: (typeof def.fixtures)[number]; fxData: Record<string, Row[]> }[] = def.fixtures.map((meta) => {
     const fxData: Record<string, Row[]> = {};
     for (const t of def.tables) {
       const f = path.join(dir, 'fixtures', meta.id, `${t.name}.csv`);
-      // A fixture may reuse the visible dataset for tables it doesn't override.
       fxData[t.name] = fs.existsSync(f) ? readTable(f, t) : data[t.name];
     }
-    return { ...meta, tables: toFixtureTables(def.tables, fxData) };
+    return { meta, fxData };
   });
+
+  const pyFile = path.join(dir, 'reference.py');
+  if (fs.existsSync(pyFile)) {
+    const pyFixtures: PyFixture[] = fixtureRows.map(({ meta, fxData }) => ({ ...meta, tables: fxData }));
+    return {
+      def,
+      data,
+      pyGrading: { missionId: def.id, referencePython: fs.readFileSync(pyFile, 'utf8'), fixtures: pyFixtures, trapFixtureId: def.trapFixture },
+    };
+  }
+  const fixtures: Fixture[] = fixtureRows.map(({ meta, fxData }) => ({ ...meta, tables: toFixtureTables(def.tables, fxData) }));
   return {
     def,
     data,

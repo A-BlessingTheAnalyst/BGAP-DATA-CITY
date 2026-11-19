@@ -26,3 +26,27 @@ export interface CaseFixtures {
   /** The fixture built for this case's main trap; scores the "edge cases" component. */
   trapFixtureId: string;
 }
+
+// ── Python missions (skill: "Python") ───────────────────────────────────────────────────
+// Reuses the exact same dataset/fixtures CSV pipeline as SQL missions (missions.ts's
+// loadPackage already produces plain Record<string, Row[]> data per fixture) — Python just
+// gets those rows as a list[dict] global per table instead of a DuckDB table. See
+// PythonGrader.ts. A mission is Python-graded when its folder has reference.py instead of
+// reference.sql (missions.ts picks the right one).
+
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [k: string]: JsonValue };
+
+export interface PyFixture {
+  id: string;
+  purpose: string;
+  failHint: string;
+  /** One list[dict] global per table, keyed by table name (same tables as def.tables). */
+  tables: Record<string, Record<string, Cell>[]>;
+}
+
+export interface PyCaseFixtures {
+  missionId: string;
+  referencePython: string;
+  fixtures: PyFixture[];
+  trapFixtureId: string;
+}

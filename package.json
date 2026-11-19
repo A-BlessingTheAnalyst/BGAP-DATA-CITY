@@ -16,6 +16,7 @@
     "test:traffic": "tsx scripts/test-traffic.ts",
     "test:garage": "tsx scripts/test-garage.ts",
     "test:reputation": "tsx scripts/test-reputation.ts",
+    "test:python": "tsx scripts/test-python-grader.ts",
     "validate:missions": "tsx scripts/validate-missions.ts",
     "validate:layout": "tsx scripts/validate-layout.ts",
     "postinstall": "node scripts/copy-duckdb.mjs"
@@ -40,6 +41,7 @@
     "next": "^14.2.24",
     "node-sql-parser": "^5.4.0",
     "postprocessing": "^6.36.7",
+    "pyodide": "^314.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recast-navigation": "^0.44.0",
