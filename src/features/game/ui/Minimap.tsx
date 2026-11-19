@@ -105,9 +105,12 @@ export const Minimap: React.FC = () => {
           <MapIcon className="w-2.5 h-2.5" />M
         </span>
       </button>
-      <div className="w-[190px] text-center leading-tight">
-        <div className="text-[11px] font-bold text-bgap-text truncate">{info.name}</div>
-        {where.street !== info.name && <div className="text-[10px] text-bgap-muted truncate">{where.street ?? 'Side street'}</div>}
+      {/* This caption floats directly over the 3D world (no panel behind it), so — like the
+          district-entry banner below — it stays fixed light text with a dark drop-shadow for
+          legibility against whatever's in the scene, rather than the theme's panel-text token. */}
+      <div className="w-[190px] text-center leading-tight drop-shadow-[0_1px_4px_rgba(0,0,0,0.85)]">
+        <div className="text-[11px] font-bold text-white truncate">{info.name}</div>
+        {where.street !== info.name && <div className="text-[10px] text-white/75 truncate">{where.street ?? 'Side street'}</div>}
         {target && where.dist !== null && (
           <div className="text-[10px] font-mono text-bgap-gold truncate">{target.label} · {where.dist < 1000 ? `${Math.round(where.dist / 5) * 5} m` : `${(where.dist / 1000).toFixed(1)} km`}</div>
         )}
@@ -137,9 +140,9 @@ export const DistrictBanner: React.FC = () => {
   }, [shown]);
   if (!shown) return null;
   return (
-    <div key={shown.at} className="absolute top-24 left-1/2 -translate-x-1/2 text-center pointer-events-none">
-      <div className="text-[10px] uppercase tracking-[0.3em] text-bgap-muted">Entering</div>
-      <div className="text-2xl font-extrabold text-bgap-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">{DISTRICT_INFO[shown.id].name}</div>
+    <div key={shown.at} className="absolute top-24 left-1/2 -translate-x-1/2 text-center pointer-events-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+      <div className="text-[10px] uppercase tracking-[0.3em] text-white/80">Entering</div>
+      <div className="text-2xl font-extrabold text-white">{DISTRICT_INFO[shown.id].name}</div>
     </div>
   );
 };

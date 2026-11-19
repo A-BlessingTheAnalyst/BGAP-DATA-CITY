@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { Play, Compass, Award, Database, Terminal, Shield } from 'lucide-react';
+import { BGAPFooter } from './components/BGAPFooter';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-bgap-dark text-bgap-text flex flex-col justify-between p-8 relative overflow-hidden">
-      {/* Background Cyber Glow Gradients */}
+    <div className="bg-bgap-dark">
+    <main className="min-h-screen text-bgap-text flex flex-col justify-between p-8 relative overflow-hidden">
+      {/* Background glow accents */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-bgap-cyan/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-bgap-emerald/10 rounded-full blur-[120px] pointer-events-none" />
 
@@ -110,5 +112,7 @@ export default function HomePage() {
         </div>
       </div>
     </main>
+    <BGAPFooter />
+    </div>
   );
 }
