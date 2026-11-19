@@ -4,17 +4,26 @@ import { bindKeyboardListeners } from './KeyboardControls';
 import { useGameState } from '../engine/GameState';
 import { AudioManager } from '../audio/AudioManager';
 import { useGarage } from '../ui/garage/useGarage';
+import { driveRuntime, requestTeleport } from '../characters/PlayerCharacter';
 export function interact() {
  const s = useGameState.getState();
- // E always gets out of the car first, regardless of what's nearby.
- if (s.isDriving) { s.setDriving(null); AudioManager.playUi('close'); resetInput(); return; }
+ // E always gets out of the car first, regardless of what's nearby. Step out to the right side
+ // of the vehicle rather than straight into its own collider.
+ if (s.isDriving) {
+  const yaw = driveRuntime.rotationY;
+  requestTeleport(driveRuntime.position.x + Math.cos(yaw) * 2.2, driveRuntime.position.z - Math.sin(yaw) * 2.2);
+  s.setDriving(null);
+  AudioManager.playUi('close'); resetInput(); return;
+ }
  if (!s.activeTarget || s.isPaused || s.isDialogueActive || s.isWorkstationActive || s.isShopOpen || s.isCreatorOpen) return;
  AudioManager.playUi('open');
  if (s.activeTarget.type === 'vehicle') {
   const vehicleId = s.activeTarget.id.slice('vehicle:'.length);
   const g = useGarage.getState();
-  const def = g.catalog.find((v) => v.id === vehicleId);
-  const ok = def?.licence === 'flight' ? g.hasFlightLicence : g.hasLicence;
+  // Jacked ambient traffic ("vehicle:traffic:<i>") has no catalog entry — it always needs the
+  // ground driving licence, same as an owned car (no ambient choppers exist in traffic).
+  const def = vehicleId.startsWith('traffic:') ? undefined : g.catalog.find((v) => v.id === vehicleId);
+  const ok = vehicleId.startsWith('traffic:') ? g.hasLicence : def?.licence === 'flight' ? g.hasFlightLicence : g.hasLicence;
   if (!ok) { AudioManager.playUi('error'); resetInput(); return; }
   s.setDriving(vehicleId);
   resetInput();

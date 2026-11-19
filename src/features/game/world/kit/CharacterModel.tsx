@@ -144,8 +144,11 @@ function rebindToSkeleton(mesh: SkinnedMesh, bonesByName: Map<string, Bone>) {
   mesh.bind(new Skeleton(bones, mesh.skeleton.boneInverses), mesh.bindMatrix);
 }
 
-export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, timeScale = 1, headwear }: {
+export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, timeScale = 1, speedScaleRef, headwear }: {
   look: CharacterLook; clothing?: Clothing; action?: string; fade?: number; timeScale?: number;
+  /** Mutated by the caller every frame (no React re-render) to keep foot-fall rate matched to
+   * actual travel speed, so a character never looks like it's walking in place or sliding. */
+  speedScaleRef?: { current: number };
   /** Rendered on the head (gele, cap, helmet…); follows the head bone every frame. */
   headwear?: ReactNode;
 }) {
@@ -232,6 +235,12 @@ export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, t
       pelvis.getWorldPosition(tmp);
       group.current.worldToLocal(tmp);
       skirt.current.position.set(tmp.x, tmp.y, tmp.z);
+    }
+    // Foot-fall rate tracks actual travel speed (set imperatively, no re-render) so a loop
+    // clip authored for one speed never visibly slides or runs in place at another.
+    if (speedScaleRef) {
+      const act = actions[current.current];
+      if (act) act.timeScale = speedScaleRef.current;
     }
   });
   const skirtLen = 0.92;

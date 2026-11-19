@@ -6,6 +6,8 @@ import { Group, MathUtils } from 'three';
 import { useGameState } from '../engine/GameState';
 import { InteractionTrigger } from '../physics/InteractionTrigger';
 import { Car, Tricycle, Chopper } from './kit/vehicles';
+import { CastMember } from './kit/CastMember';
+import { usePlayerDef } from '../ui/wardrobe/useWardrobe';
 import { runtimeInput } from '../input/InputManager';
 import { driveRuntime, playerRuntime } from '../characters/PlayerCharacter';
 import { callCar, useGarage } from '../ui/garage/useGarage';
@@ -36,6 +38,7 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
   const anyoneDriving = useGameState((s) => s.isDriving);
   const hasLicence = useGarage((s) => (def.licence === 'flight' ? s.hasFlightLicence : s.hasLicence));
   const isChopper = def.body === 'chopper';
+  const playerDef = usePlayerDef();
 
   useEffect(() => {
     const c = world.createCharacterController(0.02);
@@ -109,6 +112,13 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
       </RigidBody>
       <group ref={visual} position={owned.position} rotation={[0, owned.rotationY, 0]}>
         {def.body === 'keke' ? <Tricycle color={def.color} /> : def.body === 'chopper' ? <Chopper color={def.color} flying={isMine} /> : <Car body={def.body} color={def.color} />}
+        {/* A visible driver whenever this car is yours and occupied (Owner feedback 18 Nov 2026,
+            masterprompt.md §12.2 — drivers were invisible before). */}
+        {isMine && (
+          <group position={[def.body === 'keke' ? 0 : -0.35, h * (isChopper ? 0.5 : 0.4), isChopper ? 0.2 : 0.15]} scale={0.95}>
+            <CastMember def={playerDef} action="Drive" />
+          </group>
+        )}
       </group>
       {!isMine && !anyoneDriving && <InteractionTrigger target={enterTarget} />}
     </>
