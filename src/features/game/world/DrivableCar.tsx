@@ -113,9 +113,12 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
       <group ref={visual} position={owned.position} rotation={[0, owned.rotationY, 0]}>
         {def.body === 'keke' ? <Tricycle color={def.color} /> : def.body === 'chopper' ? <Chopper color={def.color} flying={isMine} /> : <Car body={def.body} color={def.color} />}
         {/* A visible driver whenever this car is yours and occupied (Owner feedback 18 Nov 2026,
-            masterprompt.md §12.2 — drivers were invisible before). */}
+            masterprompt.md §12.2 — drivers were invisible before). The "Driving_Loop" clip should
+            already bend the pelvis down into a seated pose; this anchor is deliberately low and
+            conservative (owner feedback 19 Nov 2026: the ambient Person driver was floating near
+            the roofline at a similar height-scaled offset) and still needs a live look to tune. */}
         {isMine && (
-          <group position={[def.body === 'keke' ? 0 : -0.35, h * (isChopper ? 0.5 : 0.4), isChopper ? 0.2 : 0.15]} scale={0.95}>
+          <group position={[def.body === 'keke' ? 0 : -0.3, isChopper ? 0.35 : 0.15, isChopper ? 0.2 : 0.1]} scale={0.95}>
             <CastMember def={playerDef} action="Drive" />
           </group>
         )}

@@ -4,7 +4,10 @@ import type { DistrictId } from '../world/kit/cityPlan';
 
 // Procedural, positional city soundscape on Howler's AudioContext (so the HUD mute and the
 // mobile/autoplay unlock apply). Everything is synthesised; no sample files are needed:
-//   • traffic bed (filtered brown noise) that swells near busy roads,
+//   • a soft instrumental chord pad carries the background (Owner feedback 19 Nov 2026: the
+//     noise beds below used to be the dominant layer and read as "white noise" — they're now a
+//     quiet supporting texture under this pad, not the main thing you hear),
+//   • a quiet traffic-road texture (filtered brown noise) that swells near busy roads,
 //   • four positional engine voices that ride the nearest vehicles (Doppler-free, panned in 3D),
 //   • horns from real vehicles, more often when traffic is crawling,
 //   • crowd murmur that follows pedestrian density (busiest in the market),
@@ -62,6 +65,24 @@ export class CityAmbience {
   private nextHorn = 3;
   private nextBirds = 2;
   private clock = 0;
+  // Owner feedback 19 Nov 2026: the noise-bed wash (brown/pink/white noise beds below) read as
+  // "white noise in the background" and was disliked. A soft instrumental pad now carries the
+  // background instead; the noise beds stay only as a much quieter supporting texture under it.
+  private music!: GainNode;
+  private pad: { osc: OscillatorNode; gain: GainNode }[] = [];
+  private bassOsc!: OscillatorNode;
+  private bassGain!: GainNode;
+  private chordTimer = 0;
+  private chordIdx = -1;
+  /** Each chord: [root, third, fifth, octave-root] in Hz, a calm Dorian/pentatonic-flavoured loop
+   * in a warm low-mid register so it sits behind SFX rather than competing with them. */
+  private static readonly CHORDS: [number, number, number, number][] = [
+    [130.81, 155.56, 196.0, 261.63], // Cm
+    [174.61, 207.65, 261.63, 349.23], // Fm
+    [116.54, 146.83, 174.61, 233.08], // A♭
+    [155.56, 196.0, 233.08, 311.13], // E♭
+  ];
+  private static readonly PAD_MIX = [0.46, 0.36, 0.3, 0.1];
 
   static create(): CityAmbience | null {
     AudioManager.warmUp(); // creates Howler's context
@@ -84,7 +105,7 @@ export class CityAmbience {
     const chat = this.bedWithFilter('pink', { type: 'bandpass', f: 1400, q: 3 }, 0);
     this.chatter = chat.gain;
     this.chatterFilter = chat.filter;
-    this.air = this.bed('white', [{ type: 'highpass', f: 3500, q: 0.3 }, { type: 'lowpass', f: 9000, q: 0.3 }], 0.006);
+    this.air = this.bed('white', [{ type: 'highpass', f: 3500, q: 0.3 }, { type: 'lowpass', f: 9000, q: 0.3 }], 0.0025);
 
     // Tech Park server hum (non-positional, district wide).
     this.techHum = ctx.createGain();
@@ -96,6 +117,36 @@ export class CityAmbience {
       o.connect(og).connect(this.techHum);
       o.start(); this.sources.push(o);
     }
+
+    // Soft instrumental pad: 4 warm voices (root, third, fifth, a quiet octave-up shimmer) through
+    // a shared lowpass, retargeted to a new chord every ~16s by update(). Non-positional, like the
+    // tech hum — this is the music bed, not a sound effect.
+    this.music = ctx.createGain();
+    this.music.gain.value = 0.16;
+    this.music.connect(this.out);
+    const padFilter = ctx.createBiquadFilter();
+    padFilter.type = 'lowpass'; padFilter.frequency.value = 1100; padFilter.Q.value = 0.4;
+    padFilter.connect(this.music);
+    for (let i = 0; i < 4; i++) {
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = i === 3 ? 'sine' : 'triangle';
+      gain.gain.value = 0;
+      osc.connect(gain).connect(padFilter);
+      osc.start();
+      this.sources.push(osc);
+      this.pad.push({ osc, gain });
+    }
+    // A soft root-note pulse under each chord, for a faint sense of movement rather than a drone.
+    const bassOsc = ctx.createOscillator();
+    bassOsc.type = 'sine';
+    this.bassGain = ctx.createGain();
+    this.bassGain.gain.value = 0;
+    const bassFilter = ctx.createBiquadFilter();
+    bassFilter.type = 'lowpass'; bassFilter.frequency.value = 220;
+    bassOsc.connect(this.bassGain).connect(bassFilter).connect(this.music);
+    bassOsc.start();
+    this.sources.push(bassOsc);
+    this.bassOsc = bassOsc;
 
     // Positional engine voices that follow the nearest vehicles.
     for (let i = 0; i < 4; i++) {
@@ -215,9 +266,30 @@ export class CityAmbience {
     window.setTimeout(() => pan.disconnect(), (end - t) * 1000 + 200);
   }
 
+  /** Advances the instrumental pad, crossfading to the next chord in the loop every ~16s. */
+  private updateMusic(dt: number, t: number) {
+    this.chordTimer -= dt;
+    if (this.chordTimer <= 0 || this.chordIdx < 0) {
+      this.chordTimer = 15 + Math.random() * 4;
+      this.chordIdx = (this.chordIdx + 1) % CityAmbience.CHORDS.length;
+      const chord = CityAmbience.CHORDS[this.chordIdx];
+      this.pad.forEach((voice, i) => {
+        voice.osc.frequency.setTargetAtTime(chord[i], t, 2.2); // slow glide, never a hard retune
+        voice.gain.gain.setTargetAtTime(CityAmbience.PAD_MIX[i], t, 3);
+      });
+      this.bassOsc.frequency.setTargetAtTime(chord[0] / 2, t, 2.2);
+      // A soft pulse on the root marks the chord change without becoming a beat.
+      this.bassGain.gain.cancelScheduledValues(t);
+      this.bassGain.gain.setValueAtTime(this.bassGain.gain.value, t);
+      this.bassGain.gain.linearRampToValueAtTime(0.1, t + 1.5);
+      this.bassGain.gain.exponentialRampToValueAtTime(0.015, t + 9);
+    }
+  }
+
   update(dt: number, f: AmbienceFrame) {
     const ctx = this.ctx, t = ctx.currentTime;
     this.clock += dt;
+    this.updateMusic(dt, t);
     // Listener follows the camera.
     const L = ctx.listener;
     if (L.positionX) {
@@ -238,7 +310,9 @@ export class CityAmbience {
       density += 1 / (1 + d2 / 900);
       if (d2 < 60 * 60) { inRange++; if (v.speed < 2) crawling++; }
     }
-    this.traffic.gain.setTargetAtTime(Math.min(0.32, 0.02 + density * 0.07), t, 0.6);
+    // Owner feedback 19 Nov 2026: this traffic-noise bed was the main thing read as "white noise"
+    // — halved so it's a quiet road-texture under the instrumental pad, not the dominant layer.
+    this.traffic.gain.setTargetAtTime(Math.min(0.14, 0.01 + density * 0.035), t, 0.6);
 
     this.engines.forEach((e, i) => {
       const n = near[i];
@@ -267,17 +341,17 @@ export class CityAmbience {
     // Crowd murmur from nearby walkers, louder in the market.
     let people = 0;
     for (const q of f.pedestrians) { if (!q) continue; const d2 = (q.x - p.x) ** 2 + (q.z - p.z) ** 2; if (d2 < 35 * 35) people += 1 / (1 + d2 / 120); }
-    const marketBoost = f.district === 'market' ? 0.05 : f.district === 'gateway' ? 0.02 : 0;
-    this.crowd.gain.setTargetAtTime(Math.min(0.2, marketBoost + people * 0.035), t, 0.8);
+    const marketBoost = f.district === 'market' ? 0.03 : f.district === 'gateway' ? 0.012 : 0;
+    this.crowd.gain.setTargetAtTime(Math.min(0.1, marketBoost + people * 0.018), t, 0.8);
     // Chatter shimmers: random syllable-rate wobble on a narrow band.
     const wobble = 0.5 + 0.5 * Math.sin(this.clock * 7.3) * Math.sin(this.clock * 3.1 + 1);
-    this.chatter.gain.setTargetAtTime(Math.min(0.06, (marketBoost + people * 0.02) * wobble), t, 0.08);
+    this.chatter.gain.setTargetAtTime(Math.min(0.03, (marketBoost + people * 0.012) * wobble), t, 0.08);
     this.chatterFilter.frequency.setTargetAtTime(1100 + 700 * Math.abs(Math.sin(this.clock * 1.7)), t, 0.1);
 
     // District colour.
     this.techHum.gain.setTargetAtTime(f.district === 'tech' ? 0.02 : 0, t, 1.5);
     const green = f.district === 'gardens' || f.district === 'academy';
-    this.air.gain.setTargetAtTime(green ? 0.012 : 0.006, t, 1.5);
+    this.air.gain.setTargetAtTime(green ? 0.005 : 0.0025, t, 1.5);
     this.nextBirds -= dt;
     if (this.nextBirds <= 0) {
       this.nextBirds = green ? 1.5 + Math.random() * 4 : 9 + Math.random() * 12;
