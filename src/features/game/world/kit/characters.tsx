@@ -230,6 +230,9 @@ export const CHARACTERS: CharacterDef[] = [
   { id: 'keke_owner', name: 'Alhaji Musa', role: 'Keke fleet owner', district: 'Ilé Gardens', story: 'Chapter: Running on Empty. Runs six tricycle taxis out of Ilé Gardens and can’t work out which ones are actually making money.', pose: 'talk',
     look: { body: 'male', hair: 'Hair_Beard', skinTone: 0.9, height: 1.03 },
     outfit: { skin: PALETTE.skin[2], top: PALETTE.fabric.indigo, bottom: PALETTE.fabric.khaki, garment: 'kaftan', head: 'cap', headColor: PALETTE.fabric.indigo, accessories: ['phone'], build: 'broad', height: 1.03 } },
+  { id: 'funke_station', name: 'Mrs. Funke Alabi', role: 'Manager, Atlas Fuel', district: 'City Gateway', story: 'Runs the pumps and the forecourt shop. Keeps a sharp eye on margins, not just which tank empties fastest.', pose: 'talk',
+    look: { body: 'female', hair: 'Hair_SimpleParted', skinTone: 1.0 },
+    outfit: { skin: PALETTE.skin[4], top: PALETTE.fabric.ankaraYellow, bottom: '#2A3340', garment: 'hiVis', head: 'cap', headColor: '#2A3340', accessories: ['clipboard'], build: 'average' } },
   // Crowd archetypes
   { id: 'crowd_trader', name: 'Market trader', role: 'Crowd', district: 'Market Boulevard', story: 'Carries produce on a head tray between the stalls.', pose: 'walk',
     look: { body: 'female', hair: 'none', skinTone: 0.9, tint: '#7FC79A' },

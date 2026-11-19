@@ -1,0 +1,69 @@
+{
+  "id": "tier1_loan_defaults",
+  "kind": "story",
+  "tier": 1,
+  "skill": "SQL",
+  "title": "The Branch With the Real Problem",
+  "summary": "Mr. Adeyemi swears the numbers are fine — Marina and Lekki just have more defaults because they're bigger.",
+  "pay": 20000,
+  "xp": 150,
+  "badgeId": "badge_rate_detective",
+  "passMark": 75,
+  "client": {
+    "name": "Mr. Kunle Adeyemi",
+    "business": "Meridian Capital",
+    "character": "mr_adeyemi",
+    "brief": [
+      "Head office is asking why defaults are climbing, and they want to know which branch to investigate. Marina and Lekki have the most defaulted loans on the books, so that's where I told them to look.",
+      "But Ikeja is a small branch — maybe it just looks fine because it's small. I need the real picture, not just the biggest numbers."
+    ],
+    "thanks": "Ikeja. I'd never have caught that from the raw counts — thank you for not just handing me what I expected to hear."
+  },
+  "location": { "district": "finance", "remote": false, "npc": [24.5, 0, 188], "workstation": [25.1, 0, 190.4] },
+  "starterSql": "-- Which branch actually has the worst default problem?\n-- Careful: branches don't all have the same number of loans.\n\nSELECT *\nFROM loans\nLIMIT 20;",
+  "tables": [
+    {
+      "name": "loans",
+      "description": "Every loan issued across Meridian Capital's three branches, and its current status.",
+      "columns": [
+        { "name": "loan_id", "type": "INTEGER", "desc": "Loan number", "pk": true },
+        { "name": "branch", "type": "VARCHAR", "desc": "Marina, Ikeja or Lekki" },
+        { "name": "amount", "type": "BIGINT", "desc": "Loan amount in naira (₦)" },
+        { "name": "status", "type": "VARCHAR", "desc": "active, paid or defaulted" },
+        { "name": "issued_at", "type": "DATE", "desc": "Date the loan was issued" }
+      ]
+    }
+  ],
+  "hints": [
+    { "title": "Hint 1: A count alone doesn't say much", "desc": "A branch with 60 loans will almost always have more defaults in raw numbers than a branch with 9 — even if it's actually doing better." },
+    { "title": "Hint 2: Default RATE is defaults out of total loans", "desc": "For each branch, divide its defaulted loans by all of its loans.", "snippet": "SUM(CASE WHEN status = 'defaulted' THEN 1 ELSE 0 END) * 1.0 / COUNT(*)" },
+    { "title": "Hint 3: Sort by that rate, not the raw count", "desc": "GROUP BY branch, order by default rate descending, and take the top one." }
+  ],
+  "findings": [
+    {
+      "id": "worst_branch",
+      "claim": "Which branch actually has the worst default problem?",
+      "options": [
+        { "id": "marina", "text": "Marina — it has the most defaulted loans on the books" },
+        { "id": "ikeja", "text": "Ikeja — a much higher share of its loans default, even though it's small", "correct": true },
+        { "id": "lekki", "text": "Lekki — tied with Marina for the most defaults" }
+      ]
+    },
+    {
+      "id": "adeyemi_mistake",
+      "claim": "Why did head office's read of 'the numbers are fine' miss Ikeja?",
+      "options": [
+        { "id": "adeyemi_size", "text": "Ikeja issues far fewer loans, so its defaults never looked like a big number next to the bigger branches.", "correct": true },
+        { "id": "adeyemi_missing", "text": "Ikeja's defaults aren't recorded in the system." },
+        { "id": "adeyemi_right", "text": "They didn't miss it — Marina really is the worst." }
+      ]
+    }
+  ],
+  "successFeedback": "Marina and Lekki have more defaulted loans only because they issue far more loans overall. Ikeja is small, but well over half of its loans default — by rate, it's the real problem.",
+  "trapFixture": "rate-not-count",
+  "fixtures": [
+    { "id": "sample", "purpose": "The loan book you can see", "failHint": "Your answer doesn't match the branch with the worst default rate here." },
+    { "id": "rate-not-count", "purpose": "The same pattern, sharper", "failHint": "A small branch can still have the worst rate even with few defaults in raw count. Divide by each branch's own total." },
+    { "id": "another-month", "purpose": "A different month where a different small branch is the real problem", "failHint": "Your query gives the wrong branch on a different month's data — it may be hardcoded instead of computing the rate." }
+  ]
+}
