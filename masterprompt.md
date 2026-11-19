@@ -4,7 +4,7 @@
 >
 > Hand this file to any developer or AI assistant picking up the project. Read it top to bottom before changing anything, and **update it whenever a phase lands**.
 >
-> *Last updated: 19 November 2026 (§12.1–12.4 built: ambient traffic is jackable, every vehicle has a visible seated driver, vehicle-entry licence check covers jacked traffic, exit steps you out beside the vehicle, walk/run animation speed now tracks actual travel speed — none of it live-verified yet, the Browser pane stayed backgrounded all session; §12.5 map rotation still untouched) · branch `feat/world-kit` · last pushed commit `2ca749d` (uncommitted local changes on top).*
+> *Last updated: 19 November 2026, second pass (§15: full breakdown of the owner's second feedback round — jacking's licence paywall removed, driver pose fixed to actually sit, background noise beds replaced with a synthesised instrumental pad; missions/storyline, backend+database, Python sandbox, Excel workspace and the light-theme/shared-footer redesign are all scoped in §15 but not started — §15.3 backend/database needs the owner's sign-off before any of it touches real credentials) · branch `feat/world-kit` · last pushed commit `322049f` (uncommitted local changes on top).*
 
 ---
 
@@ -12,7 +12,7 @@
 
 1. **Respect the owner's standing rules (section 1)**, especially: do not push to the remote until the owner asks.
 2. **Run the game and the checks first** (section 4) so you see the current state.
-3. **Work phase by phase** (section 11). Phases A–G all have at least a first pass done (some partial/scoped down — read each phase's own notes). **Section 12 is current work**: the owner's live-play bug reports and feature request. §12.1–12.4 are coded, type-checked, tested and built clean, but **not yet live-verified** (the Browser pane was backgrounded all of 19 Nov's session) — that's §13 step 1, start there. §12.5 (map rotation) hasn't been touched yet.
+3. **Work phase by phase** (section 11). Phases A–G all have at least a first pass done (some partial/scoped down — read each phase's own notes). **Section 12 and §15 are current work**: two rounds of owner live-play feedback. §12.1–12.4 and §15.1 are all coded, type-checked, tested and built clean, but **none of it is live-verified yet** (the Browser pane was backgrounded all of 19 Nov's sessions) — that's the top of §13, start there. §12.5 (map rotation) hasn't been touched. §15.2–§15.6 are a full breakdown + plan for missions/storyline, a real shared backend+database, a Python sandbox, the Excel workspace and a light-theme/shared-footer redesign — none of that is started; §15.3 (backend/database) needs the owner's sign-off on two architecture questions before any code lands, since it's a real shared production system.
 4. **Keep data analysis at the centre.** Every feature must serve the four pillars (section 2). Money only comes from graded analysis.
 5. **After each phase, and after each item in section 12:**
    - run `npm run type-check`, `npm run build`, `npm run test:grader`, `npm run validate:missions` and `npm run validate:layout`;
@@ -614,11 +614,11 @@ Type-check, the full test suite (`test:grader`, `test:shop`, `test:traffic`, `te
 ---
 
 ## 13. Immediate next steps (do these first)
-1. **Live-verify §12.1–12.4 in a real, focused browser window** (the pane was backgrounded all of 19 Nov's session — see §12.6): own nothing → walk up to an ambient car → confirm the "Jack this X [E]" prompt and a visible seated driver on every passing vehicle → press E → confirm you're driving it and your own character is now seated at the wheel → drive, exit, confirm you step out beside it, not inside it → repeat with an owned/dealership car → watch a sprinting/jogging player and a few pedestrians for any remaining foot-sliding.
+1. **Live-verify §12.1–12.4 and §15.1 in a real, focused browser window** (the pane was backgrounded all of 19 Nov's sessions): own nothing → walk up to an ambient car, confirm jacking needs no licence and the prompt/driver show up → press E, confirm your own character is seated believably (not floating/standing) → drive, exit, confirm you step out beside it → repeat with an owned/dealership car (licence still required there) → listen for the instrumental pad vs. leftover noise-bed loudness → watch a sprinting/jogging player and a few pedestrians for foot-sliding.
 2. Then §12.5: watch the minimap/full map live while turning, compare against a known landmark — do **not** re-derive the formulas again first.
-3. Commit the branch (owner's call) and push when the owner says so, so CI runs; fix anything it finds.
-4. Play the expanded city in a normal browser window and measure fps (the desktop pane throttles); if it's under 60 on desktop, merge landmark geometry first.
-5. Update §10, §11 and §12 here as each lands.
+3. Push when the owner says so, so CI runs; fix anything it finds.
+4. Work §15's roadmap in its suggested order (§15.7): districts' missions → light theme/landing/footer → Python sandbox → Excel workspace → backend/database last (needs the owner's sign-off first — see §15.3).
+5. Update §10, §11, §12 and §15 here as each lands.
 
 ---
 
@@ -635,3 +635,66 @@ Type-check, the full test suite (`test:grader`, `test:shop`, `test:traffic`, `te
 - **Content:** missions are data. New cases go in `content/missions/` and must pass `validate:missions` and have grader tests.
 - **Copy:** player-facing text is plain, warm, Lagos-flavoured; naira as `₦12,000`.
 - **Git:** work on a feature branch (currently `feat/world-kit`); commit only when asked; **never push without the owner's go-ahead**.
+
+---
+
+## 15. Owner feedback (19 Nov 2026, second round) — full breakdown and roadmap
+
+Three of the five items below were fixed the same day (§12's jacking/driver/animation work had landed, then the owner reported the jacking licence paywall, the driver's pose and the audio as still broken — see the "fixed this pass" note under each). The rest is new, much bigger scope: missions/storyline content, a real shared backend, a full theme/landing-page redesign shared with the main BGAP platform, and an Excel/Python skills story. **Exact ask, kept verbatim:**
+
+> "the drivers in cars basically look like drivers standing inside the car... then the car jacking is not working. it doesn't work at all. then the game keeps having a white noise in the background... then the different game storyline, missions and all should be built as well and given function. also, the game does not have a backend and a database yet. the backend and database of the main bgap game should be used. the landing page should be redesigned to light theme the whole game should be light mode... should have the same footer. share the same backend and the same database... PREPARE THE FULL BREAKDOWN AND THEN SUGGESTIONS ON WHAT NEEDS TO BE DONE. THEN IMPLEMENT IT. THE SQL THE PYTHON PART IN THE GAME SHOULD WORK WELL... AND IF THERE IS NEED FOR EXCEL SPREADSHEET AS WELL, WE CAN USE THE BGAP EXCEL WORKSPACE ALONGSIDE"
+
+This project lives at `C:\THE BGAP OF AIDLEARN\DATA CITY`, a sibling of the main BGAP platform. The other folders at `C:\THE BGAP OF AIDLEARN\` matter for everything below:
+- **`bgap-academy/`** — the main BGAP platform. `frontend/` is Next.js 14 + Supabase (`@supabase/ssr`, `@supabase/supabase-js`), already **light-themed** (`#F8F6F1` background, `#0f172a` text, Plus Jakarta Sans/Inter — see `frontend/app/globals.css`), with its own landing page (`frontend/app/LandingPageClient.js`, 130 KB) and footer (`frontend/app/components/BGAPFooter.jsx`). `backend/` is a separate Node service. `supabase-setup/` holds the production schema as plain SQL (`01_schema.sql` … `09_waitlists_and_newsletter.sql`) — the source of truth for what tables/RLS already exist in the shared project.
+- **`BGAP-practice-workspace/`** — a standalone Next.js app that is very likely "the BGAP Excel workspace" the owner means (not inspected in depth yet — next session should open it and confirm what it exports/how it's meant to be reused).
+- Both `bgap-academy/frontend` and this repo already depend on `jspreadsheet-ce` + `hyperformula` (a real in-browser spreadsheet engine), so there may be a shared component here already, not just a separate app.
+
+### 15.1 Driver pose, car jacking, background audio — ✅ fixed this pass (19 Nov 2026)
+- **Jacking "doesn't work at all":** root cause found by re-reading the code, not guessing — jacking an ambient car required the same ₦200,000 driving licence as buying one from the dealership. A fresh account can't afford that, so every attempt silently failed (a quiet error sound, no other feedback). Jacking is now free — an informal quick ride needs no licence; owning a car from the dealership still does.
+- **"Drivers standing inside the car":** the ambient driver (`Driver` in `streetLife.tsx`) used a standing-idle pose positioned by scaling off total vehicle height, which put the hip near the roofline of most vehicles. `Person` (`characters.tsx`) now has a `seated` pose (legs bent at the hip instead of hanging straight down) and the driver is positioned near the vehicle's actual floor. The player's own seated `CastMember` (in `DrivableCar.tsx` and the jacked-vehicle render in `streetLife.tsx`) got the same conservative height correction, though its "Driving_Loop" clip likely already seats the pelvis correctly — **this one still needs a live look to confirm/tune**, it wasn't guessed blind.
+- **"White noise in the background":** `CityAmbience.ts`'s background was dominated by filtered brown/pink/white noise beds. Added a synthesised 4-voice instrumental chord pad (no sample files, consistent with how the rest of this file works) as the new background layer, and roughly halved the noise beds so they're a quiet road/crowd texture under the music, not the dominant sound. Horns, engines and footsteps are untouched (they're SFX, not the complaint).
+- **None of this is live-verified yet** — same Browser-pane-backgrounded limitation as §12.6. This is the top of the next live-verification pass (§13/§16).
+
+### 15.2 Storylines, missions and districts — not started, this is the biggest content gap
+**Current state:** 5 missions total (`content/missions/`), all tier 1–2, all reading as market/finance-district cases (akara spot, fabric shop, keke fleet, a POS reconciliation, a fees case). **Academy, Gardens, Tech Park and Gateway have zero missions.** No tier-3 content exists. There's no overarching storyline connecting cases — each is a standalone SQL puzzle with a client and a payout.
+**Suggestion:** this is content-authoring work, not a code fix, and it's the single largest remaining item. Proposed shape, to match the "real analyst career" framing already in the game (reputation per district, ranks from Cadet to Partner — `src/server/rewards/reputation.ts`):
+1. One tier-1 and one tier-2 case per remaining district (4 districts × 2 = 8 cases) before any tier-3 work, so every district has *something* to do.
+2. A light throughline: 3–5 "signature" cases that reference each other (a recurring client, a season-long fraud thread) rather than every case being fully disconnected — gives "storyline" without needing a full narrative engine.
+3. Tier-3 cases once tier-2 reputation gating has real cases to gate (`tierReady()` in `reputation.ts` is already built and tested — it has nothing to open yet).
+4. Each new case needs: a grader fixture set (DuckDB), `validate:missions` passing, and — per §15.4 below — a matching Python or spreadsheet task where that's the better tool for the case, not SQL for everything.
+
+### 15.3 Backend and database — architecture already points at this, just never wired up
+**This needs the owner's go-ahead before any of it touches real credentials** — it's a shared, production system (per this session's own operating rules: shared/hard-to-reverse systems get confirmed first, not assumed). Everything below is a finding + a plan, not yet done.
+**What's already there, unwired:**
+- `src/server/db/supabase.ts` creates `supabasePublic`/`supabaseAdmin` clients, but falls back to a literal `https://placeholder.supabase.co` when no env vars are set — so right now it's silently never actually reaching any database.
+- `.env.example` already says, verbatim, `# Supabase Database (Shared with BGAP Platform)` and `# BGAP Core Auth & Backend Integration` — this integration was the intended design from the start, just never finished.
+- `db/migrations/0001_wallet_ledger.sql` … `0004_garage.sql` already exist, already reference `auth.users(id)` (Supabase's real auth table, the same one `bgap-academy` uses), with RLS policies written — but these migrations have never been run against any real project.
+- `wallet.ts`/`profiles.ts`/`attempts.ts` already branch between a Supabase store and a local JSON-file store (`src/server/storage/jsonFile.ts`) depending on whether Supabase env vars are configured — so wiring real credentials in is a config change for those three files, not a rewrite.
+- `SessionValidator` (`src/server/game/.../SessionValidator` — wherever `useInput`'s auth path leads) is a **stub**: any Bearer token that isn't literally the string `"invalid"` is accepted and mapped to a hardcoded fake user (`verified-analyst-001`). This is the real gap — there is no actual session verification today.
+**Plan, once approved:**
+1. Confirm with the owner whether DATA CITY should point at the **same Supabase project** as `bgap-academy` (the `.env.example` comment says yes) or a separate project with its own schema that references the same `auth.users` — these have different risk profiles (shared project = one login, one breach surface, easier to accidentally affect BGAP's real student data; separate project = more setup, needs its own user sync).
+2. Add `data_city_` (or similar) namespaced tables via the existing `db/migrations/*.sql`, reviewed against `bgap-academy/supabase-setup/01_schema.sql` for naming/RLS conventions already in use there.
+3. Replace `SessionValidator`'s stub with real verification — either Supabase JWT verification (`supabaseAdmin.auth.getUser(token)`) or whatever `bgap-academy/frontend/middleware.js` already does for its own session cookie, so a player who is logged into BGAP is automatically logged into Data City (shared login, matching "share the same backend").
+4. Decide the entry point: does Data City get reached from inside `bgap-academy` (a nav link, iframe, or subroute) passing along the existing session, or as a standalone site that reads a shared cookie/JWT? This decides a lot of the auth plumbing above and should be the owner's call, not assumed.
+5. Only after 1–4 are agreed: actually run the migrations and flip the env vars from placeholder to real.
+
+### 15.4 SQL and Python quality
+- **SQL:** already solid — `SandboxRunner.ts` is a real two-layer guard (keyword blocklist + a parsed-AST check that only a single read-only `SELECT` is allowed, no file/network/system-table functions), backed by DuckDB running server-side and in WASM. This mostly needs more mission content (§15.2) to exercise it, not a rewrite.
+- **Python: doesn't exist yet.** There's no Python sandbox, grader, or UI anywhere in this repo — "the Python part in the game should work well" is a feature to build, not a bug to fix. Needs its own scoped design next session (likely Pyodide in a worker, with the same kind of AST/keyword guard `SandboxRunner` already proves out for SQL) before any implementation.
+
+### 15.5 Excel workspace
+`bgap-academy/frontend` already ships a real in-browser spreadsheet (`jspreadsheet-ce` + `hyperformula`), and this repo already depends on the same two packages — so there's a real chance of sharing one component instead of building a second spreadsheet engine from scratch. `BGAP-practice-workspace/` (a separate app at the same `C:\THE BGAP OF AIDLEARN\` level) wasn't opened yet this pass and needs a look next session to see exactly what it is and how it's meant to be reused — this is listed as a plan item, not assumed.
+
+### 15.6 Light theme, shared landing page, shared footer
+- `bgap-academy` is already light-themed; Data City's HUD/menus currently use a dark cyberpunk palette (`bgap-dark`/`bgap-cyan`/etc. Tailwind tokens throughout `src/features/game/**/*.tsx`). **Scope question for the owner:** "the whole game should be light mode" most naturally means the 2D UI chrome — HUD panels, DataPhone, garage/shop/wardrobe menus, the landing/entry screen — not the 3D city itself (which is already a bright, lit virtual city by day; "light mode" doesn't map the same way onto a 3D scene's art direction). Proceeding on that reading unless told otherwise.
+- Plan: define a shared light palette (ideally as actual shared Tailwind tokens/CSS variables pulled from `bgap-academy/frontend/app/globals.css`, not hand-matched hex values) and re-skin Data City's UI components against it.
+- Landing page: build (or redesign) Data City's own entry screen to visually match `bgap-academy`'s `LandingPageClient.js` in tone/typography, and literally reuse `BGAPFooter.jsx` (port the component, or extract it to a package both apps import) rather than hand-copying its markup.
+
+### 15.7 Suggested sequencing
+Rough order, biggest/riskiest last since they need the owner's decisions first:
+1. Live-verify §12/§15.1's fixes (jacking, driver pose, audio) — cheap, unblocks trusting everything else.
+2. §15.2 missions for the 4 empty districts — self-contained, no cross-repo risk, immediately makes the game feel more finished.
+3. §15.6 light theme + landing page + shared footer — self-contained within this repo (footer reuse needs one decision: copy vs. shared package).
+4. §15.4 Python sandbox — self-contained, but should land after a couple more SQL missions prove out the fixture/grading pattern to reuse.
+5. §15.5 Excel workspace — needs `BGAP-practice-workspace/` inspected first.
+6. §15.3 backend/database — last, because it's the one item that touches a real, shared, production system and needs explicit sign-off on the architecture questions in §15.3 step 1 and 4 before any code changes land.
