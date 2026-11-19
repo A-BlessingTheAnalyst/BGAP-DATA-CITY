@@ -11,6 +11,15 @@ export interface AuthSession {
 // bgap-academy's own middleware.js reads), with a dev-only mock identity kept for local work
 // without a live session. See masterprompt.md §15.3 for the wider backend/database plan.
 
+// A fixed dev-only placeholder id, shared with app/game/page.tsx's own fallback. Must be a real
+// UUID literal (not an arbitrary string like the old "dev-cadet-analyst") — found live 19 Nov
+// 2026, the first time this session could actually run the app against real credentials: wallet/
+// garage/profile reads against the now-real Supabase project throw "invalid input syntax for
+// type uuid" the instant local dev hits them, because every user_id column is UUID-typed. This
+// id won't match any real auth.users row even once the migrations run, so local dev against the
+// live project still won't have real data for it — it just stops the immediate crash.
+export const DEV_USER_ID = '00000000-0000-4000-8000-000000000001';
+
 function supabaseConfigured() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   return !!process.env.SUPABASE_SERVICE_ROLE_KEY && url.startsWith('https://') && !url.includes('your-project') && !url.includes('placeholder');
@@ -50,7 +59,7 @@ export class SessionValidator {
     // Local development without a live Supabase session (or Supabase not configured yet).
     if (isDev) {
       return {
-        userId: 'dev-cadet-analyst',
+        userId: DEV_USER_ID,
         email: 'cadet@aidlearn.org',
         role: 'student',
       };
