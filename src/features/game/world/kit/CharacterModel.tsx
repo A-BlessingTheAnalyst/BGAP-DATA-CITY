@@ -273,3 +273,11 @@ export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, t
     </group>
   );
 }
+
+// Start downloading the shared bodies, hair and animation library as soon as the game code loads,
+// so cast members appear moments after the city does instead of popping in one by one.
+if (typeof window !== 'undefined') {
+  [...Object.values(BODY), ANIM, 'quaternius-hair/Hair_Buns', 'quaternius-hair/Hair_Buzzed', 'quaternius-hair/Hair_Long',
+    'quaternius-hair/Hair_BuzzedFemale', 'quaternius-hair/Hair_SimpleParted', 'quaternius-hair/Hair_Beard']
+    .forEach((r) => { try { useGLTF.preload(kitInfo(r as KitRef).url, false, true); } catch { /* unknown ref in this build */ } });
+}

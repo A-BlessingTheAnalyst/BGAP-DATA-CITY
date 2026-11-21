@@ -36,7 +36,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'], // BGAP's own brand font (bgap-academy globals.css)
         mono: ['Fira Code', 'JetBrains Mono', 'monospace'],
       },
       boxShadow: {

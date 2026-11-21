@@ -6,7 +6,7 @@ import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-th
 import { init as initRecast, Crowd, NavMeshQuery, CrowdAgent } from 'recast-navigation';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { EntityManager, FollowPathBehavior, Path, Vehicle, Vector3 as YVec } from 'yuka';
-import { CHARACTERS, CharacterDef, Outfit, Person } from './characters';
+import { CHARACTERS, CharacterDef, Outfit } from './characters';
 import { CastMember } from './CastMember';
 import type { Body, Hair } from './CharacterModel';
 import { INTERSECTIONS, HALF_ROAD, CITY_BOUNDS } from './cityPlan';
@@ -25,6 +25,18 @@ import { PALETTE } from './palette';
 
 const CROWD = CHARACTERS.filter((c) => c.role === 'Crowd');
 const FABRICS = Object.values(PALETTE.fabric);
+
+/** A rigged townsperson i (walkers and traffic drivers): its own body, hair, skin and clothes. */
+function crowdDef(i: number): CharacterDef {
+  const base = CROWD[i % CROWD.length];
+  const outfit = crowdOutfit(i);
+  // Dresses go on the female body; hairstyles are matched to the body they were made for.
+  const body: Body = outfit.garment === 'boubou' ? 'female' : i % 2 ? 'male' : 'female';
+  const hair: Hair = body === 'female'
+    ? (FEMALE_HAIR.includes(base.look.hair ?? 'none') ? base.look.hair! : FEMALE_HAIR[i % FEMALE_HAIR.length])
+    : (MALE_HAIR.includes(base.look.hair ?? 'none') ? base.look.hair! : MALE_HAIR[i % MALE_HAIR.length]);
+  return { ...base, id: `${base.id}_${i}`, outfit, look: { ...base.look, body, hair, skinTone: 0.85 + ((i * 7) % 5) * 0.08 } };
+}
 
 /** Crowd archetype i with its own skin tone and clothing colours, so no two walkers match. */
 function crowdOutfit(i: number): Outfit {
@@ -87,16 +99,7 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
   // The frame loop reads the live crowd from a ref, so it can never touch one that was destroyed.
   const live = useRef<{ crowd: Crowd; query: NavMeshQuery; agents: CrowdAgent[] } | null>(null);
   const refs = useRef<(Group | null)[]>([]);
-  const cast = useMemo<CharacterDef[]>(() => Array.from({ length: count }, (_, i) => {
-    const base = CROWD[i % CROWD.length];
-    const outfit = crowdOutfit(i);
-    // Dresses go on the female body; hairstyles are matched to the body they were made for.
-    const body: Body = outfit.garment === 'boubou' ? 'female' : i % 2 ? 'male' : 'female';
-    const hair: Hair = body === 'female'
-      ? (FEMALE_HAIR.includes(base.look.hair ?? 'none') ? base.look.hair! : FEMALE_HAIR[i % FEMALE_HAIR.length])
-      : (MALE_HAIR.includes(base.look.hair ?? 'none') ? base.look.hair! : MALE_HAIR[i % MALE_HAIR.length]);
-    return { ...base, id: `${base.id}_${i}`, outfit, look: { ...base.look, body, hair, skinTone: 0.85 + ((i * 7) % 5) * 0.08 } };
-  }), [count]);
+  const cast = useMemo<CharacterDef[]>(() => Array.from({ length: count }, (_, i) => crowdDef(i)), [count]);
   // Per-agent, mutated every frame (no re-render) so each walker's foot-fall rate tracks its
   // actual recast speed instead of always playing the walk clip at full rate.
   const animScales = useMemo(() => Array.from({ length: count }, () => ({ current: 1 })), [count]);
@@ -297,17 +300,17 @@ const KIND_LABEL: Record<Lane['vehicles'][number], string> = {
   taxi: 'Taxi', sedan: 'Sedan', suv: 'SUV', van: 'Van', danfo: 'Danfo', keke: 'Keke', okada: 'Okada',
 };
 
-/** A cheap procedural figure seated in the driver's spot (every ambient vehicle has a visible
- * driver now — Owner feedback 18 Nov 2026, masterprompt.md §12.2). Full rigged CastMember bodies
- * are reserved for the player's own car (one instance); traffic can have 40+, so this stays light.
- * Owner feedback 19 Nov 2026: the first pass positioned the group well above the vehicle's own
- * floor (scaled off total vehicle height), so a standing figure's hip ended up near the roofline —
- * "drivers standing inside the car". `seated` bends the legs out of a straight dangle (see
- * characters.tsx) and this now sits the hip pivot near the vehicle's actual floor, not its roof. */
+/** A real (rigged) driver in the seat, playing the driving clip. Owner feedback 21 Nov 2026: the old
+ * blocky procedural drivers read as caricature robots, so traffic now uses the same cast as the
+ * streets. To keep phones fast, only the vehicles nearest the camera get a driver (Traffic picks
+ * them, MAX_DRIVERS at a time); distant ones are too small to see into anyway. */
+const MAX_DRIVERS = 8;
+const DRIVER_RANGE = 55;
 function Driver({ kind, seed }: { kind: Lane['vehicles'][number]; seed: number }) {
+  const def = useMemo(() => crowdDef(seed + 7), [seed]);
   return (
-    <group position={[kind === 'okada' ? 0 : -0.32, 0.05, kind === 'danfo' || kind === 'van' ? 0.6 : 0.1]} scale={0.86}>
-      <Person outfit={crowdOutfit(seed)} seated />
+    <group position={[kind === 'okada' ? 0 : -0.3, 0.15, kind === 'danfo' || kind === 'van' ? 0.6 : 0.1]} scale={0.95}>
+      <CastMember def={def} action="Drive" />
     </group>
   );
 }
@@ -325,6 +328,9 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
   // One "blocked by the player" state machine per vehicle (streetLife.trafficLogic.stepBlockState).
   const block = useRef<BlockState[]>([]);
   const playerDef = usePlayerDef();
+  // Which vehicles currently show a driver (the MAX_DRIVERS nearest the camera, within DRIVER_RANGE).
+  const [drivers, setDrivers] = useState<number[]>([]);
+  const driverCheck = useRef(0);
 
   // Owner feedback 18 Nov 2026 (masterprompt.md §12.1/§12.3): ambient traffic is now jackable, not
   // just owned/dealership cars. One shared character controller drives whichever vehicle is jacked
@@ -484,6 +490,19 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
       driveRuntime.steer = st.steer;
     }
 
+    driverCheck.current -= dt;
+    if (driverCheck.current <= 0) {
+      driverCheck.current = 0.5;
+      const near = sim.vehicles
+        .map((v, i) => ({ i, d: (v.position.x - camera.position.x) ** 2 + (v.position.z - camera.position.z) ** 2 }))
+        .filter((x) => x.d < DRIVER_RANGE * DRIVER_RANGE)
+        .sort((a, b) => a.d - b.d)
+        .slice(0, MAX_DRIVERS)
+        .map((x) => x.i)
+        .sort((a, b) => a - b);
+      setDrivers((prev) => (prev.join() === near.join() ? prev : near));
+    }
+
     streetRuntime.vehicles.length = sim.vehicles.length;
     sim.vehicles.forEach((v, i) => {
       streetRuntime.vehicles[i] = { x: v.position.x, z: v.position.z, speed: Math.sqrt(v.getSpeedSquared()), kind: flat[i].kind };
@@ -519,9 +538,9 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
               <group position={[f.kind === 'okada' ? 0 : -0.3, 0.15, f.kind === 'danfo' || f.kind === 'van' ? 0.6 : 0.1]} scale={0.95}>
                 <CastMember def={playerDef} action="Drive" />
               </group>
-            ) : (
+            ) : drivers.includes(i) ? (
               <Driver kind={f.kind} seed={i} />
-            )}
+            ) : null}
             {/* Kinematic collider so the player can't walk through moving traffic (and the body the
                 jacked-vehicle controller above sweeps for collision). */}
             <RigidBody ref={(b) => { bodies.current[i] = b; }} type="kinematicPosition" colliders={false} position={[0, h / 2, 0]}>

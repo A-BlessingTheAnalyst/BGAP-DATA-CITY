@@ -10,7 +10,7 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; /* BGAP brand font */
   overflow-x: hidden;
   user-select: none;
 }
@@ -39,3 +39,26 @@ body {
 /* Horizontally scrolling chip rows (in-game keyboard) without a visible scrollbar. */
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── BGAP brand buttons (copied from bgap-academy frontend/app/globals.css so both sites match) ── */
+.bgap-btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: #1d4ed8; color: #ffffff !important; font-weight: 700; border-radius: 6px; text-decoration: none;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.28); border: 1px solid #1d4ed8; cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bgap-btn-primary:hover { background: #1e40af; border-color: #1e40af; transform: translateY(-2px); box-shadow: 0 10px 24px -4px rgba(29, 78, 216, 0.42); }
+.bgap-btn-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(29, 78, 216, 0.28); }
+.bgap-btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: #ffffff; color: #0f172a !important; font-weight: 700; border: 1px solid #cbd5e1; border-radius: 6px; text-decoration: none; cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.bgap-btn-secondary:hover { border-color: #1d4ed8; color: #1d4ed8 !important; background: #f8faff; transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(29, 78, 216, 0.2); }
+.bgap-btn-sky {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: #38bdf8; color: #0f172a !important; font-weight: 800; border-radius: 6px; text-decoration: none; border: 1px solid #38bdf8;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+.bgap-btn-sky:hover { background: #7dd3fc; transform: translateY(-2px); }
+html { scroll-behavior: smooth; }

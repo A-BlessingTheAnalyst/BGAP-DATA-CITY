@@ -7,7 +7,8 @@ import { PostFX } from '../../engine/PostFX';
 import { KIT as KIT_OWN, LIBRARY, CATEGORIES, DISTRICTS, Category, KitAsset } from './catalog';
 
 const KIT = [...KIT_OWN, ...LIBRARY];
-import { Person, CHARACTERS } from './characters';
+import { CHARACTERS } from './characters';
+import { CastMember } from './CastMember';
 import { MarketBoulevard } from './district';
 
 // Asset Lab: browse and inspect every building, vehicle and character in the kit.
@@ -51,7 +52,7 @@ function ScaleFigure({ asset }: { asset: KitAsset }) {
   const x = asset.footprint[0] / 2 + 1.2;
   return (
     <group position={[x, 0, asset.footprint[1] / 2]}>
-      <Person outfit={CHARACTERS[0].outfit} />
+      <Suspense fallback={null}><CastMember def={CHARACTERS[0]} /></Suspense>
     </group>
   );
 }

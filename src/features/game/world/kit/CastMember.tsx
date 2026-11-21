@@ -1,10 +1,10 @@
 'use client';
 import { Suspense, useMemo } from 'react';
 import { CharacterModel, Clothing } from './CharacterModel';
-import { CharacterDef, HeadPiece, Person, Headwear } from './characters';
+import { CharacterDef, HeadPiece, Headwear } from './characters';
 
 // One member of the cast: the rigged Quaternius character with our headwear on top,
-// falling back to the procedural figure while the model streams in.
+// shown only once the model has loaded (no blocky stand-in body in between).
 
 const HATS: Headwear[] = ['gele', 'cap', 'kufi', 'beret', 'helmet', 'chefHat'];
 
@@ -28,9 +28,15 @@ export function CastMember({ def, action, walking, speedScaleRef, actionRef }: {
   const hat = HATS.includes(def.outfit.head) ? <HeadPiece head={def.outfit.head} color={def.outfit.headColor} /> : undefined;
   const clothing = useMemo(() => clothingFor(def), [def]);
   const look = useMemo(() => ({ ...def.look, skin: def.look.skin ?? def.outfit.skin, hairColor: def.look.hairColor ?? '#2A201C' }), [def]);
+  // Remount (fresh mixer + bindings) whenever the look changes. Rebuilding the body in place left
+  // the animation bound to the *old* skeleton, so e.g. the player stood in a T-pose after their
+  // saved cadet loaded a moment after the first frame.
+  const lookKey = useMemo(() => JSON.stringify([look, clothing, def.outfit.head]), [look, clothing, def.outfit.head]);
   return (
-    <Suspense fallback={<Person outfit={def.outfit} walking={pose === 'Walk'} talking={pose === 'Talk'} />}>
-      <CharacterModel look={look} clothing={clothing} action={pose} headwear={hat} speedScaleRef={speedScaleRef} actionRef={actionRef} />
+    // No placeholder body while the rigged model streams in (the old blocky stand-in read as a
+    // caricature robot on first load); the models are preloaded at startup (CharacterModel.tsx).
+    <Suspense fallback={null}>
+      <CharacterModel key={lookKey} look={look} clothing={clothing} action={pose} headwear={hat} speedScaleRef={speedScaleRef} actionRef={actionRef} />
     </Suspense>
   );
 }

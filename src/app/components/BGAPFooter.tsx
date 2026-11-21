@@ -5,7 +5,7 @@ import Link from 'next/link';
 // plain Tailwind component against this repo's own bgap-* tokens (no framer-motion dependency
 // here, and the brand mark is copied locally at public/brand/ rather than imported across repos).
 // Links that don't exist in this app (pricing, login, about, …) point at the real bgap.app site
-// rather than this app's own routes — a straight copy of the original component would have sent
+// rather than this app's own routes; a straight copy of the original component would have sent
 // them to this app's own non-existent pages instead.
 const BGAP_URL = 'https://bgap.app';
 
@@ -22,7 +22,7 @@ export function BGAPFooter() {
               <img src="/brand/bgap-logo-blue.png" alt="BGAP" className="h-10 w-auto" />
             </Link>
             <p className="text-[13.5px] text-bgap-muted leading-relaxed max-w-sm mb-3.5">
-              Where data skills become business instincts. Data City is BGAP's 3D career simulator — the same account, the same XP, a different way in.
+              Where data skills become business instincts. Data City is BGAP's 3D career simulator. Same account, same XP, a new way in.
             </p>
             <div className="text-xs text-bgap-muted/70">BGAP · A product of Aidlearn Analytics Limited · Built for Africa</div>
           </div>
