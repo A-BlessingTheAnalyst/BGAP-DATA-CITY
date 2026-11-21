@@ -12,6 +12,8 @@ import { runtimeInput } from '../input/InputManager';
 import { driveRuntime, playerRuntime } from '../characters/PlayerCharacter';
 import { callCar, useGarage } from '../ui/garage/useGarage';
 import { CITY_BOUNDS } from './kit/cityPlan';
+import { stepVehicle, profileFor, type VehicleState } from './vehicleDynamics';
+import { readDriveInput } from '../input/driveInput';
 import type { OwnedVehicle, VehicleDef } from '@/shared/types/garage';
 
 /** Rough box footprint per body style, matching the kit models closely enough for collision. */
@@ -19,7 +21,6 @@ const FOOTPRINT: Record<VehicleDef['body'], [number, number, number]> = {
   hatchback: [1.8, 1.6, 3.9], sedan: [1.8, 1.6, 4.5], taxi: [1.8, 1.7, 4.4],
   suv: [2, 2, 4.7], pickup: [1.9, 2, 5.2], keke: [1.4, 2.2, 2.4], chopper: [2.1, 2.5, 4.6],
 };
-const ACCEL = 6, BRAKE = 10, TURN_RATE = 1.8, DRAG = 2.2;
 // Phase F: the chopper is a floaty hover model, not a ray-cast ground controller — it free-flies
 // with an altitude clamp and the city bounds, but (unlike ground vehicles) no collision against
 // buildings. That full 3D obstacle-avoidance is out of scope for this pass; see masterprompt.md.
@@ -39,10 +40,11 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
   const hasLicence = useGarage((s) => (def.licence === 'flight' ? s.hasFlightLicence : s.hasLicence));
   const isChopper = def.body === 'chopper';
   const playerDef = usePlayerDef();
+  const profile = profileFor(def.body, def.maxSpeed);
+  const dyn = useRef<VehicleState>({ speed: 0, yaw: owned.rotationY, steer: 0 });
 
   useEffect(() => {
     const c = world.createCharacterController(0.02);
-    c.enableSnapToGround(0.3);
     controller.current = c;
     return () => { world.removeCharacterController(c); controller.current = undefined; };
   }, [world]);
@@ -57,13 +59,13 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
 
   useFrame((_, dt) => {
     if (!body.current || !controller.current) return;
-    const delta = Math.min(dt, 0.04);
+    const delta = Math.min(dt, 0.1);
     const [x0, y0, z0] = pos.current;
 
     if (isMine && isChopper) {
       // Free flight: W/S thrust, A/D yaw (can turn on the spot), Space climbs, Shift descends.
       const throttle = (runtimeInput.forward ? 1 : 0) - (runtimeInput.backward ? 1 : 0);
-      const steer = (runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0);
+      const steer = MathUtils.clamp((runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0) - runtimeInput.axisX, -1, 1);
       const vertical = (runtimeInput.jump ? 1 : 0) - (runtimeInput.sprint ? 1 : 0);
       const maxSpeed = def.maxSpeed;
       speed.current = MathUtils.damp(speed.current, throttle * maxSpeed, 4, delta);
@@ -76,25 +78,33 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
       body.current.setNextKinematicTranslation({ x: nx, y: ny, z: nz });
       driveRuntime.position.set(nx, ny + 0.4, nz);
       driveRuntime.rotationY = yaw.current;
+      driveRuntime.speed = speed.current;
+      driveRuntime.steer = 0;
     } else if (isMine) {
-      const throttle = (runtimeInput.forward ? 1 : 0) - (runtimeInput.backward ? 1 : 0);
-      const steer = (runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0);
-      const maxSpeed = def.maxSpeed * (runtimeInput.sprint ? 1 : 0.6);
-      if (throttle !== 0) speed.current = MathUtils.clamp(speed.current + throttle * ACCEL * delta, -maxSpeed * 0.5, maxSpeed);
-      else speed.current = MathUtils.damp(speed.current, 0, BRAKE / 4, delta);
-      speed.current = MathUtils.damp(speed.current, speed.current * (1 - DRAG * delta), 20, delta);
-      // Can only steer while moving (and reversed steering feels right in reverse).
-      if (Math.abs(speed.current) > 0.3) yaw.current += steer * TURN_RATE * delta * Math.sign(speed.current) * Math.min(1, Math.abs(speed.current) / 3);
-
-      const dx = Math.sin(yaw.current) * speed.current * delta;
-      const dz = Math.cos(yaw.current) * speed.current * delta;
-      controller.current.computeColliderMovement(body.current.collider(0), { x: dx, y: -0.3 * delta, z: dz });
-      const m = controller.current.computedMovement();
-      if (Math.abs(m.x) < Math.abs(dx) * 0.4 || Math.abs(m.z) < Math.abs(dz) * 0.4) speed.current *= 0.3; // hit something: shed speed
-      pos.current = [x0 + m.x, Math.max(y0 + m.y, FOOTPRINT[def.body][1] / 2), z0 + m.z];
-      body.current.setNextKinematicTranslation({ x: pos.current[0], y: pos.current[1], z: pos.current[2] });
-      driveRuntime.position.set(pos.current[0], pos.current[1] + 0.3, pos.current[2]);
+      // Real-feel arcade car (world/vehicleDynamics.ts): speed-sensitive steering, separate
+      // brake/reverse, drag, handbrake. The car stays on the road (y never drifts upward: the
+      // old `max(y, h/2)` floated every driven car ~0.8 m above the street).
+      const st = dyn.current;
+      st.yaw = yaw.current;
+      st.speed = speed.current;
+      const ctrl = controller.current, rb = body.current;
+      const res = stepVehicle(st, profile, readDriveInput(delta), delta, (dx, dz) => {
+        ctrl.computeColliderMovement(rb.collider(0), { x: dx, y: 0, z: dz });
+        const m = ctrl.computedMovement();
+        return { x: m.x, z: m.z };
+      });
+      speed.current = st.speed;
+      yaw.current = st.yaw;
+      const B = CITY_BOUNDS, mg = 2;
+      pos.current = [MathUtils.clamp(x0 + res.dx, B.minX + mg, B.maxX - mg), y0, MathUtils.clamp(z0 + res.dz, B.minZ + mg, B.maxZ - mg)];
+      rb.setNextKinematicTranslation({ x: pos.current[0], y: pos.current[1], z: pos.current[2] });
+      // The collision box turns with the car (it used to stay axis-aligned whatever the heading).
+      const half = yaw.current / 2;
+      rb.setNextKinematicRotation({ x: 0, y: Math.sin(half), z: 0, w: Math.cos(half) });
+      driveRuntime.position.set(pos.current[0], pos.current[1] + 0.9, pos.current[2]);
       driveRuntime.rotationY = yaw.current;
+      driveRuntime.speed = speed.current;
+      driveRuntime.steer = st.steer;
     }
 
     if (visual.current) { visual.current.position.set(...pos.current); visual.current.rotation.y = yaw.current; }
@@ -108,7 +118,8 @@ export function DrivableCar({ owned, def }: { owned: OwnedVehicle; def: VehicleD
   return (
     <>
       <RigidBody ref={body} type="kinematicPosition" colliders={false} position={owned.position} enabledRotations={[false, false, false]}>
-        <CuboidCollider args={[w / 2, h / 2, len / 2]} position={[0, h / 2, 0]} sensor={isChopper} />
+        {/* Lifted a little so the box never scrapes the road and reads the ground as a wall. */}
+        <CuboidCollider args={[w / 2, h / 2 - 0.1, len / 2]} position={[0, h / 2 + 0.1, 0]} sensor={isChopper} />
       </RigidBody>
       <group ref={visual} position={owned.position} rotation={[0, owned.rotationY, 0]}>
         {def.body === 'keke' ? <Tricycle color={def.color} /> : def.body === 'chopper' ? <Chopper color={def.color} flying={isMine} /> : <Car body={def.body} color={def.color} />}

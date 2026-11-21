@@ -30,3 +30,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #00F2FE;
 }
+
+/* Game HUD: keep controls clear of the notch / home indicator on phones (viewport-fit=cover). */
+.hud-safe {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Horizontally scrolling chip rows (in-game keyboard) without a visible scrollbar. */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

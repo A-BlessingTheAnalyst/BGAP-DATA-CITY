@@ -18,11 +18,20 @@ export interface AuthSession {
 // type uuid" the instant local dev hits them, because every user_id column is UUID-typed. This
 // id won't match any real auth.users row even once the migrations run, so local dev against the
 // live project still won't have real data for it — it just stops the immediate crash.
-export const DEV_USER_ID = '00000000-0000-4000-8000-000000000001';
+// Local dev against the live project: set DATA_CITY_DEV_USER_ID (in .env.local only) to your own
+// BGAP account's auth.users id, so dev writes satisfy the auth.users foreign keys. Without it the
+// placeholder below is used and every database write fails with a *_user_id_fkey violation.
+export const DEV_USER_ID = process.env.DATA_CITY_DEV_USER_ID || '00000000-0000-4000-8000-000000000001';
 
 function supabaseConfigured() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   return !!process.env.SUPABASE_SERVICE_ROLE_KEY && url.startsWith('https://') && !url.includes('your-project') && !url.includes('placeholder');
+}
+
+async function roleAndEmail(userId: string, fallbackEmail: string): Promise<Pick<AuthSession, 'role' | 'email'>> {
+  const { supabaseAdmin } = await import('@/server/db/supabase');
+  const { data: row } = await supabaseAdmin.from('users').select('role, email').eq('id', userId).maybeSingle();
+  return { email: (row?.email as string | undefined) ?? fallbackEmail, role: mapRole(row?.role as string | undefined) };
 }
 
 /** BGAP's own role vocabulary (public.users.role: student/instructor/admin/manager/hr_admin/
@@ -44,16 +53,19 @@ export class SessionValidator {
       const { supabaseAdmin } = await import('@/server/db/supabase');
       const { data, error } = await supabaseAdmin.auth.getUser(token);
       if (!error && data?.user) {
-        const { data: row } = await supabaseAdmin.from('users').select('role, email').eq('id', data.user.id).maybeSingle();
-        return {
-          userId: data.user.id,
-          email: (row?.email as string | undefined) ?? data.user.email ?? '',
-          role: mapRole(row?.role as string | undefined),
-        };
+        return { userId: data.user.id, ...(await roleAndEmail(data.user.id, data.user.email ?? '')) };
       }
       // A token was sent but didn't verify: in production that's a real auth failure, not a
       // reason to fall through to the dev mock identity.
       if (!isDev) throw new Error('Unauthorized: invalid or expired BGAP session.');
+    }
+
+    // No Bearer token: the game's own fetches rely on the Supabase auth cookie set by /auth/handoff
+    // (arriving from bgap.app) or /login.
+    if (!token && supabaseConfigured()) {
+      const { cookieUser } = await import('@/server/db/supabaseSession');
+      const user = await cookieUser();
+      if (user) return { userId: user.id, ...(await roleAndEmail(user.id, user.email)) };
     }
 
     // Local development without a live Supabase session (or Supabase not configured yet).

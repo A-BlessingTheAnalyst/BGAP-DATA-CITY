@@ -23,14 +23,14 @@ export function clothingFor(def: CharacterDef): Clothing {
   };
 }
 
-export function CastMember({ def, action, walking, speedScaleRef }: { def: CharacterDef; action?: string; walking?: boolean; speedScaleRef?: { current: number } }) {
+export function CastMember({ def, action, walking, speedScaleRef, actionRef }: { def: CharacterDef; action?: string; walking?: boolean; speedScaleRef?: { current: number }; actionRef?: { current: string } }) {
   const pose = action ?? (walking || def.pose === 'walk' ? 'Walk' : def.pose === 'talk' ? 'Talk' : 'Idle');
   const hat = HATS.includes(def.outfit.head) ? <HeadPiece head={def.outfit.head} color={def.outfit.headColor} /> : undefined;
   const clothing = useMemo(() => clothingFor(def), [def]);
   const look = useMemo(() => ({ ...def.look, skin: def.look.skin ?? def.outfit.skin, hairColor: def.look.hairColor ?? '#2A201C' }), [def]);
   return (
     <Suspense fallback={<Person outfit={def.outfit} walking={pose === 'Walk'} talking={pose === 'Talk'} />}>
-      <CharacterModel look={look} clothing={clothing} action={pose} headwear={hat} speedScaleRef={speedScaleRef} />
+      <CharacterModel look={look} clothing={clothing} action={pose} headwear={hat} speedScaleRef={speedScaleRef} actionRef={actionRef} />
     </Suspense>
   );
 }

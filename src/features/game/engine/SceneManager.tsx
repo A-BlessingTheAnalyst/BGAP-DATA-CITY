@@ -41,7 +41,7 @@ export const SceneManager: React.FC = () => {
         <MarketBoulevard physics streets={false} life={false} />
         <Traffic lanes={CITY_LANES} />
         <TrafficLights />
-        <Pedestrians walkways={CITY_WALKWAYS} count={22} focus={playerRuntime.position} />
+        <Pedestrians walkways={CITY_WALKWAYS} count={30} focus={playerRuntime.position} />
         <BarkLayer />
 
         {/* Chapter 1 story points */}

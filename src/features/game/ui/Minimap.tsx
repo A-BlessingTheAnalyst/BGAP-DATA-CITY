@@ -14,7 +14,7 @@ const SCALE = 0.85; // px per metre (shows ~100 m around you)
 const R = SIZE / 2;
 
 /** Heading-up minimap: the city turns with the camera, so "up" is always where you're looking. */
-export const Minimap: React.FC = () => {
+export const Minimap: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
   const world = useRef<SVGGElement>(null);
   const arrow = useRef<SVGGElement>(null);
   const edge = useRef<SVGGElement>(null);
@@ -71,14 +71,13 @@ export const Minimap: React.FC = () => {
 
   const info = DISTRICT_INFO[where.district];
   return (
-    <div className="flex flex-col items-center gap-1.5 origin-top-left scale-[0.68] sm:scale-100 -mb-16 sm:mb-0">
+    <div className="flex flex-col items-center gap-1">
       <button
         onClick={() => setMapOpen(true)}
         aria-label="Open city map (M)"
-        className="relative rounded-full overflow-hidden border-2 border-bgap-border shadow-hud-glass bg-[#0E1524] hover:border-bgap-cyan transition"
-        style={{ width: SIZE, height: SIZE }}
+        className="relative rounded-full overflow-hidden border-2 border-bgap-border shadow-hud-glass bg-[#0E1524] hover:border-bgap-cyan transition w-[104px] h-[104px] sm:w-[140px] sm:h-[140px] lg:w-[168px] lg:h-[168px] [@media(max-height:500px)]:w-[96px] [@media(max-height:500px)]:h-[96px]"
       >
-        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+        <svg width="100%" height="100%" viewBox={`0 0 ${SIZE} ${SIZE}`}>
           <g ref={world}>
             <CityLayers />
             {route && <polyline points={route.map(([x, z]) => `${x},${-z}`).join(' ')} fill="none" stroke={MAP_COLORS.route} strokeWidth={3.2 / SCALE} strokeLinejoin="round" strokeLinecap="round" strokeOpacity={0.9} />}
@@ -108,13 +107,13 @@ export const Minimap: React.FC = () => {
       {/* This caption floats directly over the 3D world (no panel behind it), so — like the
           district-entry banner below — it stays fixed light text with a dark drop-shadow for
           legibility against whatever's in the scene, rather than the theme's panel-text token. */}
-      <div className="w-[190px] text-center leading-tight drop-shadow-[0_1px_4px_rgba(0,0,0,0.85)]">
+      {!compact && <div className="w-[150px] lg:w-[190px] text-center leading-tight drop-shadow-[0_1px_4px_rgba(0,0,0,0.85)] [@media(max-height:500px)]:hidden">
         <div className="text-[11px] font-bold text-white truncate">{info.name}</div>
         {where.street !== info.name && <div className="text-[10px] text-white/75 truncate">{where.street ?? 'Side street'}</div>}
         {target && where.dist !== null && (
           <div className="text-[10px] font-mono text-bgap-gold truncate">{target.label} · {where.dist < 1000 ? `${Math.round(where.dist / 5) * 5} m` : `${(where.dist / 1000).toFixed(1)} km`}</div>
         )}
-      </div>
+      </div>}
     </div>
   );
 };

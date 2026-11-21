@@ -5,6 +5,7 @@ import { SandboxRunner } from '@/server/assessment/SandboxRunner';
 import { creditMissionReward, getWallet } from '@/server/economy/wallet';
 import { SessionValidator } from '@/server/game/SessionValidator';
 import { getAttempt, isFast, recordSubmission } from '@/server/game/attempts';
+import { syncCompletionToBgap } from '@/server/game/bgapSync';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +47,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
         reason: `Paid by ${pkg.def.client.business}`,
       });
       alreadyPaid = !created;
+      // Count it on the BGAP platform too (dashboard XP, challenges completed, leaderboard).
+      await syncCompletionToBgap(session.userId, pkg.def, result);
     }
     const wallet = await getWallet(session.userId);
     return NextResponse.json({ ...result, hintsUsed: attempt.hintLog.length, fast, alreadyPaid, balance: wallet.balance });

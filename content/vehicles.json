@@ -7,7 +7,7 @@
       "body": "hatchback",
       "color": "#8FAE5A",
       "price": 1500000,
-      "maxSpeed": 16,
+      "maxSpeed": 22,
       "description": "A reliable second-hand runabout. Gets you where you're going."
     },
     {
@@ -16,7 +16,7 @@
       "body": "keke",
       "color": "#F2C21B",
       "price": 2500000,
-      "maxSpeed": 11,
+      "maxSpeed": 13.5,
       "description": "Your own tricycle taxi. Slow, but it never gets stuck in tight streets."
     },
     {
@@ -25,7 +25,7 @@
       "body": "sedan",
       "color": "#3A6EA5",
       "price": 3800000,
-      "maxSpeed": 20,
+      "maxSpeed": 25,
       "description": "Comfortable, reliable, respectable. The analyst's first real car."
     },
     {
@@ -34,7 +34,7 @@
       "body": "pickup",
       "color": "#B0532A",
       "price": 5200000,
-      "maxSpeed": 18,
+      "maxSpeed": 23,
       "description": "A workhorse truck with room for cargo."
     },
     {
@@ -43,7 +43,7 @@
       "body": "suv",
       "color": "#2B2F36",
       "price": 12000000,
-      "maxSpeed": 22,
+      "maxSpeed": 26,
       "description": "Finance Row's favourite. Turns heads outside the bank."
     },
     {

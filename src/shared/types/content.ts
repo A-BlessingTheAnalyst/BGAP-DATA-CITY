@@ -68,6 +68,10 @@ export interface MissionDef {
   successFeedback: string;
   trapFixture: string;
   fixtures: FixtureMeta[];
+  /** Spreadsheet missions are solved in workspace.bgap.app (BGAP's Excel workspace) rather than the
+   * SQL terminal: these are the deliverables shown there and its own auto-graded checks
+   * (same format bgap-academy's challenges use, e.g. { type: 'cell_value_equals', cell, expected }). */
+  workspace?: { tool?: 'excel' | 'python' | 'sql'; deliverables: string[]; checks?: unknown[]; passScore?: number };
 }
 
 export type Row = Record<string, string | number | null>;

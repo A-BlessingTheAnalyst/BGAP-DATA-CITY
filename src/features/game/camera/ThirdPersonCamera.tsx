@@ -2,13 +2,19 @@
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRapier } from '@react-three/rapier';
-import { Vector3 } from 'three';
+import { PerspectiveCamera, Vector3 } from 'three';
 import { useGameState } from '../engine/GameState';
-import { playerRuntime } from '../characters/PlayerCharacter';
+import { driveRuntime, playerRuntime } from '../characters/PlayerCharacter';
 import { runtimeInput } from '../input/InputManager';
 
 const DISTANCE = 5;
 const MIN_DISTANCE = 0.8;
+/** After the player lets go of the camera, how long before the chase cam swings back behind the car. */
+const CHASE_DELAY = 1.2;
+
+/** Last time (performance.now, ms) the player dragged the camera. */
+let lastManualLook = 0;
+const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 
 /**
  * Orbit camera behind the player. Mouse/touch drag orbits; the wheel zooms.
@@ -31,6 +37,7 @@ export function ThirdPersonCamera() {
       runtimeInput.yaw -= (e.clientX - x) * 0.005;
       runtimeInput.pitch = Math.max(0.05, Math.min(1.2, runtimeInput.pitch + (e.clientY - y) * 0.005));
       x = e.clientX; y = e.clientY;
+      lastManualLook = performance.now();
     };
     const up = () => { drag = false; };
     const context = (e: Event) => e.preventDefault();
@@ -53,9 +60,26 @@ export function ThirdPersonCamera() {
     };
   }, [gl]);
 
+  const chaseDist = useRef(DISTANCE);
   useFrame((_, dt) => {
     const s = useGameState.getState(), p = playerRuntime.position;
-    const dist = DISTANCE * zoom.current;
+    const d = Math.min(dt, 0.05);
+    // Chase cam while driving: swing in behind the vehicle once the player isn't steering the
+    // camera, pull back and lift with speed, and open the FOV a touch for a sense of pace.
+    const speed = s.isDriving ? Math.abs(driveRuntime.speed) : 0;
+    if (s.isDriving) {
+      if (performance.now() - lastManualLook > CHASE_DELAY * 1000 && speed > 0.5) {
+        const behind = driveRuntime.rotationY + Math.PI;
+        runtimeInput.yaw += wrap(behind - runtimeInput.yaw) * (1 - Math.exp(-3.2 * d));
+        runtimeInput.pitch += (0.3 - runtimeInput.pitch) * (1 - Math.exp(-1.5 * d));
+      }
+    }
+    const wantDist = s.isDriving ? 7.5 + Math.min(4, speed * 0.16) : DISTANCE;
+    chaseDist.current += (wantDist - chaseDist.current) * (1 - Math.exp(-2.5 * d));
+    const cam = camera as PerspectiveCamera;
+    const fov = 55 + (s.isDriving ? Math.min(10, speed * 0.4) : 0);
+    if (Math.abs(cam.fov - fov) > 0.05) { cam.fov += (fov - cam.fov) * (1 - Math.exp(-3 * d)); cam.updateProjectionMatrix(); }
+    const dist = chaseDist.current * zoom.current;
     target.current.set(p.x, p.y + 0.8, p.z);
     desired.current.set(
       p.x + Math.sin(runtimeInput.yaw) * dist * Math.cos(runtimeInput.pitch),

@@ -1,8 +1,20 @@
 import React from 'react';
 import GameClient from './GameClient';
-import { SessionValidator, DEV_USER_ID } from '@/server/game/SessionValidator';
+import { redirect } from 'next/navigation';
+import { SessionValidator } from '@/server/game/SessionValidator';
 
 export const dynamic = 'force-dynamic';
+
+// The game owns the whole screen on phones: content runs under the notch/home bar (the HUD pads
+// itself with env(safe-area-inset-*)), and pinch-zoom is off so two-thumb play never zooms the page.
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#0B1220',
+};
 
 export const metadata = {
   title: 'BGAP City 3D World',
@@ -10,15 +22,13 @@ export const metadata = {
 };
 
 export default async function GamePage() {
+  // A real BGAP session (cookie from /auth/handoff or /login). It used to fall back to a fake dev
+  // player on any error, in production too; now an unsigned visitor is sent to sign in.
   let session;
   try {
     session = await SessionValidator.validateSession(null);
-  } catch (err) {
-    session = {
-      userId: DEV_USER_ID,
-      email: 'cadet@aidlearn.org',
-      role: 'student' as const,
-    };
+  } catch {
+    redirect('/login?next=/game');
   }
 
   return (
