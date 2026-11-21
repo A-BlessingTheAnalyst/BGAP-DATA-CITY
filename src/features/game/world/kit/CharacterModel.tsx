@@ -144,8 +144,10 @@ function rebindToSkeleton(mesh: SkinnedMesh, bonesByName: Map<string, Bone>) {
   mesh.bind(new Skeleton(bones, mesh.skeleton.boneInverses), mesh.bindMatrix);
 }
 
-export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, timeScale = 1, speedScaleRef, headwear }: {
+export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, timeScale = 1, speedScaleRef, actionRef, headwear }: {
   look: CharacterLook; clothing?: Clothing; action?: string; fade?: number; timeScale?: number;
+  /** Optional: an action name the caller mutates per frame; overrides `action` when set. */
+  actionRef?: { current: string };
   /** Mutated by the caller every frame (no React re-render) to keep foot-fall rate matched to
    * actual travel speed, so a character never looks like it's walking in place or sliding. */
   speedScaleRef?: { current: number };
@@ -204,15 +206,23 @@ export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, t
 
   const { actions, mixer } = useAnimations(anim.animations, group);
   const current = useRef<string>('');
+  /** Last gameplay action name applied (from the prop or actionRef). */
+  const applied = useRef<string>('');
 
-  useEffect(() => {
-    const clip = CLIP[action] ?? action;
+  const play = (name: string) => {
+    applied.current = name;
+    const clip = CLIP[name] ?? name;
     const next = actions[clip] ?? actions[CLIP.Idle];
     if (!next || current.current === clip) return;
     const prev = actions[current.current];
     next.reset().setEffectiveTimeScale(timeScale).fadeIn(fade).play();
     prev?.fadeOut(fade);
     current.current = clip;
+  };
+
+  useEffect(() => {
+    play(actionRef?.current ?? action);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, actions, fade, timeScale]);
 
   useEffect(() => () => { mixer.stopAllAction(); }, [mixer]);
@@ -238,6 +248,8 @@ export function CharacterModel({ look, clothing, action = 'Idle', fade = 0.25, t
     }
     // Foot-fall rate tracks actual travel speed (set imperatively, no re-render) so a loop
     // clip authored for one speed never visibly slides or runs in place at another.
+    // Crowd walkers switch clips imperatively (walk ↔ idle ↔ talk) with no React re-render.
+    if (actionRef && actionRef.current !== applied.current) play(actionRef.current);
     if (speedScaleRef) {
       const act = actions[current.current];
       if (act) act.timeScale = speedScaleRef.current;

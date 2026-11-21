@@ -7,6 +7,8 @@ import { PALETTE } from '../../world/kit/palette';
 import { CadetPreview } from './CadetPreview';
 import { cadetDef, saveCadet, useWardrobe } from './useWardrobe';
 import { DEFAULT_APPEARANCE, DEFAULT_EQUIPPED, PRESET_CADETS } from '@/shared/wardrobe/look';
+import { TouchTextInput } from '../keyboard/TouchEditors';
+import { useIsTouch } from '../hudPrefs';
 import { HAIR_COLORS, HAIR_STYLES, type Appearance, type BodyType, type Equipped, type HairStyle, type Slot } from '@/shared/types/wardrobe';
 
 const HAIR_LABEL: Record<HairStyle, string> = {
@@ -56,6 +58,7 @@ export function CharacterCreator() {
   const setCreatorOpen = useGameState((s) => s.setCreatorOpen);
   const open = loaded && (!profile || editing);
 
+  const touch = useIsTouch();
   const [name, setName] = useState('');
   const [appearance, setAppearance] = useState<Appearance>(DEFAULT_APPEARANCE);
   const [equipped, setEquipped] = useState<Equipped>(DEFAULT_EQUIPPED);
@@ -128,13 +131,17 @@ export function CharacterCreator() {
           <button onClick={() => setCreatorOpen(false)} aria-label="Cancel" className="float-right w-9 h-9 rounded-full bg-bgap-card text-bgap-muted hover:text-bgap-text flex items-center justify-center"><X className="w-4 h-4" /></button>
         )}
         <Section title="Name">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={24}
-            placeholder="What should the city call you?"
-            className="w-full max-w-sm px-3 py-2.5 rounded-xl bg-bgap-card border border-bgap-border text-bgap-text placeholder:text-bgap-muted/60 focus:border-bgap-cyan outline-none"
-          />
+{touch ? (
+            <TouchTextInput value={name} onChange={setName} maxLength={24} placeholder="What should the city call you?" className="w-full max-w-sm px-3 py-2.5 rounded-xl bg-bgap-card border border-bgap-border text-bgap-text placeholder:text-bgap-muted/60 focus:border-bgap-cyan outline-none" />
+          ) : (
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={24}
+              placeholder="What should the city call you?"
+              className="w-full max-w-sm px-3 py-2.5 rounded-xl bg-bgap-card border border-bgap-border text-bgap-text placeholder:text-bgap-muted/60 focus:border-bgap-cyan outline-none"
+            />
+          )}
         </Section>
 
         {isNew && (

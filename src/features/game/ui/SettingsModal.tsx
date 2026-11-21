@@ -3,7 +3,8 @@
 import React from 'react';
 import { useGameState } from '../engine/GameState';
 import { GraphicsQuality } from '@/shared/types/game';
-import { X, Monitor, Volume2, Eye, Type, Wind } from 'lucide-react';
+import { X, Monitor, Volume2, Eye, Type, Wind, LayoutDashboard, Target, Lightbulb } from 'lucide-react';
+import { useHudPrefs } from './hudPrefs';
 
 interface Props {
   onClose: () => void;
@@ -31,6 +32,7 @@ function Toggle({ icon: Icon, label, hint, on, onClick, colorOn = 'text-bgap-eme
 export const SettingsModal: React.FC<Props> = ({ onClose }) => {
   const quality = useGameState((s) => s.graphicsQuality);
   const setQuality = useGameState((s) => s.setGraphicsQuality);
+  const hud = useHudPrefs();
   const isMuted = useGameState((s) => s.isMuted);
   const toggleMute = useGameState((s) => s.toggleMute);
   const { reducedMotion, largeText, colorblindSafe, setAccessibility } = useGameState((s) => ({
@@ -74,6 +76,12 @@ export const SettingsModal: React.FC<Props> = ({ onClose }) => {
 
         {/* Audio Toggle */}
         <Toggle icon={Volume2} label="Sound & Audio FX" hint="Footsteps, UI sounds, the city's ambient soundscape" on={!isMuted} onClick={toggleMute} />
+
+        {/* Screen layout */}
+        <label className="text-xs font-mono text-bgap-cyan uppercase font-bold tracking-wider block mb-2 mt-5">Screen</label>
+        <Toggle icon={LayoutDashboard} label="Show HUD" hint="Status, buttons and tracker (H). The map always stays." on={hud.hudVisible} onClick={() => hud.set({ hudVisible: !hud.hudVisible })} />
+        <Toggle icon={Target} label="Mission tracker" hint="The one-line job pill under the status bar" on={hud.showTracker} onClick={() => hud.set({ showTracker: !hud.showTracker })} />
+        <Toggle icon={Lightbulb} label="Guidance tips" hint="Short one-time popups explaining controls" on={hud.showTips} onClick={() => hud.set({ showTips: !hud.showTips })} />
 
         {/* Accessibility */}
         <label className="text-xs font-mono text-bgap-cyan uppercase font-bold tracking-wider block mb-2 mt-5">Accessibility</label>

@@ -13,6 +13,9 @@ import { AudioManager } from '../../game/audio/AudioManager';
 import { refreshWallet, useCareerStore } from '../../game/ui/phone/useCareer';
 import type { MissionEvaluationResult } from '@/shared/types/mission';
 import type { AttemptView, HintDef, PublicMissionDetail } from '@/shared/types/content';
+import { WorkspacePanel } from '../workspace/WorkspacePanel';
+import { TouchSqlEditor } from '../../game/ui/keyboard/TouchEditors';
+import { useIsTouch } from '../../game/ui/hudPrefs';
 import { Play, Send, X, Database, HelpCircle, Code, Scale, FileSearch, Lock } from 'lucide-react';
 
 type Tab = 'editor' | 'schema' | 'hints';
@@ -41,6 +44,9 @@ export const AnalyticsTerminalModal: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { runQuery, queryResult, isRunning, error, ready } = useDuckDb(mission);
+  // Touch devices get the in-game keyboard (no OS keyboard, SQL keys, schema chips); desktop keeps Monaco.
+  const touch = useIsTouch();
+  const schemaWords = React.useMemo(() => (mission ? Array.from(new Set(mission.tables.flatMap((t) => [t.name, ...t.columns.map((c) => c.name)]))) : []), [mission]);
 
   // Load the case: tables, visible data, hints and findings (never answers or hidden data).
   useEffect(() => {
@@ -181,13 +187,19 @@ export const AnalyticsTerminalModal: React.FC = () => {
 
       {loadError && <p className="m-6 text-sm text-red-400">{loadError}</p>}
 
-      {mission && (
+      {mission?.workspace && (
+        <WorkspacePanel missionId={mission.id} deliverables={mission.workspace.deliverables} clientName={mission.client.name} />
+      )}
+
+      {mission && !mission.workspace && (
         <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
           <div className="lg:flex-1 flex flex-col border-r border-bgap-border min-h-[55vh] lg:min-h-0">
             {tab === 'editor' && (
               <>
                 <div className="flex-1 relative min-h-[240px]">
-                  <MonacoSqlEditor value={query} onChange={setQuery} onRun={() => runQuery(query)} />
+                  {touch
+                    ? <TouchSqlEditor value={query} onChange={setQuery} suggestions={schemaWords} onRun={() => runQuery(query)} runLabel={isRunning ? '…' : 'Run'} />
+                    : <MonacoSqlEditor value={query} onChange={setQuery} onRun={() => runQuery(query)} />}
                 </div>
                 <div className="h-14 border-t border-bgap-border bg-bgap-surface px-4 flex items-center justify-between gap-2">
                   <button
@@ -196,7 +208,7 @@ export const AnalyticsTerminalModal: React.FC = () => {
                     className="px-4 py-2 rounded-xl bg-bgap-cyan hover:bg-bgap-neon text-bgap-dark font-bold text-xs flex items-center gap-1.5 transition disabled:opacity-50"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>{!ready ? 'Loading data…' : isRunning ? 'Running…' : 'Run query (Ctrl+Enter)'}</span>
+                    <span>{!ready ? 'Loading data…' : isRunning ? 'Running…' : touch ? 'Run query' : 'Run query (Ctrl+Enter)'}</span>
                   </button>
                   <button
                     onClick={handleSubmit}

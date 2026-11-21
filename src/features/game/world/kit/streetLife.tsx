@@ -9,13 +9,14 @@ import { EntityManager, FollowPathBehavior, Path, Vehicle, Vector3 as YVec } fro
 import { CHARACTERS, CharacterDef, Outfit, Person } from './characters';
 import { CastMember } from './CastMember';
 import type { Body, Hair } from './CharacterModel';
-import { INTERSECTIONS, HALF_ROAD } from './cityPlan';
+import { INTERSECTIONS, HALF_ROAD, CITY_BOUNDS } from './cityPlan';
+import { stepVehicle, profileFor, type VehicleState } from '../vehicleDynamics';
+import { readDriveInput } from '../../input/driveInput';
 import { signalPhase, signalBrakeFactor, isBlockedByPlayer, stepBlockState, lampColour, type BlockState } from './trafficLogic';
 import { playerRuntime, playerNudge, driveRuntime } from '../../characters/PlayerCharacter';
 import { pushBark } from '../barks';
 import { useGameState } from '../../engine/GameState';
 import { interactionTargets } from '../../physics/InteractionTrigger';
-import { runtimeInput } from '../../input/InputManager';
 import { usePlayerDef } from '../../ui/wardrobe/useWardrobe';
 
 const FEMALE_HAIR: Hair[] = ['Hair_BuzzedFemale', 'Hair_Buns', 'Hair_Long', 'none'];
@@ -51,6 +52,29 @@ export interface Focus { x: number; z: number }
 
 // ─────────────────────────────── Pedestrians ───────────────────────────────
 
+/** Ground speed (m/s) the Walk_Loop clip's stride is authored for. */
+const WALK_CLIP_SPEED = 1.3;
+const WALK_SPEED_MIN = 1.1;
+/** Seconds between "has this walker actually moved?" checks. */
+const STUCK_WINDOW = 2.5;
+
+interface Brain {
+  mode: 'walk' | 'pause';
+  timer: number;
+  pauseAction?: 'Idle' | 'Talk';
+  /** Heading to turn toward while paused (e.g. facing a chat partner). */
+  faceYaw?: number;
+  checkT: number;
+  checkX: number;
+  checkZ: number;
+  /** Smoothed facing, so slow or crowded walkers don't jitter round. */
+  yaw: number;
+}
+
+const dampAngle = (from: number, to: number, rate: number, dt: number) =>
+  from + Math.atan2(Math.sin(to - from), Math.cos(to - from)) * (1 - Math.exp(-rate * dt));
+const start0 = (a: CrowdAgent) => a.position();
+
 let recastReady: Promise<void> | null = null;
 const loadRecast = () => (recastReady ??= initRecast());
 
@@ -76,6 +100,9 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
   // Per-agent, mutated every frame (no re-render) so each walker's foot-fall rate tracks its
   // actual recast speed instead of always playing the walk clip at full rate.
   const animScales = useMemo(() => Array.from({ length: count }, () => ({ current: 1 })), [count]);
+  // Per-agent clip ('Walk' | 'Idle' | 'Talk'), switched imperatively by CharacterModel.
+  const animActions = useMemo(() => Array.from({ length: count }, () => ({ current: 'Walk' })), [count]);
+  const brains = useRef<Brain[]>([]);
 
   useEffect(() => {
     let disposed = false;
@@ -101,10 +128,11 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
         const start = focus
           ? query.findRandomPointAroundCircle({ x: focus.x, y: 0, z: focus.z }, 45).randomPoint
           : query.findRandomPoint().randomPoint;
-        const agent = crowd.addAgent(start, { radius: 0.35, height: 1.75, maxSpeed: 1.1 + (i % 4) * 0.12, maxAcceleration: 4, separationWeight: 2 });
+        const agent = crowd.addAgent(start, { radius: 0.35, height: 1.75, maxSpeed: WALK_SPEED_MIN + (i % 5) * 0.1, maxAcceleration: 3, separationWeight: 2 });
         agent.requestMoveTarget(query.findRandomPointAroundCircle(start, 40).randomPoint);
         agents.push(agent);
       }
+      brains.current = agents.map((_, i) => ({ mode: 'walk', timer: 0, checkT: 1 + (i % 5) * 0.4, checkX: start0(agents[i]).x, checkZ: start0(agents[i]).z, yaw: 0 }));
       built = { crowd, query, destroyMesh: () => result.navMesh.destroy() };
       live.current = { crowd, query, agents };
       setCrowd(live.current);
@@ -122,32 +150,91 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
   useFrame(({ clock }, dt) => {
     const c = live.current;
     if (!c) return;
-    c.crowd.update(Math.min(dt, 0.05));
+    // Fixed 1/30 s sub-steps over the *real* frame time. Clamping the step to 0.05 s (as before)
+    // made the crowd run in slow motion whenever the frame rate dipped below 20 fps, while the
+    // walk clip kept playing in real time — exactly the "walking but not going anywhere" look.
+    const d = Math.min(dt, 0.25);
+    c.crowd.update(1 / 30, d, 8);
     streetRuntime.pedestrians.length = c.agents.length;
+    const newTarget = (from: { x: number; y: number; z: number }, r = 40) => c.query.findRandomPointAroundCircle(from, r).randomPoint;
     c.agents.forEach((a, i) => {
       const g = refs.current[i];
+      const brain = brains.current[i];
       let p = a.interpolatedPosition;
       streetRuntime.pedestrians[i] = { x: p.x, z: p.z };
-      if (!g) return;
+      if (!g || !brain) return;
       if (focus && (p.x - focus.x) ** 2 + (p.z - focus.z) ** 2 > radius * radius) {
         // Re-place far walkers on a sidewalk ring around the focus (out of the camera's near field).
         const angle = Math.random() * Math.PI * 2, r = 35 + Math.random() * 35;
         const near = c.query.findClosestPoint({ x: focus.x + Math.cos(angle) * r, y: 0, z: focus.z + Math.sin(angle) * r }, { halfExtents: { x: 30, y: 4, z: 30 } });
         if (near.success) {
           a.teleport(near.point);
-          a.requestMoveTarget(c.query.findRandomPointAroundCircle(near.point, 40).randomPoint);
+          a.requestMoveTarget(newTarget(near.point));
+          brain.mode = 'walk';
+          brain.checkX = near.point.x; brain.checkZ = near.point.z; brain.checkT = STUCK_WINDOW;
           p = a.interpolatedPosition;
         }
       }
       streetRuntime.pedestrians[i] = { x: p.x, z: p.z };
       const v = a.velocity();
+      const ground = Math.hypot(v.x, v.z);
       g.position.set(p.x, p.y, p.z);
-      if (v.x * v.x + v.z * v.z > 0.01) g.rotation.y = Math.atan2(v.x, v.z);
-      // Walk_Loop is authored around ~1.3 m/s; scale it to this agent's actual ground speed so it
-      // never looks like it's walking in place when steering slows it (crowding, re-targeting).
-      animScales[i].current = Math.min(1.3, Math.max(0.2, Math.hypot(v.x, v.z) / 1.3));
-      const t = a.target();
-      if ((t.x - p.x) ** 2 + (t.z - p.z) ** 2 < 1) a.requestMoveTarget(c.query.findRandomPointAroundCircle(p, 40).randomPoint);
+
+      // ── Behaviour: walk somewhere → sometimes stop (look around, chat, check a phone) → walk on.
+      if (brain.mode === 'pause') {
+        brain.timer -= d;
+        if (brain.faceYaw !== undefined) brain.yaw = dampAngle(brain.yaw, brain.faceYaw, 6, d);
+        if (brain.timer <= 0) {
+          brain.mode = 'walk';
+          brain.faceYaw = undefined;
+          a.requestMoveTarget(newTarget(p));
+          brain.checkX = p.x; brain.checkZ = p.z; brain.checkT = STUCK_WINDOW;
+        }
+      } else {
+        const t = a.target();
+        if ((t.x - p.x) ** 2 + (t.z - p.z) ** 2 < 1.2) {
+          // Arrived: about a third of the time, stop for a bit instead of instantly turning round.
+          if (Math.random() < 0.38) {
+            brain.mode = 'pause';
+            brain.timer = 2 + Math.random() * 5;
+            brain.pauseAction = Math.random() < 0.45 ? 'Talk' : 'Idle';
+            a.requestMoveTarget(p); // hold position
+            // Strike up a chat with a nearby walker: both stop and face each other.
+            const j = c.agents.findIndex((o, oi) => oi !== i && brains.current[oi]?.mode === 'walk' && (o.interpolatedPosition.x - p.x) ** 2 + (o.interpolatedPosition.z - p.z) ** 2 < 9);
+            if (j >= 0 && Math.random() < 0.6) {
+              const o = c.agents[j], ob = brains.current[j], op = o.interpolatedPosition;
+              brain.pauseAction = 'Talk';
+              brain.faceYaw = Math.atan2(op.x - p.x, op.z - p.z);
+              Object.assign(ob, { mode: 'pause', timer: brain.timer, pauseAction: 'Talk', faceYaw: Math.atan2(p.x - op.x, p.z - op.z) });
+              o.requestMoveTarget(op);
+            }
+          } else {
+            a.requestMoveTarget(newTarget(p));
+          }
+        }
+        // Stuck detection: walking but going nowhere (crowding, a target on a sidewalk island) →
+        // pick a fresh nearby target instead of marching in place.
+        brain.checkT -= d;
+        if (brain.checkT <= 0) {
+          if (brain.mode === 'walk' && (p.x - brain.checkX) ** 2 + (p.z - brain.checkZ) ** 2 < 0.16) a.requestMoveTarget(newTarget(p, 20));
+          brain.checkX = p.x; brain.checkZ = p.z; brain.checkT = STUCK_WINDOW;
+        }
+        if (ground > 0.15) brain.yaw = dampAngle(brain.yaw, Math.atan2(v.x, v.z), 8, d);
+      }
+      g.rotation.y = brain.yaw;
+
+      // The clip always matches what the body is really doing: walking only while actually moving
+      // (rate matched to ground speed so feet don't slide or tread water), otherwise idle/talk.
+      if (brain.mode === 'pause') {
+        animActions[i].current = brain.pauseAction ?? 'Idle';
+        animScales[i].current = 1;
+      } else if (ground < 0.25) {
+        animActions[i].current = 'Idle';
+        animScales[i].current = 1;
+      } else {
+        animActions[i].current = 'Walk';
+        animScales[i].current = Math.min(1.35, Math.max(0.55, ground / WALK_CLIP_SPEED));
+      }
 
       // A sprinting player who barrels into a walker gets shouted at and sidestepped.
       const pl = playerRuntime.position;
@@ -156,16 +243,31 @@ export function Pedestrians({ walkways, count = 18, focus, radius = 85 }: { walk
         pushBark('bumped', [p.x, p.y + 1.6, p.z], `ped${i}`, clock.elapsedTime, 2.5);
         const side = new Vector3(-dz, 0, dx).normalize().multiplyScalar(2.5);
         a.requestMoveTarget({ x: p.x + side.x, y: p.y, z: p.z + side.z });
+        brain.mode = 'walk';
+        brain.faceYaw = undefined;
       }
     });
   });
+
+  // Development-only: inspect the crowd from the console (window.__crowd.sample()).
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    const w = window as unknown as { __crowd?: unknown };
+    w.__crowd = {
+      sample: () => live.current?.agents.map((a, i) => {
+        const v = a.velocity();
+        return { mode: brains.current[i]?.mode, anim: animActions[i].current, speed: +Math.hypot(v.x, v.z).toFixed(2), rate: +animScales[i].current.toFixed(2) };
+      }),
+    };
+    return () => { delete w.__crowd; };
+  }, [animActions, animScales]);
 
   if (!crowd) return null;
   return (
     <>
       {cast.map((c, i) => (
         <group key={i} ref={(g) => { refs.current[i] = g; }}>
-          <CastMember def={c} walking speedScaleRef={animScales[i]} />
+          <CastMember def={c} walking speedScaleRef={animScales[i]} actionRef={animActions[i]} />
         </group>
       ))}
     </>
@@ -230,6 +332,7 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
   const jackController = useRef<ReturnType<typeof world.createCharacterController>>();
   const jackSpeed = useRef(0);
   const jackYaw = useRef(0);
+  const jackState = useRef<VehicleState>({ speed: 0, yaw: 0, steer: 0 });
   const prevJackIdx = useRef(-1);
   // Which vehicle (if any) the player is currently jacked into — reactive only on the rare
   // transition (entering/leaving a car), so it's safe to drive the render from a hook here.
@@ -238,7 +341,6 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
 
   useEffect(() => {
     const c = world.createCharacterController(0.02);
-    c.enableSnapToGround(0.3);
     jackController.current = c;
     return () => { world.removeCharacterController(c); jackController.current = undefined; };
   }, [world]);
@@ -289,6 +391,8 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
 
   useFrame(({ camera, clock }, dt) => {
     const d = Math.min(dt, 0.05), t = clock.elapsedTime, p = playerRuntime.position;
+    /** Real frame time (capped) for the player-driven vehicle, so it never runs in slow motion. */
+    const dDrive = Math.min(dt, 0.1);
     const s = useGameState.getState();
     const jackIdx = s.isDriving && s.drivingVehicleId?.startsWith('traffic:') ? Number(s.drivingVehicleId.slice('traffic:'.length)) : -1;
     if (jackIdx !== prevJackIdx.current) {
@@ -348,34 +452,36 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
       }
       if (prevPhase !== 'none' && next.phase === 'none') pushBark('thanks', [v.position.x, 1, v.position.z], `${vehId}:thanks`, t, 6);
     });
-    sim.manager.update(d);
+    // Sub-stepped over real frame time, so traffic keeps real-world pace even at low frame rates.
+    for (let rem = Math.min(dt, 0.25); rem > 1e-4; rem -= 0.05) sim.manager.update(Math.min(rem, 0.05));
 
     // Player-controlled movement for the jacked vehicle, written back into its yuka state so
     // releasing it (E) hands smoothly back to FollowPathBehavior from wherever it ends up.
     if (jackIdx >= 0 && bodies.current[jackIdx]) {
       const jv = sim.vehicles[jackIdx];
       const kind = flat[jackIdx].kind;
-      const maxSpeed = kind === 'okada' ? 10 : kind === 'danfo' || kind === 'van' ? 7 : 9;
-      const throttle = (runtimeInput.forward ? 1 : 0) - (runtimeInput.backward ? 1 : 0);
-      const steer = (runtimeInput.left ? 1 : 0) - (runtimeInput.right ? 1 : 0);
-      const boost = runtimeInput.sprint ? 1 : 0.6;
-      if (throttle !== 0) jackSpeed.current = MathUtils.clamp(jackSpeed.current + throttle * 6 * d, -maxSpeed * 0.5, maxSpeed * boost);
-      else jackSpeed.current = MathUtils.damp(jackSpeed.current, 0, 2.5, d);
-      if (Math.abs(jackSpeed.current) > 0.3) jackYaw.current += steer * 1.8 * d * Math.sign(jackSpeed.current) * Math.min(1, Math.abs(jackSpeed.current) / 3);
-      const dx = Math.sin(jackYaw.current) * jackSpeed.current * d, dz = Math.cos(jackYaw.current) * jackSpeed.current * d;
-      let mx = dx, mz = dz;
-      const jc = jackController.current;
-      if (jc) {
-        jc.computeColliderMovement(bodies.current[jackIdx]!.collider(0), { x: dx, y: -0.3 * d, z: dz });
+      // Same real-feel dynamics as owned cars (world/vehicleDynamics.ts). The old path capped a
+      // jacked car at 60% of 9 m/s (~19 km/h) unless Shift was held, and its per-axis "hit" test
+      // misread rounding on the minor axis as a crash, cutting speed by 70% nearly every frame.
+      const st = jackState.current;
+      st.speed = jackSpeed.current;
+      st.yaw = jackYaw.current;
+      const jc = jackController.current, jb = bodies.current[jackIdx]!;
+      const res = stepVehicle(st, profileFor(kind === 'van' ? 'van' : kind), readDriveInput(dDrive), dDrive, jc ? (dx, dz) => {
+        jc.computeColliderMovement(jb.collider(0), { x: dx, y: 0, z: dz });
         const m = jc.computedMovement();
-        mx = m.x; mz = m.z;
-        if (Math.abs(m.x) < Math.abs(dx) * 0.4 || Math.abs(m.z) < Math.abs(dz) * 0.4) jackSpeed.current *= 0.3; // hit something
-      }
-      jv.position.x += mx;
-      jv.position.z += mz;
-      jv.velocity.set(mx / d, 0, mz / d);
-      driveRuntime.position.set(jv.position.x, FOOTPRINT[kind][1] * 0.5 + 0.3, jv.position.z);
+        return { x: m.x, z: m.z };
+      } : undefined);
+      jackSpeed.current = st.speed;
+      jackYaw.current = st.yaw;
+      const B = CITY_BOUNDS;
+      jv.position.x = MathUtils.clamp(jv.position.x + res.dx, B.minX + 2, B.maxX - 2);
+      jv.position.z = MathUtils.clamp(jv.position.z + res.dz, B.minZ + 2, B.maxZ - 2);
+      jv.velocity.set(res.dx / dDrive, 0, res.dz / dDrive);
+      driveRuntime.position.set(jv.position.x, 0.9, jv.position.z);
       driveRuntime.rotationY = jackYaw.current;
+      driveRuntime.speed = st.speed;
+      driveRuntime.steer = st.steer;
     }
 
     streetRuntime.vehicles.length = sim.vehicles.length;
@@ -419,7 +525,8 @@ export function Traffic({ lanes }: { lanes: Lane[] }) {
             {/* Kinematic collider so the player can't walk through moving traffic (and the body the
                 jacked-vehicle controller above sweeps for collision). */}
             <RigidBody ref={(b) => { bodies.current[i] = b; }} type="kinematicPosition" colliders={false} position={[0, h / 2, 0]}>
-              <CuboidCollider args={[w / 2, h / 2, len / 2]} />
+              {/* Bottom sits 0.1 m above the road so a driven vehicle's sweep never reads the ground as a wall. */}
+              <CuboidCollider args={[w / 2, h / 2 - 0.1, len / 2]} />
             </RigidBody>
           </group>
         );

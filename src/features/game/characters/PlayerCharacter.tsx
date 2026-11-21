@@ -21,7 +21,7 @@ export const playerNudge = new Vector3();
 
 /** While driving, the active DrivableCar writes its position/yaw here each frame; the player
  * mirrors it (so the camera, minimap and GPS all keep following "the player" with no extra code). */
-export const driveRuntime = { position: new Vector3(), rotationY: 0 };
+export const driveRuntime = { position: new Vector3(), rotationY: 0, /** m/s, signed */ speed: 0, /** front-wheel angle, rad */ steer: 0 };
 
 /** A one-shot fast-travel request (e.g. a paid danfo ride): the player picks it up and clears it
  * on its next free frame (never mid-drive, mid-dialogue or at the terminal). */
@@ -45,6 +45,10 @@ export function PlayerCharacter() {
     w.__player = {
       runtime: playerRuntime,
       teleport: (x: number, z: number) => body.current?.setNextKinematicTranslation({ x, y: SY, z }),
+      drive: driveRuntime,
+      input: input,
+      game: useGameState,
+      wardrobe: useWardrobe,
     };
     return () => { delete w.__player; };
   }, []);
@@ -65,7 +69,7 @@ export function PlayerCharacter() {
 
   useFrame((_, dt) => {
     if (!body.current || !controller.current) return;
-    const delta = Math.min(dt, 0.04), s = useGameState.getState();
+    const delta = Math.min(dt, 0.1), s = useGameState.getState();
 
     // While driving, a DrivableCar owns movement; the player just rides along invisibly so the
     // camera/minimap/GPS (which all follow playerRuntime.position) keep working unchanged.

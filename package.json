@@ -17,6 +17,8 @@
     "test:garage": "tsx scripts/test-garage.ts",
     "test:reputation": "tsx scripts/test-reputation.ts",
     "test:python": "tsx scripts/test-python-grader.ts",
+    "test:driving": "tsx scripts/test-driving.ts",
+    "test:keyboard": "tsx scripts/test-keyboard.ts",
     "validate:missions": "tsx scripts/validate-missions.ts",
     "validate:layout": "tsx scripts/validate-layout.ts",
     "postinstall": "node scripts/copy-duckdb.mjs"
